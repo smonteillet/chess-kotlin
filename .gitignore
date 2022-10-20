@@ -1,0 +1,7 @@
+.gradle
+.DS_Store
+.gitattributes
+.idea
+
+# Ignore Gradle build output directory
+build
