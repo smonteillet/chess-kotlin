@@ -3,8 +3,7 @@ package fr.smo.chess.service
 import fr.smo.chess.model.*
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
-import fr.smo.chess.model.Piece.Companion.piece
-import fr.smo.chess.model.Piece.Type.*
+import fr.smo.chess.model.Piece.*
 import java.util.*
 
 const val STARTING_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -152,37 +151,36 @@ class FEN {
 
     private fun getPiece(str : String) : Piece {
         return when (str) {
-            "r" -> piece(ROOK,   BLACK)
-            "R" -> piece(ROOK,   WHITE)
-            "n" -> piece(KNIGHT, BLACK)
-            "N" -> piece(KNIGHT, WHITE)
-            "b" -> piece(BISHOP, BLACK)
-            "B" -> piece(BISHOP, WHITE)
-            "q" -> piece(QUEEN,  BLACK)
-            "Q" -> piece(QUEEN,  WHITE)
-            "k" -> piece(KING,   BLACK)
-            "K" -> piece(KING,   WHITE)
-            "p" -> piece(PAWN,   BLACK)
-            "P" -> piece(PAWN,   WHITE)
+            "r" -> BLACK_ROOK
+            "R" -> WHITE_ROOK
+            "n" -> BLACK_KNIGHT
+            "N" -> WHITE_KNIGHT
+            "b" -> BLACK_BISHOP
+            "B" -> WHITE_BISHOP
+            "q" -> BLACK_QUEEN
+            "Q" -> WHITE_QUEEN
+            "k" -> BLACK_KING
+            "K" -> WHITE_KING
+            "p" -> BLACK_PAWN
+            "P" -> WHITE_PAWN
             else -> throw IllegalArgumentException("Unknown fen piece format : $str")
         }
     }
 
     private fun getLetter(piece : Piece) : String {
         return when (piece) {
-            piece(ROOK,   BLACK) -> "r"
-            piece(ROOK,   WHITE) -> "R"
-            piece(KNIGHT, BLACK) -> "n"
-            piece(KNIGHT, WHITE) -> "N"
-            piece(BISHOP, BLACK) -> "b"
-            piece(BISHOP, WHITE) -> "B"
-            piece(QUEEN,  BLACK) -> "q"
-            piece(QUEEN,  WHITE) -> "Q"
-            piece(KING,   BLACK) -> "k"
-            piece(KING,   WHITE) -> "K"
-            piece(PAWN,   BLACK) -> "p"
-            piece(PAWN,   WHITE) -> "P"
-            else -> throw IllegalArgumentException("Unknown fen piece format : $piece")
+            BLACK_ROOK -> "r"
+            WHITE_ROOK -> "R"
+            BLACK_KNIGHT -> "n"
+            WHITE_KNIGHT -> "N"
+            BLACK_BISHOP -> "b"
+            WHITE_BISHOP -> "B"
+            BLACK_QUEEN -> "q"
+            WHITE_QUEEN -> "Q"
+            BLACK_KING -> "k"
+            WHITE_KING -> "K"
+            BLACK_PAWN -> "p"
+            WHITE_PAWN -> "P"
         }
     }
 }

@@ -3,10 +3,8 @@ package fr.smo.chess.service
 import fr.smo.chess.model.*
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
-import fr.smo.chess.model.Piece.Companion.blackPawn
-import fr.smo.chess.model.Piece.Companion.piece
-import fr.smo.chess.model.Piece.Companion.whitePawn
-import fr.smo.chess.model.Piece.Type.*
+import fr.smo.chess.model.Piece.*
+import fr.smo.chess.model.PieceType.*
 import fr.smo.chess.model.Square.*
 
 /**
@@ -97,7 +95,7 @@ class PseudoLegalMovesFinder {
             ) {
                 return Move(
                     piece = pawnPosition.piece,
-                    capturedPiece = blackPawn(),
+                    capturedPiece = BLACK_PAWN,
                     from = pawnPosition.square,
                     destination = gameState.enPassantTargetSquare,
                 )
@@ -110,7 +108,7 @@ class PseudoLegalMovesFinder {
             ) {
                 return Move(
                     piece = pawnPosition.piece,
-                    capturedPiece = whitePawn(),
+                    capturedPiece = WHITE_PAWN,
                     from = pawnPosition.square,
                     destination = gameState.enPassantTargetSquare,
                 )
@@ -182,9 +180,9 @@ class PseudoLegalMovesFinder {
 
     private fun getPromotedPieces(color: Color, position: Square): List<Piece> {
         return if (color == WHITE && position.rank == Rank.EIGHTH) {
-            listOf(piece(QUEEN, WHITE), piece(ROOK, WHITE), piece(BISHOP, WHITE), piece(KNIGHT, WHITE))
+            listOf(WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT)
         } else if (color == BLACK && position.rank == Rank.FIRST) {
-            listOf(piece(QUEEN, BLACK), piece(ROOK, BLACK), piece(BISHOP, BLACK), piece(KNIGHT, BLACK))
+            listOf(BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT)
         } else {
             emptyList()
         }

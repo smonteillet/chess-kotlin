@@ -3,10 +3,7 @@ package fr.smo.chess.service
 import fr.smo.chess.ai.NegamaxAIPlayer
 import fr.smo.chess.helper.RandomAIPlayer
 import fr.smo.chess.model.*
-import fr.smo.chess.model.Piece.Companion.blackKing
-import fr.smo.chess.model.Piece.Companion.blackRook
-import fr.smo.chess.model.Piece.Companion.whiteKing
-import fr.smo.chess.model.Piece.Companion.whiteRook
+import fr.smo.chess.model.Piece.*
 import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -97,29 +94,29 @@ internal class GameLoopTest {
     private fun assertVariousThingsAboutCastling(gameState: GameState) {
         if (gameState.isBlackQueenCastlePossible) {
             expectThat(gameState.chessboard.getPositionAt(A8)).isNotNull()
-            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo blackRook()
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo BLACK_ROOK
         }
         if (gameState.isBlackKingCastlePossible) {
             expectThat(gameState.chessboard.getPositionAt(H8)).isNotNull()
-            expectThat(gameState.chessboard.getPositionAt(H8)?.piece) isEqualTo blackRook()
+            expectThat(gameState.chessboard.getPositionAt(H8)?.piece) isEqualTo BLACK_ROOK
         }
         if (gameState.isWhiteQueenCastlePossible) {
             expectThat(gameState.chessboard.getPositionAt(A1)).isNotNull()
-            expectThat(gameState.chessboard.getPositionAt(A1)?.piece) isEqualTo whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(A1)?.piece) isEqualTo WHITE_ROOK
         }
         if (gameState.isWhiteKingCastlePossible) {
             expectThat(gameState.chessboard.getPositionAt(H1)).isNotNull()
-            expectThat(gameState.chessboard.getPositionAt(H1)?.piece) isEqualTo whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(H1)?.piece) isEqualTo WHITE_ROOK
         }
 
         if (gameState.isWhiteKingCastlePossible || gameState.isWhiteQueenCastlePossible) {
             expectThat(gameState.chessboard.getPositionAt(E1)).isNotNull()
-            expectThat(gameState.chessboard.getPositionAt(E1)?.piece) isEqualTo whiteKing()
+            expectThat(gameState.chessboard.getPositionAt(E1)?.piece) isEqualTo WHITE_KING
         }
 
         if (gameState.isBlackQueenCastlePossible || gameState.isBlackKingCastlePossible) {
             expectThat(gameState.chessboard.getPositionAt(E8)).isNotNull()
-            expectThat(gameState.chessboard.getPositionAt(E8)?.piece) isEqualTo blackKing()
+            expectThat(gameState.chessboard.getPositionAt(E8)?.piece) isEqualTo BLACK_KING
         }
     }
 

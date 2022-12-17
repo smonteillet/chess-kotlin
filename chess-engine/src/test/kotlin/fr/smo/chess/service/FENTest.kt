@@ -3,10 +3,7 @@ package fr.smo.chess.service
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.GameState
-import fr.smo.chess.model.Piece.Companion.blackRook
-import fr.smo.chess.model.Piece.Companion.whiteKing
-import fr.smo.chess.model.Piece.Companion.whitePawn
-import fr.smo.chess.model.Piece.Companion.whiteQueen
+import fr.smo.chess.model.Piece.*
 import fr.smo.chess.model.Position
 import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Nested
@@ -69,9 +66,9 @@ class FENTest {
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
                 expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(A8, blackRook()),
-                    Position(E8, blackRook()),
-                    Position(H8, whiteQueen())
+                    Position(A8, BLACK_ROOK),
+                    Position(E8, BLACK_ROOK),
+                    Position(H8, WHITE_QUEEN)
                 )
             }
 
@@ -83,8 +80,8 @@ class FENTest {
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
                 expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(A1, whiteKing()),
-                    Position(A2, whitePawn()),
+                    Position(A1, WHITE_KING),
+                    Position(A2, WHITE_PAWN),
                 )
             }
 
@@ -96,7 +93,7 @@ class FENTest {
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
                 expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(B8, whiteQueen())
+                    Position(B8, WHITE_QUEEN)
                 )
             }
         }

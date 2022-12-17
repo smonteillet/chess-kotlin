@@ -6,19 +6,8 @@ import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.GameState
 import fr.smo.chess.model.GameState.GameOutcome.*
 import fr.smo.chess.model.MoveRequest
-import fr.smo.chess.model.Piece.Companion.blackBishop
-import fr.smo.chess.model.Piece.Companion.blackKing
-import fr.smo.chess.model.Piece.Companion.blackKnight
-import fr.smo.chess.model.Piece.Companion.blackPawn
-import fr.smo.chess.model.Piece.Companion.blackQueen
-import fr.smo.chess.model.Piece.Companion.blackRook
-import fr.smo.chess.model.Piece.Companion.whiteBishop
-import fr.smo.chess.model.Piece.Companion.whiteKing
-import fr.smo.chess.model.Piece.Companion.whiteKnight
-import fr.smo.chess.model.Piece.Companion.whitePawn
-import fr.smo.chess.model.Piece.Companion.whiteQueen
-import fr.smo.chess.model.Piece.Companion.whiteRook
-import fr.smo.chess.model.Piece.Type.*
+import fr.smo.chess.model.Piece.*
+import fr.smo.chess.model.PieceType.*
 import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -168,8 +157,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, QUEEN), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackQueen()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  BLACK_QUEEN
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo  0
         }
 
         @Test
@@ -179,8 +168,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, KNIGHT), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackKnight()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_KNIGHT
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo  0
         }
 
         @Test
@@ -190,8 +179,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, BISHOP), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackBishop()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  BLACK_BISHOP
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo  0
         }
 
         @Test
@@ -201,8 +190,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, ROOK), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackRook()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  BLACK_ROOK
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo  0
         }
 
 
@@ -214,8 +203,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, QUEEN), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteQueen()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  WHITE_QUEEN
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo  0
         }
 
         @Test
@@ -225,8 +214,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, KNIGHT), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteKnight()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  WHITE_KNIGHT
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo  0
         }
 
         @Test
@@ -236,8 +225,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, BISHOP), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteBishop()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  WHITE_BISHOP
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo  0
         }
 
         @Test
@@ -247,8 +236,8 @@ class GameStateAggregateTest {
             // When
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, ROOK), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteRook()
-            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  WHITE_ROOK
+            expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo  0
         }
     }
 
@@ -267,7 +256,7 @@ class GameStateAggregateTest {
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D4,E5), gameState)
             // Then
             expectThat(gameState.chessboard.getPositionAt(D4)).isNull()
-            expectThat(gameState.chessboard.getPositionAt(E5)?.piece) isEqualTo whitePawn()
+            expectThat(gameState.chessboard.getPositionAt(E5)?.piece) isEqualTo WHITE_PAWN
             expectThat(gameState.chessboard.piecesOnBoard.size) isEqualTo initialAmountOfPieces - 1
         }
 
@@ -467,7 +456,7 @@ class GameStateAggregateTest {
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E5,F6), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(F6)?.piece) isEqualTo whitePawn()
+            expectThat(gameState.chessboard.getPositionAt(F6)?.piece) isEqualTo WHITE_PAWN
             expectThat(gameState.chessboard.getPositionAt(F5)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E5)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E6)).isNull()
@@ -482,7 +471,7 @@ class GameStateAggregateTest {
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H5,G6), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(G6)?.piece) isEqualTo whitePawn()
+            expectThat(gameState.chessboard.getPositionAt(G6)?.piece) isEqualTo WHITE_PAWN
             expectThat(gameState.chessboard.getPositionAt(G5)).isNull()
             expectThat(gameState.chessboard.getPositionAt(H5)).isNull()
             expectThat(gameState.chessboard.getPositionAt(H6)).isNull()
@@ -497,7 +486,7 @@ class GameStateAggregateTest {
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(C4,D3), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(D3)?.piece) isEqualTo blackPawn()
+            expectThat(gameState.chessboard.getPositionAt(D3)?.piece) isEqualTo BLACK_PAWN
             expectThat(gameState.chessboard.getPositionAt(D4)).isNull()
             expectThat(gameState.chessboard.getPositionAt(C4)).isNull()
             expectThat(gameState.chessboard.getPositionAt(C3)).isNull()
@@ -512,7 +501,7 @@ class GameStateAggregateTest {
             gameState = gameStateAggregate.applyMoveRequest(MoveRequest(F4,E3), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(E3)?.piece) isEqualTo blackPawn()
+            expectThat(gameState.chessboard.getPositionAt(E3)?.piece) isEqualTo BLACK_PAWN
             expectThat(gameState.chessboard.getPositionAt(F3)).isNull()
             expectThat(gameState.chessboard.getPositionAt(F4)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E4)).isNull()
@@ -742,8 +731,8 @@ class GameStateAggregateTest {
             expectThat(gameState.isWhiteQueenCastlePossible).isFalse()
             expectThat(gameState.chessboard.getPositionAt(H1)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E1)).isNull()
-            expectThat(gameState.chessboard.getPositionAt(G1)?.piece) isEqualTo  whiteKing()
-            expectThat(gameState.chessboard.getPositionAt(F1)?.piece) isEqualTo  whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(G1)?.piece) isEqualTo  WHITE_KING
+            expectThat(gameState.chessboard.getPositionAt(F1)?.piece) isEqualTo  WHITE_ROOK
         }
 
         @Test
@@ -766,8 +755,8 @@ class GameStateAggregateTest {
             expectThat(gameState.isWhiteQueenCastlePossible).isFalse()
             expectThat(gameState.chessboard.getPositionAt(A1)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E1)).isNull()
-            expectThat(gameState.chessboard.getPositionAt(C1)?.piece) isEqualTo  whiteKing()
-            expectThat(gameState.chessboard.getPositionAt(D1)?.piece) isEqualTo  whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(C1)?.piece) isEqualTo  WHITE_KING
+            expectThat(gameState.chessboard.getPositionAt(D1)?.piece) isEqualTo  WHITE_ROOK
         }
 
         @Test
@@ -790,8 +779,8 @@ class GameStateAggregateTest {
             expectThat(gameState.isWhiteQueenCastlePossible).isTrue()
             expectThat(gameState.chessboard.getPositionAt(H8)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E8)).isNull()
-            expectThat(gameState.chessboard.getPositionAt(G8)?.piece) isEqualTo  blackKing()
-            expectThat(gameState.chessboard.getPositionAt(F8)?.piece) isEqualTo  blackRook()
+            expectThat(gameState.chessboard.getPositionAt(G8)?.piece) isEqualTo  BLACK_KING
+            expectThat(gameState.chessboard.getPositionAt(F8)?.piece) isEqualTo  BLACK_ROOK
         }
 
         @Test
@@ -813,8 +802,8 @@ class GameStateAggregateTest {
             expectThat(gameState.isWhiteQueenCastlePossible).isTrue()
             expectThat(gameState.chessboard.getPositionAt(A8)).isNull()
             expectThat(gameState.chessboard.getPositionAt(E8)).isNull()
-            expectThat(gameState.chessboard.getPositionAt(C8)?.piece) isEqualTo  blackKing()
-            expectThat(gameState.chessboard.getPositionAt(D8)?.piece) isEqualTo  blackRook()
+            expectThat(gameState.chessboard.getPositionAt(C8)?.piece) isEqualTo  BLACK_KING
+            expectThat(gameState.chessboard.getPositionAt(D8)?.piece) isEqualTo  BLACK_ROOK
         }
 
         @Test

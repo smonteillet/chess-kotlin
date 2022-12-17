@@ -3,14 +3,9 @@ package fr.smo.chess.service
 import fr.smo.chess.model.*
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
-import fr.smo.chess.model.Piece.Companion.blackKing
-import fr.smo.chess.model.Piece.Companion.blackPawn
-import fr.smo.chess.model.Piece.Companion.blackRook
-import fr.smo.chess.model.Piece.Companion.whiteKing
-import fr.smo.chess.model.Piece.Companion.whitePawn
-import fr.smo.chess.model.Piece.Companion.whiteRook
-import fr.smo.chess.model.Piece.Type.KING
-import fr.smo.chess.model.Piece.Type.PAWN
+import fr.smo.chess.model.Piece.*
+import fr.smo.chess.model.PieceType.KING
+import fr.smo.chess.model.PieceType.PAWN
 import fr.smo.chess.model.Square.*
 import fr.smo.chess.model.Rank.*
 
@@ -93,10 +88,10 @@ class GameStateAggregate(
     }
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
-        return if (move.piece == whitePawn() && move.from.rank == SECOND && move.destination.rank == FOURTH) {
+        return if (move.piece == WHITE_PAWN && move.from.rank == SECOND && move.destination.rank == FOURTH) {
             move.from.withRank(THIRD)
         }
-        else if (move.piece == blackPawn() && move.from.rank == SEVENTH && move.destination.rank == FIFTH) {
+        else if (move.piece == BLACK_PAWN && move.from.rank == SEVENTH && move.destination.rank == FIFTH) {
             move.from.withRank(SIXTH)
         }
         else
@@ -163,8 +158,8 @@ class GameStateAggregate(
                     ) ||
                     (
                         move.piece.color == WHITE &&
-                        move.piece != whiteKing() &&
-                        (move.piece != whiteRook() || move.from != H1)
+                        move.piece != WHITE_KING &&
+                        (move.piece != WHITE_ROOK || move.from != H1)
                     )
                 )
     }
@@ -178,8 +173,8 @@ class GameStateAggregate(
                     ) ||
                     (
                         move.piece.color == WHITE &&
-                        move.piece != whiteKing() &&
-                        (move.piece != whiteRook() || move.from != A1)
+                        move.piece != WHITE_KING &&
+                        (move.piece != WHITE_ROOK || move.from != A1)
                     )
                 )
     }
@@ -193,8 +188,8 @@ class GameStateAggregate(
                     ) ||
                     (
                         move.piece.color == BLACK &&
-                        move.piece != blackKing() &&
-                        (move.piece != blackRook() || move.from != H8)
+                        move.piece != BLACK_KING &&
+                        (move.piece != BLACK_ROOK || move.from != H8)
                     )
                 )
     }
@@ -208,8 +203,8 @@ class GameStateAggregate(
                     ) ||
                     (
                         move.piece.color == BLACK &&
-                        move.piece != blackKing() &&
-                        (move.piece != blackRook() || move.from != A8)
+                        move.piece != BLACK_KING &&
+                        (move.piece != BLACK_ROOK || move.from != A8)
                     )
                 )
     }
@@ -247,19 +242,19 @@ class GameStateAggregate(
         if (move.isKingCastle && move.piece.color == WHITE) {
             return positions
                 .filter { it.square != H1 }
-                .plus(Position(F1, whiteRook()))
+                .plus(Position(F1, WHITE_ROOK))
         } else if (move.isQueenCastle && move.piece.color == WHITE) {
             return positions
                 .filter { it.square != A1 }
-                .plus(Position(D1, whiteRook()))
+                .plus(Position(D1, WHITE_ROOK))
         } else if (move.isKingCastle && move.piece.color == BLACK) {
             return positions
                 .filter { it.square != H8 }
-                .plus(Position(F8, blackRook()))
+                .plus(Position(F8, BLACK_ROOK))
         } else if (move.isQueenCastle && move.piece.color == BLACK) {
             return positions
                 .filter { it.square != A8 }
-                .plus(Position(D8, blackRook()))
+                .plus(Position(D8, BLACK_ROOK))
         } else {
             return positions
         }

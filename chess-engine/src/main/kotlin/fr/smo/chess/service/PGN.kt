@@ -2,7 +2,7 @@ package fr.smo.chess.service
 
 import fr.smo.chess.model.GameState
 import fr.smo.chess.model.Move
-import fr.smo.chess.model.Piece.Type.*
+import fr.smo.chess.model.PieceType.*
 
 class PGN {
 
