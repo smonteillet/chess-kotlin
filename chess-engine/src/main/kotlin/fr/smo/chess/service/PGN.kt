@@ -7,21 +7,17 @@ import fr.smo.chess.model.PieceType.*
 class PGN {
 
     fun export(gameState: GameState): String {
-        var pgn = ""
-        gameState.moveHistory.forEachIndexed { index, move ->
-            if (index % 2 == 0) {
-                val moveIndex = index / 2 + 1
-                pgn += "$moveIndex. "
-            }
-            pgn += moveToPgn(move) + " "
-        }
-        pgn += when (gameState.gameOutcome) {
+        val pgnHistory = gameState.moveHistory.mapIndexed { index, move ->
+            val indexStr = if (index % 2 == 0) "${index / 2 + 1}. " else ""
+            return@mapIndexed indexStr + moveToPgn(move)
+        }.joinToString(" ")
+        val pgnOutcome = when (gameState.gameOutcome) {
             GameState.GameOutcome.BLACK_WIN -> "0-1"
             GameState.GameOutcome.WHITE_WIN -> "1-0"
             GameState.GameOutcome.DRAW -> "1/2-1/2"
             GameState.GameOutcome.NOT_FINISHED_YET -> ""
         }
-        return pgn
+        return pgnHistory + pgnOutcome
     }
 
     private fun moveToPgn(move: Move): String {
@@ -30,7 +26,7 @@ class PGN {
         } else if (move.isQueenCastle) {
             "O-O-O"
         } else {
-            var movePGN = when (move.piece.type) {
+            val piece = when (move.piece.type) {
                 PAWN -> "" + move.from
                 BISHOP -> "B"
                 KNIGHT -> "N" + move.from
@@ -38,20 +34,21 @@ class PGN {
                 KING -> "K"
                 ROOK -> "R" + move.from
             }
-            if (move.capturedPiece != null) {
-                movePGN = movePGN.plus("x")
-            }
-            movePGN = movePGN.plus(move.destination)
-            if (move.promotedTo != null) {
-                movePGN = when (move.promotedTo.type) {
-                    BISHOP -> "$movePGN=B"
-                    KNIGHT -> "$movePGN=N"
-                    QUEEN -> "$movePGN=Q"
-                    ROOK -> "$movePGN=R"
+            val captured = if (move.capturedPiece != null) "x" else ""
+            val destination = move.destination
+            val promotedTo =  if (move.promotedTo != null) {
+               when (move.promotedTo.type) {
+                    BISHOP -> "=B"
+                    KNIGHT -> "=N"
+                    QUEEN -> "=Q"
+                    ROOK -> "=R"
                     else -> throw IllegalStateException("cannot promote to ${move.promotedTo}")
                 }
             }
-            movePGN
+            else{
+                ""
+            }
+            return piece + captured + destination + promotedTo
         }
     }
 
