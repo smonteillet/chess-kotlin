@@ -5,7 +5,7 @@ import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.GameState
 import fr.smo.chess.model.GameState.GameOutcome.*
-import fr.smo.chess.model.MoveRequest.Companion.moveRequest
+import fr.smo.chess.model.MoveRequest
 import fr.smo.chess.model.Piece.Companion.blackBishop
 import fr.smo.chess.model.Piece.Companion.blackKing
 import fr.smo.chess.model.Piece.Companion.blackKnight
@@ -19,7 +19,7 @@ import fr.smo.chess.model.Piece.Companion.whitePawn
 import fr.smo.chess.model.Piece.Companion.whiteQueen
 import fr.smo.chess.model.Piece.Companion.whiteRook
 import fr.smo.chess.model.Piece.Type.*
-import fr.smo.chess.model.Square.Companion.square
+import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -39,14 +39,14 @@ class GameStateAggregateTest {
         fun `should mark game as won when performing Scholar's mate`() {
             // Given
             var gameState = GameState.NEW_STANDARD_CHESS_GAME
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","e4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","e5"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("f1","c4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b8","c6"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d1","h5"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g8","f6"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E2,E4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E7,E5), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(F1,C4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B8,C6), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D1,H5), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G8,F6), gameState)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h5","f7"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H5,F7), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo WHITE_WIN
         }
@@ -56,7 +56,7 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k2r/p7/8/8/8/8/PPP5/1K6", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h8","h1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H8,H1), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo BLACK_WIN
         }
@@ -66,7 +66,7 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "8/8/8/7P/8/1k6/4q3/1K6", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","b2"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E2,B2), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo BLACK_WIN
         }
@@ -76,7 +76,7 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "6rk/6pp/2PN4/8/8/8/8/1K6", sideToMove = WHITE)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d6","f7"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D6,F7), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo WHITE_WIN
         }
@@ -86,7 +86,7 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "8/3R4/8/7k/8/1p4R1/8/3K4", sideToMove = WHITE)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d7","h7"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D7,H7), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo WHITE_WIN
         }
@@ -96,7 +96,7 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/8/2k5/7r/2K5", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h2","h1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H2,H1), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo BLACK_WIN
         }
@@ -106,7 +106,7 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/8/2k5/7p/2K5", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h2","h1", QUEEN), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H2,H1, QUEEN), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo BLACK_WIN
         }
@@ -120,8 +120,8 @@ class GameStateAggregateTest {
             // Given
             var gameState = GameState.NEW_STANDARD_CHESS_GAME
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h2","h4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h7", "h5" ),gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H2,H4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H7, H5 ),gameState)
             // Then
             expectThat(gameState.moveHistory.none { it.capturedPiece != null })
             expectThat(gameState.chessboard.piecesOnBoard.size) isEqualTo 32
@@ -136,11 +136,11 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "3k4/1P6/8/8/8/8/7r/2K5", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h2","h1"), gameState) // White King check
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H2,H1), gameState) // White King check
 
             // Then
             assertThrows<IllegalStateException> {
-                gameStateAggregate.applyMoveRequest(moveRequest("b7","b8"), gameState)
+                gameStateAggregate.applyMoveRequest(MoveRequest(B7,B8), gameState)
             }
         }
 
@@ -149,11 +149,11 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "3k4/1P6/8/8/8/8/7p/2K5", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h2","h1", QUEEN), gameState) // White King check
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H2,H1, QUEEN), gameState) // White King check
 
             // Then
             assertThrows<IllegalStateException> {
-                gameStateAggregate.applyMoveRequest(moveRequest("b7","b8"), gameState)
+                gameStateAggregate.applyMoveRequest(MoveRequest(B7,B8), gameState)
             }
         }
 
@@ -166,9 +166,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b2","b1", QUEEN), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, QUEEN), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("b1"))?.piece) isEqualTo  blackQueen()
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackQueen()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
         }
 
@@ -177,9 +177,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b2","b1", KNIGHT), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, KNIGHT), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("b1"))?.piece) isEqualTo  blackKnight()
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackKnight()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
         }
 
@@ -188,9 +188,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b2","b1", BISHOP), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, BISHOP), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("b1"))?.piece) isEqualTo  blackBishop()
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackBishop()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
         }
 
@@ -199,9 +199,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b2","b1", ROOK), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B2,B1, ROOK), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("b1"))?.piece) isEqualTo  blackRook()
+            expectThat(gameState.chessboard.getPositionAt(B1)?.piece) isEqualTo  blackRook()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == blackPawn() }) isEqualTo  0
         }
 
@@ -212,9 +212,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a7","a8", QUEEN), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, QUEEN), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("a8"))?.piece) isEqualTo  whiteQueen()
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteQueen()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
         }
 
@@ -223,9 +223,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a7","a8", KNIGHT), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, KNIGHT), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("a8"))?.piece) isEqualTo  whiteKnight()
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteKnight()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
         }
 
@@ -234,9 +234,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a7","a8", BISHOP), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, BISHOP), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("a8"))?.piece) isEqualTo  whiteBishop()
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteBishop()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
         }
 
@@ -245,9 +245,9 @@ class GameStateAggregateTest {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a7","a8", ROOK), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A7,A8, ROOK), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("a8"))?.piece) isEqualTo  whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(A8)?.piece) isEqualTo  whiteRook()
             expectThat(gameState.chessboard.piecesOnBoard.count { it.piece == whitePawn() }) isEqualTo  0
         }
     }
@@ -264,10 +264,10 @@ class GameStateAggregateTest {
             )
             val initialAmountOfPieces = gameState.chessboard.piecesOnBoard.size
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d4","e5"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D4,E5), gameState)
             // Then
-            expectThat(gameState.chessboard.getPositionAt(square("d4"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e5"))?.piece) isEqualTo whitePawn()
+            expectThat(gameState.chessboard.getPositionAt(D4)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E5)?.piece) isEqualTo whitePawn()
             expectThat(gameState.chessboard.piecesOnBoard.size) isEqualTo initialAmountOfPieces - 1
         }
 
@@ -286,7 +286,7 @@ class GameStateAggregateTest {
                 sideToMove = BLACK,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a8","a1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A8,A1), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo DRAW
         }
@@ -300,20 +300,20 @@ class GameStateAggregateTest {
                 sideToMove = WHITE,
             )
             // When First Repetition
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h1","g1"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g8","h8"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g1","h1"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h8","g8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H1,G1), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G8,H8), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G1,H1), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H8,G8), gameState)
             // When Second Repetition
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h1","g1"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g8","h8"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g1","h1"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h8","g8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H1,G1), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G8,H8), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G1,H1), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H8,G8), gameState)
             // When Third Repetition
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h1","g1"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g8","h8"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g1","h1"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h8","g8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H1,G1), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G8,H8), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G1,H1), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H8,G8), gameState)
             // Then
             expectThat(gameState.gameOutcome) isEqualTo DRAW
         }
@@ -330,7 +330,7 @@ class GameStateAggregateTest {
                     sideToMove = WHITE,
                 )
                 // when
-                gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","f7"), gameState)
+                gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E7,F7), gameState)
                 // Then
                 expectThat(gameState.gameOutcome) isEqualTo DRAW
             }
@@ -343,7 +343,7 @@ class GameStateAggregateTest {
                     sideToMove = BLACK,
                 )
                 // when
-                gameState = gameStateAggregate.applyMoveRequest(moveRequest("a4","a3"), gameState)
+                gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A4,A3), gameState)
                 // Then
                 expectThat(gameState.gameOutcome) isEqualTo DRAW
             }
@@ -356,7 +356,7 @@ class GameStateAggregateTest {
                     sideToMove = WHITE,
                 )
                 // when
-                gameState = gameStateAggregate.applyMoveRequest(moveRequest("e1","f3"), gameState)
+                gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E1,F3), gameState)
                 // Then
                 expectThat(gameState.gameOutcome) isEqualTo DRAW
             }
@@ -372,12 +372,12 @@ class GameStateAggregateTest {
         fun `should test updating full move counter in game state after white move`() {
             // Given
             var gameState =  GameState.StartingPositions.NEW_STANDARD_CHESS_GAME
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","e4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","e5"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("f1","c4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b8","c6"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E2,E4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E7,E5), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(F1,C4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B8,C6), gameState)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d1","h5"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D1,H5), gameState)
             // Then
             expectThat(gameState.fullMoveCounter) isEqualTo 3
         }
@@ -386,13 +386,13 @@ class GameStateAggregateTest {
         fun `should test updating full move counter in game state after black move`() {
             // Given
             var gameState = GameState.StartingPositions.NEW_STANDARD_CHESS_GAME
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","e4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","e5"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("f1","c4"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("b8","c6"), gameState)
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d1","h5"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E2,E4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E7,E5), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(F1,C4), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(B8,C6), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D1,H5), gameState)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("g8","f6"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(G8,F6), gameState)
             // Then
             expectThat(gameState.fullMoveCounter) isEqualTo 4
         }
@@ -409,7 +409,7 @@ class GameStateAggregateTest {
                 sideToMove = WHITE,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a1","a2"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A1,A2), gameState)
             // Then
             expectThat(gameState.halfMoveClock) isEqualTo 11
         }
@@ -423,7 +423,7 @@ class GameStateAggregateTest {
                 sideToMove = WHITE,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d3","d4"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D3,D4), gameState)
             // Then
             expectThat(gameState.halfMoveClock) isEqualTo 0
         }
@@ -437,7 +437,7 @@ class GameStateAggregateTest {
                 sideToMove = BLACK,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h8","h6"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H8,H6), gameState)
             // Then
             expectThat(gameState.halfMoveClock) isEqualTo 0
         }
@@ -450,11 +450,11 @@ class GameStateAggregateTest {
         @Test
         fun `should change en passant target square in game state and set it back to null when necessary`() {
             var gameState = GameState.StartingPositions.NEW_STANDARD_CHESS_GAME
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2", "e4"), gameState)
-            expectThat(gameState.enPassantTargetSquare) isEqualTo square("e3")
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7", "e5"), gameState)
-            expectThat(gameState.enPassantTargetSquare) isEqualTo square("e6")
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d2", "d3"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E2, E4), gameState)
+            expectThat(gameState.enPassantTargetSquare) isEqualTo E3
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E7, E5), gameState)
+            expectThat(gameState.enPassantTargetSquare) isEqualTo E6
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D2, D3), gameState)
             expectThat(gameState.enPassantTargetSquare).isNull()
         }
 
@@ -462,60 +462,60 @@ class GameStateAggregateTest {
         fun `should capture en passant to the right for white`() {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "3k4/8/8/4Pp2/8/8/8/2K5", sideToMove = WHITE,
-                enPassantTargetSquare = square("f6"))
+                enPassantTargetSquare = F6)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e5","f6"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E5,F6), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("f6"))?.piece) isEqualTo whitePawn()
-            expectThat(gameState.chessboard.getPositionAt(square("f5"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e5"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e6"))).isNull()
+            expectThat(gameState.chessboard.getPositionAt(F6)?.piece) isEqualTo whitePawn()
+            expectThat(gameState.chessboard.getPositionAt(F5)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E5)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E6)).isNull()
         }
 
         @Test
         fun `should capture en passant to the left for white`() {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "3k4/8/8/6pP/8/8/8/2K5", sideToMove = WHITE,
-                enPassantTargetSquare = square("g6"))
+                enPassantTargetSquare = G6)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h5","g6"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H5,G6), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("g6"))?.piece) isEqualTo whitePawn()
-            expectThat(gameState.chessboard.getPositionAt(square("g5"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("h5"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("h6"))).isNull()
+            expectThat(gameState.chessboard.getPositionAt(G6)?.piece) isEqualTo whitePawn()
+            expectThat(gameState.chessboard.getPositionAt(G5)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(H5)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(H6)).isNull()
         }
 
         @Test
         fun `should capture en passant to the right for black`() {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "3k4/8/8/8/2pP4/8/8/2K5", sideToMove = BLACK,
-                enPassantTargetSquare = square("d3"))
+                enPassantTargetSquare = D3)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("c4","d3"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(C4,D3), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("d3"))?.piece) isEqualTo blackPawn()
-            expectThat(gameState.chessboard.getPositionAt(square("d4"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("c4"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("c3"))).isNull()
+            expectThat(gameState.chessboard.getPositionAt(D3)?.piece) isEqualTo blackPawn()
+            expectThat(gameState.chessboard.getPositionAt(D4)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(C4)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(C3)).isNull()
         }
 
         @Test
         fun `should capture en passant to the left for black`() {
             // Given
             var gameState = givenAChessGame(fenPiecePlacementOnly = "3k4/8/8/8/4Pp2/8/8/2K5", sideToMove = BLACK,
-                enPassantTargetSquare = square("e3"))
+                enPassantTargetSquare = E3)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("f4","e3"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(F4,E3), gameState)
             // Then
             expectThat(gameState.enPassantTargetSquare).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e3"))?.piece) isEqualTo blackPawn()
-            expectThat(gameState.chessboard.getPositionAt(square("f3"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("f4"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e4"))).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E3)?.piece) isEqualTo blackPawn()
+            expectThat(gameState.chessboard.getPositionAt(F3)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(F4)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E4)).isNull()
         }
     }
 
@@ -534,7 +534,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a8","a7"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A8,A7), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
@@ -554,7 +554,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = false,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d5","a8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D5,A8), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
@@ -574,7 +574,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = false,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e5","h8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E5,H8), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
@@ -594,7 +594,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("d4","a1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(D4,A1), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
@@ -614,7 +614,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e4","h1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E4,H1), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
@@ -634,7 +634,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h8","h7"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H8,H7), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
@@ -654,7 +654,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("a1","a2"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(A1,A2), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
@@ -674,7 +674,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("h1","h2"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(H1,H2), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
@@ -694,7 +694,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e1","e2"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E1,E2), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
@@ -714,7 +714,7 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e8","e7"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E8,E7), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
@@ -734,16 +734,16 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e1","g1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E1,G1), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
             expectThat(gameState.isWhiteKingCastlePossible).isFalse()
             expectThat(gameState.isWhiteQueenCastlePossible).isFalse()
-            expectThat(gameState.chessboard.getPositionAt(square("h1"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e1"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("g1"))?.piece) isEqualTo  whiteKing()
-            expectThat(gameState.chessboard.getPositionAt(square("f1"))?.piece) isEqualTo  whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(H1)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E1)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(G1)?.piece) isEqualTo  whiteKing()
+            expectThat(gameState.chessboard.getPositionAt(F1)?.piece) isEqualTo  whiteRook()
         }
 
         @Test
@@ -758,16 +758,16 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e1","c1"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E1,C1), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isTrue()
             expectThat(gameState.isBlackKingCastlePossible).isTrue()
             expectThat(gameState.isWhiteKingCastlePossible).isFalse()
             expectThat(gameState.isWhiteQueenCastlePossible).isFalse()
-            expectThat(gameState.chessboard.getPositionAt(square("a1"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e1"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("c1"))?.piece) isEqualTo  whiteKing()
-            expectThat(gameState.chessboard.getPositionAt(square("d1"))?.piece) isEqualTo  whiteRook()
+            expectThat(gameState.chessboard.getPositionAt(A1)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E1)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(C1)?.piece) isEqualTo  whiteKing()
+            expectThat(gameState.chessboard.getPositionAt(D1)?.piece) isEqualTo  whiteRook()
         }
 
         @Test
@@ -782,16 +782,16 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
             )
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e8","g8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E8,G8), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
             expectThat(gameState.isWhiteKingCastlePossible).isTrue()
             expectThat(gameState.isWhiteQueenCastlePossible).isTrue()
-            expectThat(gameState.chessboard.getPositionAt(square("h8"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e8"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("g8"))?.piece) isEqualTo  blackKing()
-            expectThat(gameState.chessboard.getPositionAt(square("f8"))?.piece) isEqualTo  blackRook()
+            expectThat(gameState.chessboard.getPositionAt(H8)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E8)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(G8)?.piece) isEqualTo  blackKing()
+            expectThat(gameState.chessboard.getPositionAt(F8)?.piece) isEqualTo  blackRook()
         }
 
         @Test
@@ -805,16 +805,16 @@ class GameStateAggregateTest {
                 isWhiteKingCastlePossible = true,
                 sideToMove = BLACK)
             // When
-            gameState = gameStateAggregate.applyMoveRequest(moveRequest("e8","c8"), gameState)
+            gameState = gameStateAggregate.applyMoveRequest(MoveRequest(E8,C8), gameState)
             // Then
             expectThat(gameState.isBlackQueenCastlePossible).isFalse()
             expectThat(gameState.isBlackKingCastlePossible).isFalse()
             expectThat(gameState.isWhiteKingCastlePossible).isTrue()
             expectThat(gameState.isWhiteQueenCastlePossible).isTrue()
-            expectThat(gameState.chessboard.getPositionAt(square("a8"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("e8"))).isNull()
-            expectThat(gameState.chessboard.getPositionAt(square("c8"))?.piece) isEqualTo  blackKing()
-            expectThat(gameState.chessboard.getPositionAt(square("d8"))?.piece) isEqualTo  blackRook()
+            expectThat(gameState.chessboard.getPositionAt(A8)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(E8)).isNull()
+            expectThat(gameState.chessboard.getPositionAt(C8)?.piece) isEqualTo  blackKing()
+            expectThat(gameState.chessboard.getPositionAt(D8)?.piece) isEqualTo  blackRook()
         }
 
         @Test
@@ -829,7 +829,7 @@ class GameStateAggregateTest {
                 sideToMove = BLACK)
             // When
             assertThrows<IllegalStateException> {
-                gameStateAggregate.applyMoveRequest(moveRequest("e8","c8"), gameState)
+                gameStateAggregate.applyMoveRequest(MoveRequest(E8,C8), gameState)
             }
         }
 
@@ -845,7 +845,7 @@ class GameStateAggregateTest {
                 sideToMove = BLACK)
             // When
             assertThrows<IllegalStateException> {
-                gameStateAggregate.applyMoveRequest(moveRequest("e8","c8"), gameState)
+                gameStateAggregate.applyMoveRequest(MoveRequest(E8,C8), gameState)
             }
         }
 

@@ -4,16 +4,17 @@ import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.GameState
 import fr.smo.chess.model.Piece.Companion.blackRook
+import fr.smo.chess.model.Piece.Companion.whiteKing
+import fr.smo.chess.model.Piece.Companion.whitePawn
 import fr.smo.chess.model.Piece.Companion.whiteQueen
 import fr.smo.chess.model.Position
-import fr.smo.chess.model.Square.Companion.square
+import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.containsExactlyInAnyOrder
 import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
-
 
 
 class FENTest {
@@ -68,9 +69,22 @@ class FENTest {
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
                 expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(square("a8"), blackRook()),
-                    Position(square("e8"), blackRook()),
-                    Position(square("h8"), whiteQueen())
+                    Position(A8, blackRook()),
+                    Position(E8, blackRook()),
+                    Position(H8, whiteQueen())
+                )
+            }
+
+            @Test
+            fun `should import simple fen`() {
+                // Given
+                val fen = "8/8/8/8/8/8/P7/K7 w KQkq - 0 1"
+                // When
+                val gameState = this@FENTest.fen.import(fen)
+                // Then
+                expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
+                    Position(A1, whiteKing()),
+                    Position(A2, whitePawn()),
                 )
             }
 
@@ -82,7 +96,7 @@ class FENTest {
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
                 expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(square("b8"), whiteQueen())
+                    Position(B8, whiteQueen())
                 )
             }
         }
@@ -224,7 +238,7 @@ class FENTest {
                 // When
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
-                expectThat(gameState.enPassantTargetSquare) isEqualTo square("b6")
+                expectThat(gameState.enPassantTargetSquare) isEqualTo B6
             }
 
             @Test
@@ -234,7 +248,7 @@ class FENTest {
                 // When
                 val gameState = this@FENTest.fen.import(fen)
                 // Then
-                expectThat(gameState.enPassantTargetSquare) isEqualTo square("b3")
+                expectThat(gameState.enPassantTargetSquare) isEqualTo B3
             }
         }
 

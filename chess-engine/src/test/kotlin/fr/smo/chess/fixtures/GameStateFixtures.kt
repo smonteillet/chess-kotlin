@@ -1,6 +1,9 @@
 package fr.smo.chess.fixtures
 
-import fr.smo.chess.model.*
+import fr.smo.chess.model.Color
+import fr.smo.chess.model.GameState
+import fr.smo.chess.model.Move
+import fr.smo.chess.model.Square
 import fr.smo.chess.service.FEN
 import fr.smo.chess.service.STARTING_POSITION_FEN
 import java.util.*

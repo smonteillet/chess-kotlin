@@ -7,7 +7,7 @@ import fr.smo.chess.model.Piece.Companion.blackPawn
 import fr.smo.chess.model.Piece.Companion.piece
 import fr.smo.chess.model.Piece.Companion.whitePawn
 import fr.smo.chess.model.Piece.Type.*
-import fr.smo.chess.model.Square.Companion.square
+import fr.smo.chess.model.Square.*
 
 /**
  * In Pseudo-legal move generation pieces obey their normal rules of movement, but they're not checked beforehand to see
@@ -62,7 +62,7 @@ class PseudoLegalMovesFinder {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = gameState.chessboard,
                 pawnPosition = pawnPosition,
-                hasPawnNotAlreadyMoved = pawnPosition.square.row == 2,
+                hasPawnNotAlreadyMoved = pawnPosition.square.rank == Rank.SECOND,
                 pawnFrontMoveFunction = { it.up() },
             ).plus(
                 getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.upRight() }
@@ -73,7 +73,7 @@ class PseudoLegalMovesFinder {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = gameState.chessboard,
                 pawnPosition = pawnPosition,
-                hasPawnNotAlreadyMoved = pawnPosition.square.row == 7,
+                hasPawnNotAlreadyMoved = pawnPosition.square.rank == Rank.SEVENTH,
                 pawnFrontMoveFunction = { it.down() },
             ).plus(
                 getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.downRight() }
@@ -181,9 +181,9 @@ class PseudoLegalMovesFinder {
 
 
     private fun getPromotedPieces(color: Color, position: Square): List<Piece> {
-        return if (color == WHITE && position.row == 8) {
+        return if (color == WHITE && position.rank == Rank.EIGHTH) {
             listOf(piece(QUEEN, WHITE), piece(ROOK, WHITE), piece(BISHOP, WHITE), piece(KNIGHT, WHITE))
-        } else if (color == BLACK && position.row == 1) {
+        } else if (color == BLACK && position.rank == Rank.FIRST) {
             listOf(piece(QUEEN, BLACK), piece(ROOK, BLACK), piece(BISHOP, BLACK), piece(KNIGHT, BLACK))
         } else {
             emptyList()
@@ -313,10 +313,10 @@ class PseudoLegalMovesFinder {
                 kingPosition = kingPosition,
                 isKingCastlePossible = gameState.isWhiteKingCastlePossible,
                 isQueenCastlePossible = gameState.isWhiteQueenCastlePossible,
-                kingDestinationKingCastle = square("g1"),
-                kingDestinationQueenCastle = square("c1"),
-                kingCastlingPathSquares = listOf(square("e1"), square("f1"), square("g1")),
-                queenCastlingPathSquares = listOf(square("e1"), square("d1"), square("c1")),
+                kingDestinationKingCastle = G1,
+                kingDestinationQueenCastle = C1,
+                kingCastlingPathSquares = listOf(E1, F1, G1),
+                queenCastlingPathSquares = listOf(E1, D1, C1),
             )
         } else if (gameState.isNextPlayCouldBeBlackCastle) {
             getCastleMoves(
@@ -324,10 +324,10 @@ class PseudoLegalMovesFinder {
                 kingPosition = kingPosition,
                 isKingCastlePossible = gameState.isBlackKingCastlePossible,
                 isQueenCastlePossible = gameState.isBlackQueenCastlePossible,
-                kingDestinationKingCastle = square("g8"),
-                kingDestinationQueenCastle = square("c8"),
-                kingCastlingPathSquares = listOf(square("e8"), square("f8"), square("g8")),
-                queenCastlingPathSquares = listOf(square("e8"), square("d8"), square("c8")),
+                kingDestinationKingCastle = G8,
+                kingDestinationQueenCastle = C8,
+                kingCastlingPathSquares = listOf(E8, F8, G8),
+                queenCastlingPathSquares = listOf(E8, D8, C8),
             )
         } else {
             emptyList()

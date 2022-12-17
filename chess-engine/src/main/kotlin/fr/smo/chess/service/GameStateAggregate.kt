@@ -11,7 +11,8 @@ import fr.smo.chess.model.Piece.Companion.whitePawn
 import fr.smo.chess.model.Piece.Companion.whiteRook
 import fr.smo.chess.model.Piece.Type.KING
 import fr.smo.chess.model.Piece.Type.PAWN
-import fr.smo.chess.model.Square.Companion.square
+import fr.smo.chess.model.Square.*
+import fr.smo.chess.model.Rank.*
 
 class GameStateAggregate(
     private val pseudoLegalMovesFinder : PseudoLegalMovesFinder = PseudoLegalMovesFinder()
@@ -92,11 +93,11 @@ class GameStateAggregate(
     }
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
-        return if (move.piece == whitePawn() && move.from.row == 2 && move.destination.row == 4) {
-            move.from.withRow(3)
+        return if (move.piece == whitePawn() && move.from.rank == SECOND && move.destination.rank == FOURTH) {
+            move.from.withRank(THIRD)
         }
-        else if (move.piece == blackPawn() && move.from.row == 7 && move.destination.row == 5) {
-            move.from.withRow(6)
+        else if (move.piece == blackPawn() && move.from.rank == SEVENTH && move.destination.rank == FIFTH) {
+            move.from.withRank(SIXTH)
         }
         else
             null
@@ -158,12 +159,12 @@ class GameStateAggregate(
                 (
                     (
                         move.piece.color == BLACK &&
-                        ((move.capturedPiece != null && move.destination != square("h1")) || move.capturedPiece == null)
+                        ((move.capturedPiece != null && move.destination != H1) || move.capturedPiece == null)
                     ) ||
                     (
                         move.piece.color == WHITE &&
                         move.piece != whiteKing() &&
-                        (move.piece != whiteRook() || move.from != square("h1"))
+                        (move.piece != whiteRook() || move.from != H1)
                     )
                 )
     }
@@ -173,12 +174,12 @@ class GameStateAggregate(
                 (
                     (
                             move.piece.color == BLACK &&
-                            ((move.capturedPiece != null && move.destination != square("a1")) || move.capturedPiece == null)
+                            ((move.capturedPiece != null && move.destination != A1) || move.capturedPiece == null)
                     ) ||
                     (
                         move.piece.color == WHITE &&
                         move.piece != whiteKing() &&
-                        (move.piece != whiteRook() || move.from != square("a1"))
+                        (move.piece != whiteRook() || move.from != A1)
                     )
                 )
     }
@@ -188,12 +189,12 @@ class GameStateAggregate(
                 (
                     (
                         move.piece.color == WHITE &&
-                       ((move.capturedPiece != null && move.destination != square("h8")) || move.capturedPiece == null)
+                       ((move.capturedPiece != null && move.destination != H8) || move.capturedPiece == null)
                     ) ||
                     (
                         move.piece.color == BLACK &&
                         move.piece != blackKing() &&
-                        (move.piece != blackRook() || move.from != square("h8"))
+                        (move.piece != blackRook() || move.from != H8)
                     )
                 )
     }
@@ -203,12 +204,12 @@ class GameStateAggregate(
                 (
                     (
                         move.piece.color == WHITE &&
-                        ((move.capturedPiece != null && move.destination != square("a8")) || move.capturedPiece == null)
+                        ((move.capturedPiece != null && move.destination != A8) || move.capturedPiece == null)
                     ) ||
                     (
                         move.piece.color == BLACK &&
                         move.piece != blackKing() &&
-                        (move.piece != blackRook() || move.from != square("a8"))
+                        (move.piece != blackRook() || move.from != A8)
                     )
                 )
     }
@@ -245,20 +246,20 @@ class GameStateAggregate(
     private fun applyRookMovesForCastling(move: Move, positions: List<Position>): List<Position> {
         if (move.isKingCastle && move.piece.color == WHITE) {
             return positions
-                .filter { it.square != square("h1") }
-                .plus(Position(square("f1"), whiteRook()))
+                .filter { it.square != H1 }
+                .plus(Position(F1, whiteRook()))
         } else if (move.isQueenCastle && move.piece.color == WHITE) {
             return positions
-                .filter { it.square != square("a1") }
-                .plus(Position(square("d1"), whiteRook()))
+                .filter { it.square != A1 }
+                .plus(Position(D1, whiteRook()))
         } else if (move.isKingCastle && move.piece.color == BLACK) {
             return positions
-                .filter { it.square != square("h8") }
-                .plus(Position(square("f8"), blackRook()))
+                .filter { it.square != H8 }
+                .plus(Position(F8, blackRook()))
         } else if (move.isQueenCastle && move.piece.color == BLACK) {
             return positions
-                .filter { it.square != square("a8") }
-                .plus(Position(square("d8"), blackRook()))
+                .filter { it.square != A8 }
+                .plus(Position(D8, blackRook()))
         } else {
             return positions
         }

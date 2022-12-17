@@ -15,7 +15,7 @@ import fr.smo.chess.model.Piece.Companion.whiteQueen
 import fr.smo.chess.model.Piece.Companion.whiteRook
 import fr.smo.chess.model.Piece.Type.*
 import fr.smo.chess.model.Position
-import fr.smo.chess.model.Square.Companion.square
+import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -41,11 +41,11 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b2"), whitePawn()),
+                    Position(B2, whitePawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b3")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B3)
             }
 
             @Test
@@ -56,7 +56,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b2"), whitePawn()),
+                    Position(B2, whitePawn()),
                     gameState
                 )
                 // then
@@ -71,7 +71,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b2"), whitePawn()),
+                    Position(B2, whitePawn()),
                     gameState
                 )
                 // then
@@ -86,11 +86,11 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b2"), whitePawn()),
+                    Position(B2, whitePawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b3", "b4")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B3, B4)
             }
 
             @Test
@@ -101,11 +101,11 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b3"), whitePawn()),
+                    Position(B3, whitePawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b4")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4)
             }
 
             @Test
@@ -116,15 +116,15 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b3"), whitePawn()),
+                    Position(B3, whitePawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b4", "c4")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, C4)
                 expectThat(legalMoves.contains(Move(
                     piece = whitePawn(),
-                    from = square("b3"),
-                    destination = square("c4"),
+                    from = B3,
+                    destination = C4,
                     capturedPiece = blackPawn(),
                 ))).isTrue()
             }
@@ -138,15 +138,15 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b3"), whitePawn()),
+                    Position(B3, whitePawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b4", "a4")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, A4)
                 expectThat(legalMoves.contains(Move(
                     piece = whitePawn(),
-                    from = square("b3"),
-                    destination = square("a4"),
+                    from = B3,
+                    destination = A4,
                     capturedPiece = blackPawn(),
                 ))).isTrue()
             }
@@ -159,21 +159,21 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b3"), whitePawn()),
+                    Position(B3, whitePawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b4", "a4", "c4")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, A4, C4)
                 expectThat(legalMoves.contains(Move(
                     piece = whitePawn(),
-                    from = square("b3"),
-                    destination = square("a4"),
+                    from = B3,
+                    destination = A4,
                     capturedPiece = blackPawn(),
                 ))).isTrue()
                 expectThat(legalMoves.contains(Move(
                     piece = whitePawn(),
-                    from = square("b3"),
-                    destination = square("c4"),
+                    from = B3,
+                    destination = C4,
                     capturedPiece = blackPawn(),
                 ))).isTrue()
             }
@@ -186,7 +186,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("c7"), whitePawn()),
+                    Position(C7, whitePawn()),
                     gameState
                 )
                 // Then
@@ -197,7 +197,7 @@ internal class PseudoLegalMovesFinderTest {
                     KNIGHT
                 )
                 expectThat(legalMoves.map { it.promotedTo!!.color }.all { it == WHITE }) isEqualTo true
-                expectThat(legalMoves.map { it.destination }.all { it == square("c8") }) isEqualTo true
+                expectThat(legalMoves.map { it.destination }.all { it == C8 }) isEqualTo true
             }
 
             @Nested
@@ -208,17 +208,17 @@ internal class PseudoLegalMovesFinderTest {
                    // Given
                    val gameState =  givenAChessGame(
                        fenPiecePlacementOnly = "8/8/8/2pP4/8/8/8/8",
-                       enPassantTargetSquare = square("c6")
+                       enPassantTargetSquare = C6
                    )
                    // when
                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                       Position(square("d5"), whitePawn()),
+                       Position(D5, whitePawn()),
                        gameState
                    )
                     // Then
                     expectThat(legalMoves).containsExactlyInAnyOrder(
-                        Move(whitePawn(), square("d5"), square("d6")),
-                        Move(whitePawn(), square("d5"), square("c6"), capturedPiece = blackPawn())
+                        Move(whitePawn(), D5, D6),
+                        Move(whitePawn(), D5, C6, capturedPiece = blackPawn())
                     )
                 }
 
@@ -227,17 +227,17 @@ internal class PseudoLegalMovesFinderTest {
                     // Given
                     val gameState =  givenAChessGame(
                         fenPiecePlacementOnly = "8/8/8/3Pp3/8/8/8/8",
-                        enPassantTargetSquare = square("e6")
+                        enPassantTargetSquare = E6
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("d5"), whitePawn()),
+                        Position(D5, whitePawn()),
                         gameState
                     )
                     // Then
                     expectThat(legalMoves).containsExactlyInAnyOrder(
-                        Move(whitePawn(), square("d5"), square("d6")),
-                        Move(whitePawn(), square("d5"), square("e6"), capturedPiece = blackPawn())
+                        Move(whitePawn(), D5, D6),
+                        Move(whitePawn(), D5, E6, capturedPiece = blackPawn())
                     )
                 }
 
@@ -249,13 +249,11 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("d5"), whitePawn()),
+                        Position(D5, whitePawn()),
                         gameState
                     )
                     // Then
-                    expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
-                        square("d6")
-                    )
+                    expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D6)
                 }
             }
         }
@@ -271,11 +269,11 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b7"), blackPawn()),
+                    Position(B7, blackPawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b6")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B6)
             }
 
             @Test
@@ -286,7 +284,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b7"), blackPawn()),
+                    Position(B7, blackPawn()),
                     gameState
                 )
                 // then
@@ -301,7 +299,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b7"), blackPawn()),
+                    Position(B7, blackPawn()),
                     gameState
                 )
                 // then
@@ -316,11 +314,11 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b7"), blackPawn()),
+                    Position(B7, blackPawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b6", "b5")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B6, B5)
             }
 
             @Test
@@ -331,11 +329,11 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b6"), blackPawn()),
+                    Position(B6, blackPawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b5")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5)
             }
 
             @Test
@@ -346,15 +344,15 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b6"), blackPawn()),
+                    Position(B6, blackPawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b5", "c5")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5, C5)
                 expectThat(legalMoves.contains(Move(
                     piece = blackPawn(),
-                    from = square("b6"),
-                    destination = square("c5"),
+                    from = B6,
+                    destination = C5,
                     capturedPiece = whitePawn(),
                 )))
             }
@@ -368,15 +366,15 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b6"), blackPawn()),
+                    Position(B6, blackPawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b5", "a5")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5, A5)
                 expectThat(legalMoves.contains(Move(
                     piece = blackPawn(),
-                    from = square("b6"),
-                    destination = square("a5"),
+                    from = B6,
+                    destination = A5,
                     capturedPiece = whitePawn(),
                 )))
             }
@@ -389,21 +387,21 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b6"), blackPawn()),
+                    Position(B6, blackPawn()),
                     gameState
                 )
                 // then
-                expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("b5", "a5", "c5")
+                expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5, A5, C5)
                 expectThat(legalMoves.contains(Move(
                     piece = blackPawn(),
-                    from = square("b6"),
-                    destination = square("a5"),
+                    from = B6,
+                    destination = A5,
                     capturedPiece = whitePawn(),
                 )))
                 expectThat(legalMoves.contains(Move(
                     piece = blackPawn(),
-                    from = square("b6"),
-                    destination = square("c5"),
+                    from = B6,
+                    destination = C5,
                     capturedPiece = whitePawn(),
                 )))
             }
@@ -416,7 +414,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("b2"), blackPawn()),
+                    Position(B2, blackPawn()),
                     gameState
                 )
                 // Then
@@ -427,7 +425,7 @@ internal class PseudoLegalMovesFinderTest {
                     KNIGHT
                 )
                 expectThat(legalMoves.map { it.promotedTo!!.color }.all { it == BLACK }) isEqualTo true
-                expectThat(legalMoves.map { it.destination }.all { it == square("b1") }) isEqualTo true
+                expectThat(legalMoves.map { it.destination }.all { it == B1 }) isEqualTo true
             }
 
             @Nested
@@ -438,18 +436,18 @@ internal class PseudoLegalMovesFinderTest {
                     // Given
                     val gameState =  givenAChessGame(
                         fenPiecePlacementOnly = "8/8/8/8/3Pp3/8/8/8",
-                        enPassantTargetSquare = square("d3"),
+                        enPassantTargetSquare = D3,
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e4"), blackPawn()),
+                        Position(E4, blackPawn()),
                         gameState
                     )
-                    expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("d3", "e3")
+                    expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3, E3)
                     expectThat(legalMoves.contains(Move(
                         piece = blackPawn(),
-                        from = square("e4"),
-                        destination = square("d3"),
+                        from = E4,
+                        destination = D3,
                         capturedPiece = whitePawn(),
                     ))).isTrue()
                 }
@@ -459,18 +457,18 @@ internal class PseudoLegalMovesFinderTest {
                     // Given
                     val gameState =  givenAChessGame(
                         fenPiecePlacementOnly = "8/8/8/8/2pP4/8/8/8",
-                        enPassantTargetSquare = square("d3"),
+                        enPassantTargetSquare = D3,
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("c4"), blackPawn()),
+                        Position(C4, blackPawn()),
                         gameState
                     )
-                    expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder("d3", "c3")
+                    expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3, C3)
                     expectThat(legalMoves.contains(Move(
                         piece = blackPawn(),
-                        from = square("c4"),
-                        destination = square("d3"),
+                        from = C4,
+                        destination = D3,
                         capturedPiece = whitePawn(),
                     ))).isTrue()
                 }
@@ -484,10 +482,10 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("d4"), blackPawn()),
+                        Position(D4, blackPawn()),
                         gameState
                     )
-                    expectThat(legalMoves.map{ it.destination.toString() }).containsExactlyInAnyOrder("d3")
+                    expectThat(legalMoves.map{ it.destination }).containsExactlyInAnyOrder(D3)
                 }
 
                 @Test
@@ -499,10 +497,10 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("d4"), blackPawn()),
+                        Position(D4, blackPawn()),
                         gameState
                     )
-                    expectThat(legalMoves.map{ it.destination.toString() }).containsExactlyInAnyOrder("d3")
+                    expectThat(legalMoves.map{ it.destination }).containsExactlyInAnyOrder(D3)
                 }
             }
         }
@@ -519,12 +517,12 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("e4"), whiteKnight()),
+                Position(E4, whiteKnight()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "g5", "g3", "c5", "c3", "f6", "f2", "d6", "d2"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                G5, G3, C5, C3, F6, F2, D6, D2
             )
         }
 
@@ -536,12 +534,12 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("a1"), whiteKnight()),
+                Position(A1, whiteKnight()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "c2", "b3"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                C2, B3
             )
         }
 
@@ -553,12 +551,12 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("e4"), whiteKnight()),
+                Position(E4, whiteKnight()),
                 gameState
             )
             // Then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "g3", "c5", "c3", "f6", "f2", "d6", "d2"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                G3, C5, C3, F6, F2, D6, D2
             )
         }
 
@@ -570,18 +568,18 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("e4"), whiteKnight()),
+                Position(E4, whiteKnight()),
                 gameState
             )
             // Then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "g5", "g3", "c5", "c3", "f6", "f2", "d6", "d2"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                G5, G3, C5, C3, F6, F2, D6, D2
             )
             expectThat(legalMoves.contains(
                 Move(
                     piece = whiteKnight(),
-                    from = square("e4"),
-                    destination = square("g5"),
+                    from = E4,
+                    destination = G5,
                     capturedPiece = blackBishop(),
                 )
             )).isTrue()
@@ -598,15 +596,15 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteQueen()),
+                Position(B2, whiteQueen()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6", "b7", "b8",
-                "a1", "c3", "d4", "e5", "f6", "g7", "h8",
-                "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6, B7, B8,
+                A1, C3, D4, E5, F6, G7, H8,
+                A3, C1
             )
         }
 
@@ -618,15 +616,15 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteQueen()),
+                Position(B2, whiteQueen()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6",
-                "a1", "c3", "d4", "e5", "f6", "g7", "h8",
-                "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6,
+                A1, C3, D4, E5, F6, G7, H8,
+                A3, C1
             )
         }
 
@@ -638,20 +636,20 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteQueen()),
+                Position(B2, whiteQueen()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6", "b7",
-                "a1", "c3", "d4", "e5", "f6", "g7", "h8",
-                "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6, B7,
+                A1, C3, D4, E5, F6, G7, H8,
+                A3, C1
             )
             expectThat(legalMoves.contains(Move(
                 piece = whiteQueen(),
-                from = square("b2"),
-                destination = square("b7"),
+                from = B2,
+                destination = B7,
                 capturedPiece = blackPawn(),
             )))
         }
@@ -664,20 +662,20 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteQueen()),
+                Position(B2, whiteQueen()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6", "b7", "b8",
-                "a1", "c3", "d4", "e5", "f6",
-                "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6, B7, B8,
+                A1, C3, D4, E5, F6,
+                A3, C1
             )
             expectThat(legalMoves.contains(Move(
                 piece = whiteQueen(),
-                from = square("b2"),
-                destination = square("f6"),
+                from = B2,
+                destination = F6,
                 capturedPiece = blackPawn(),
             )))
         }
@@ -690,7 +688,7 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("a1"), whiteQueen()),
+                Position(A1, whiteQueen()),
                 gameState
             )
             // then
@@ -709,13 +707,13 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteRook()),
+                Position(B2, whiteRook()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6", "b7", "b8",
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6, B7, B8,
             )
         }
 
@@ -727,13 +725,13 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteRook()),
+                Position(B2, whiteRook()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6",
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6,
             )
         }
 
@@ -745,18 +743,18 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteRook()),
+                Position(B2, whiteRook()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a2", "c2", "d2", "e2", "f2", "g2", "h2",
-                "b1", "b3", "b4", "b5", "b6", "b7"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A2, C2, D2, E2, F2, G2, H2,
+                B1, B3, B4, B5, B6, B7
             )
             expectThat(legalMoves.contains(Move(
                 piece = whiteRook(),
-                from = square("b2"),
-                destination = square("b7"),
+                from = B2,
+                destination = B7,
                 capturedPiece = blackPawn(),
             )))
         }
@@ -769,7 +767,7 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("a1"), whiteQueen()),
+                Position(A1, whiteQueen()),
                 gameState
             )
             // then
@@ -788,13 +786,13 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteBishop()),
+                Position(B2, whiteBishop()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a1", "c3", "d4", "e5", "f6", "g7", "h8",
-                "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A1, C3, D4, E5, F6, G7, H8,
+                A3, C1
             )
         }
 
@@ -806,12 +804,12 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteBishop()),
+                Position(B2, whiteBishop()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a1", "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A1, A3, C1
             )
         }
 
@@ -823,17 +821,17 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("b2"), whiteBishop()),
+                Position(B2, whiteBishop()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "a1", "c3", "a3", "c1"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                A1, C3, A3, C1
             )
             expectThat(legalMoves.contains(Move(
                 piece = whiteBishop(),
-                from = square("b2"),
-                destination = square("c3"),
+                from = B2,
+                destination = C3,
                 capturedPiece = blackPawn(),
             )))
         }
@@ -846,7 +844,7 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("a1"), whiteBishop()),
+                Position(A1, whiteBishop()),
                 gameState
             )
             // then
@@ -870,15 +868,15 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e1"), whiteKing()),
+                        Position(E1, whiteKing()),
                         gameState
                     )
                     // then
                     expectThat(legalMoves.contains(
                         Move(
                             piece = whiteKing(),
-                            from = square("e1"),
-                            destination = square("g1"),
+                            from = E1,
+                            destination = G1,
                             isQueenCastle = false,
                             isKingCastle = true,
                         )
@@ -893,15 +891,15 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e1"), whiteKing()),
+                        Position(E1, whiteKing()),
                         gameState
                     )
                     // then
                     expectThat(legalMoves.contains(
                         Move(
                             piece = whiteKing(),
-                            from = square("e1"),
-                            destination = square("c1"),
+                            from = E1,
+                            destination = C1,
                             isQueenCastle = true,
                             isKingCastle = false,
                         )
@@ -914,7 +912,7 @@ internal class PseudoLegalMovesFinderTest {
                     val gameState =  givenAChessGame()
                     // When
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e1"), whiteKing()),
+                        Position(E1, whiteKing()),
                         gameState
                     )
                     // Then
@@ -927,7 +925,7 @@ internal class PseudoLegalMovesFinderTest {
                     val gameState =  givenAChessGame()
                     // When
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e1"), whiteKing()),
+                        Position(E1, whiteKing()),
                         gameState
                     )
                     // Then
@@ -944,7 +942,7 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e1"), whiteKing()),
+                        Position(E1, whiteKing()),
                         gameState
                     )
                     // Then
@@ -961,7 +959,7 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e1"), whiteKing()),
+                        Position(E1, whiteKing()),
                         gameState
                     )
                     // Then
@@ -980,15 +978,15 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e8"), whiteKing()),
+                        Position(E8, whiteKing()),
                         gameState
                     )
                     // then
                     expectThat(legalMoves.contains(
                         Move(
                             piece = whiteKing(),
-                            from = square("e8"),
-                            destination = square("g8"),
+                            from = E8,
+                            destination = G8,
                             isKingCastle = true,
                             isQueenCastle = false,
                         )
@@ -1003,15 +1001,15 @@ internal class PseudoLegalMovesFinderTest {
                     )
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e8"), whiteKing()),
+                        Position(E8, whiteKing()),
                         gameState
                     )
                     // then
                     expectThat(legalMoves.contains(
                         Move(
                             piece = whiteKing(),
-                            from = square("e8"),
-                            destination = square("c8"),
+                            from = E8,
+                            destination = C8,
                             isKingCastle = true,
                             isQueenCastle = false,
                         )
@@ -1024,7 +1022,7 @@ internal class PseudoLegalMovesFinderTest {
                     val gameState =  givenAChessGame()
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e8"), blackKing()),
+                        Position(E8, blackKing()),
                         gameState
                     )
                     // Then
@@ -1037,7 +1035,7 @@ internal class PseudoLegalMovesFinderTest {
                     val gameState =  givenAChessGame()
                     // when
                     val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                        Position(square("e8"), blackKing()),
+                        Position(E8, blackKing()),
                         gameState
                     )
                     // Then
@@ -1055,7 +1053,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("e8"), blackKing()),
+                    Position(E8, blackKing()),
                     gameState
                 )
                 // Then
@@ -1070,7 +1068,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("e8"), blackKing()),
+                    Position(E8, blackKing()),
                     gameState
                 )
                 // Then
@@ -1085,7 +1083,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("e8"), blackKing()),
+                    Position(E8, blackKing()),
                     gameState
                 )
                 // Then
@@ -1100,7 +1098,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("e8"), blackKing()),
+                    Position(E8, blackKing()),
                     gameState
                 )
                 // Then
@@ -1117,7 +1115,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("e8"), blackKing()),
+                    Position(E8, blackKing()),
                     gameState
                 )
                 // Then
@@ -1134,7 +1132,7 @@ internal class PseudoLegalMovesFinderTest {
                 )
                 // when
                 val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                    Position(square("e8"), blackKing()),
+                    Position(E8, blackKing()),
                     gameState
                 )
                 // Then
@@ -1154,12 +1152,12 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("d4"), whiteKing()),
+                Position(D4, whiteKing()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "c5", "d5", "e5", "c4", "e4", "c3", "d3", "e3"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                C5, D5, E5, C4, E4, C3, D3, E3
             )
         }
 
@@ -1175,17 +1173,17 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("d4"), whiteKing()),
+                Position(D4, whiteKing()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "c5", "d5", "e5", "c4", "e4", "c3", "d3", "e3"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                C5, D5, E5, C4, E4, C3, D3, E3
             )
             expectThat(legalMoves.contains(Move(
                 piece = whiteKing(),
-                from = square("d4"),
-                destination = square("e5"),
+                from = D4,
+                destination = E5,
                 capturedPiece = blackPawn(),
             ))).isTrue()
         }
@@ -1202,12 +1200,12 @@ internal class PseudoLegalMovesFinderTest {
             )
             // when
             val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
-                Position(square("a1"), whiteKing()),
+                Position(A1, whiteKing()),
                 gameState
             )
             // then
-            expectThat(legalMoves.map { it.destination.toString() }).containsExactlyInAnyOrder(
-                "b1", "b2"
+            expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
+                B1, B2
             )
         }
     }

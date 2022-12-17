@@ -5,7 +5,6 @@ import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.Piece.Companion.piece
 import fr.smo.chess.model.Piece.Type.*
-import fr.smo.chess.model.Square.Companion.square
 import java.util.*
 
 const val STARTING_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -67,7 +66,7 @@ class FEN {
 
     private fun getFenPiecePlacementFromGameState(gameState: GameState) : String {
         var chessboardFinished = false
-        var currentSquare = square("a8")
+        var currentSquare = Square.A8
         var fen = ""
         while (!chessboardFinished) {
             var lineFinished = false
@@ -106,7 +105,7 @@ class FEN {
 
     private fun enPassantTargetSquare(enPassantFen: String): Square? {
         return if (enPassantFen.length == 2) {
-            square(enPassantFen)
+            Square.at(enPassantFen)
         }
         else {
             null
@@ -124,14 +123,14 @@ class FEN {
     fun getChessboardFromFenPiecePlacement(fenPiecePlacement : String): Chessboard {
         val board: MutableList<Position> = mutableListOf()
         val lines = fenPiecePlacement.split("/")
-        var currentSquare = square("a8")
+        var currentSquare = Square.A8
         for (lineIndex in 8 downTo 1) {
             val currentLine = lines[8 - lineIndex]
             currentLine.forEach { currentChar ->
                 var currentIndex = currentChar.toString().toIntOrNull()
                 if (currentIndex == null) {
                     board.add(Position(currentSquare,getPiece(currentChar.toString())))
-                    if (currentSquare.getColumn() != "H") {
+                    if (currentSquare.file != File.H) {
                         currentSquare = currentSquare.right()!!
                     }
                 } else
@@ -144,7 +143,7 @@ class FEN {
 
             }
             currentSquare = currentSquare.toTheVeryLeft()
-            if (currentSquare.row != 1) {
+            if (currentSquare.rank != Rank.FIRST) {
                 currentSquare = currentSquare.down()!!
             }
         }

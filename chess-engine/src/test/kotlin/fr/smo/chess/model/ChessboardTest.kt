@@ -3,10 +3,10 @@ package fr.smo.chess.model
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.Piece.Companion.piece
 import fr.smo.chess.model.Piece.Type.ROOK
-import fr.smo.chess.model.Square.Companion.square
+import fr.smo.chess.model.Square.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 internal class ChessboardTest {
 
@@ -14,13 +14,13 @@ internal class ChessboardTest {
 
     @Test
     fun `get existing Position at corresponding square returns piece`() {
-        val foundPosition = board.getPositionAt(square("a1"))
-        assertEquals(foundPosition, Position(square("a1"), piece(ROOK, WHITE)))
+        val foundPosition = board.getPositionAt(A1)
+        assertEquals(foundPosition, Position(A1, piece(ROOK, WHITE)))
     }
 
     @Test
     fun `get non existing Position at an empty square returns null`() {
-        val foundPosition = board.getPositionAt(square("e5"))
+        val foundPosition = board.getPositionAt(E5)
         assertNull(foundPosition)
     }
 }

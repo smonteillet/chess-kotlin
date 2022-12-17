@@ -1,86 +1,93 @@
 package fr.smo.chess.model
 
-import fr.smo.chess.model.Square.Companion.square
+
+import fr.smo.chess.model.Square.*
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNotEqualTo
 import strikt.assertions.isNull
 
 internal class SquareTest {
 
     @Test
     fun up() {
-        expectThat(square("d4").up()) isEqualTo  square("d5")
+        expectThat(D4.up()) isEqualTo  D5
     }
 
     @Test
     fun upLeft() {
-        expectThat(square("d4").upLeft()) isEqualTo  square("c5")
+        expectThat(D4.upLeft()) isEqualTo  C5
     }
 
     @Test
     fun upRight() {
-        expectThat(square("d4").upRight()) isEqualTo  square("e5")
+        expectThat(D4.upRight()) isEqualTo  E5
     }
 
 
     @Test
     fun down() {
-        expectThat(square("d4").down()) isEqualTo square("d3")
+        expectThat(D4.down()) isEqualTo D3
     }
 
     @Test
     fun downLeft() {
-        expectThat(square("d4").downLeft()) isEqualTo square("c3")
+        expectThat(D4.downLeft()) isEqualTo C3
     }
 
     @Test
     fun downRight() {
-        expectThat(square("d4").downRight()) isEqualTo square("e3")
+        expectThat(D4.downRight()) isEqualTo E3
     }
 
     @Test
     fun left() {
-        expectThat(square("d4").left()) isEqualTo square("c4")
+        expectThat(D4.left()) isEqualTo C4
     }
 
     @Test
     fun right() {
-        expectThat(square("d4").right()) isEqualTo square("e4")
+        expectThat(D4.right()) isEqualTo E4
     }
 
     @Test
     fun outOfBoundFromTop() {
-        expectThat(square("h8").up()).isNull()
+        expectThat(H8.up()).isNull()
     }
 
     @Test
     fun outOfBoundFromBottom() {
-        expectThat(square("a1").down()).isNull()
+        expectThat(A1.down()).isNull()
     }
 
     @Test
     fun outOfBoundFromLeft() {
-        expectThat(square("a1").left()).isNull()
+        expectThat(A1.left()).isNull()
     }
 
     @Test
     fun outOfBoundFromRight() {
-        expectThat(square("h8").right()).isNull()
+        expectThat(H8.right()).isNull()
     }
 
     @Test
     fun testEquality() {
-        expectThat(square("d8")) isEqualTo square("d8")
+        expectThat(D8) isEqualTo D8
     }
 
     @Test
     fun testToTheVeryLeft() {
-        expectThat(square("h7").toTheVeryLeft()) isEqualTo square("a7")
+        expectThat(H7.toTheVeryLeft()) isEqualTo A7
     }
     @Test
     fun testWithRow() {
-        expectThat(square("h7").withRow(3)) isEqualTo square("h3")
+        expectThat(H7.withRank(Rank.THIRD)) isEqualTo H3
+    }
+
+    @Test
+    fun `should test weird case`() {
+        expectThat(B1) isNotEqualTo A2
 
     }
 
