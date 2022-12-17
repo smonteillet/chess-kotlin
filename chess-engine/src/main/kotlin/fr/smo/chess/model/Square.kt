@@ -1,136 +1,111 @@
 package fr.smo.chess.model
 
+enum class Square(val file: File, val rank: Rank) {
 
-enum class Square(val rank: Rank, val file: File) {
-    A1(Rank.FIRST, File.A),
-    A2(Rank.SECOND, File.A),
-    A3(Rank.THIRD, File.A),
-    A4(Rank.FOURTH, File.A),
-    A5(Rank.FIFTH, File.A),
-    A6(Rank.SIXTH, File.A),
-    A7(Rank.SEVENTH, File.A),
-    A8(Rank.EIGHTH, File.A),
+    A1(File.A, Rank.FIRST),
+    A2(File.A, Rank.SECOND),
+    A3(File.A, Rank.THIRD),
+    A4(File.A, Rank.FOURTH),
+    A5(File.A, Rank.FIFTH),
+    A6(File.A, Rank.SIXTH),
+    A7(File.A, Rank.SEVENTH),
+    A8(File.A, Rank.EIGHTH),
 
-    B1(Rank.FIRST, File.B),
-    B2(Rank.SECOND, File.B),
-    B3(Rank.THIRD, File.B),
-    B4(Rank.FOURTH, File.B),
-    B5(Rank.FIFTH, File.B),
-    B6(Rank.SIXTH, File.B),
-    B7(Rank.SEVENTH, File.B),
-    B8(Rank.EIGHTH, File.B),
+    B1(File.B, Rank.FIRST),
+    B2(File.B, Rank.SECOND),
+    B3(File.B, Rank.THIRD),
+    B4(File.B, Rank.FOURTH),
+    B5(File.B, Rank.FIFTH),
+    B6(File.B, Rank.SIXTH),
+    B7(File.B, Rank.SEVENTH),
+    B8(File.B, Rank.EIGHTH),
 
-    C1(Rank.FIRST, File.C),
-    C2(Rank.SECOND, File.C),
-    C3(Rank.THIRD, File.C),
-    C4(Rank.FOURTH, File.C),
-    C5(Rank.FIFTH, File.C),
-    C6(Rank.SIXTH, File.C),
-    C7(Rank.SEVENTH, File.C),
-    C8(Rank.EIGHTH, File.C),
+    C1(File.C, Rank.FIRST),
+    C2(File.C, Rank.SECOND),
+    C3(File.C, Rank.THIRD),
+    C4(File.C, Rank.FOURTH),
+    C5(File.C, Rank.FIFTH),
+    C6(File.C, Rank.SIXTH),
+    C7(File.C, Rank.SEVENTH),
+    C8(File.C, Rank.EIGHTH),
 
-    D1(Rank.FIRST, File.D),
-    D2(Rank.SECOND, File.D),
-    D3(Rank.THIRD, File.D),
-    D4(Rank.FOURTH, File.D),
-    D5(Rank.FIFTH, File.D),
-    D6(Rank.SIXTH, File.D),
-    D7(Rank.SEVENTH, File.D),
-    D8(Rank.EIGHTH, File.D),
+    D1(File.D, Rank.FIRST),
+    D2(File.D, Rank.SECOND),
+    D3(File.D, Rank.THIRD),
+    D4(File.D, Rank.FOURTH),
+    D5(File.D, Rank.FIFTH),
+    D6(File.D, Rank.SIXTH),
+    D7(File.D, Rank.SEVENTH),
+    D8(File.D, Rank.EIGHTH),
 
-    E1(Rank.FIRST, File.E),
-    E2(Rank.SECOND, File.E),
-    E3(Rank.THIRD, File.E),
-    E4(Rank.FOURTH, File.E),
-    E5(Rank.FIFTH, File.E),
-    E6(Rank.SIXTH, File.E),
-    E7(Rank.SEVENTH, File.E),
-    E8(Rank.EIGHTH, File.E),
+    E1(File.E, Rank.FIRST),
+    E2(File.E, Rank.SECOND),
+    E3(File.E, Rank.THIRD),
+    E4(File.E, Rank.FOURTH),
+    E5(File.E, Rank.FIFTH),
+    E6(File.E, Rank.SIXTH),
+    E7(File.E, Rank.SEVENTH),
+    E8(File.E, Rank.EIGHTH),
 
-    F1(Rank.FIRST, File.F),
-    F2(Rank.SECOND, File.F),
-    F3(Rank.THIRD, File.F),
-    F4(Rank.FOURTH, File.F),
-    F5(Rank.FIFTH, File.F),
-    F6(Rank.SIXTH, File.F),
-    F7(Rank.SEVENTH, File.F),
-    F8(Rank.EIGHTH, File.F),
+    F1(File.F, Rank.FIRST),
+    F2(File.F, Rank.SECOND),
+    F3(File.F, Rank.THIRD),
+    F4(File.F, Rank.FOURTH),
+    F5(File.F, Rank.FIFTH),
+    F6(File.F, Rank.SIXTH),
+    F7(File.F, Rank.SEVENTH),
+    F8(File.F, Rank.EIGHTH),
 
-    G1(Rank.FIRST, File.G),
-    G2(Rank.SECOND, File.G),
-    G3(Rank.THIRD, File.G),
-    G4(Rank.FOURTH, File.G),
-    G5(Rank.FIFTH, File.G),
-    G6(Rank.SIXTH, File.G),
-    G7(Rank.SEVENTH, File.G),
-    G8(Rank.EIGHTH, File.G),
+    G1(File.G, Rank.FIRST),
+    G2(File.G, Rank.SECOND),
+    G3(File.G, Rank.THIRD),
+    G4(File.G, Rank.FOURTH),
+    G5(File.G, Rank.FIFTH),
+    G6(File.G, Rank.SIXTH),
+    G7(File.G, Rank.SEVENTH),
+    G8(File.G, Rank.EIGHTH),
 
-    H1(Rank.FIRST, File.H),
-    H2(Rank.SECOND, File.H),
-    H3(Rank.THIRD, File.H),
-    H4(Rank.FOURTH, File.H),
-    H5(Rank.FIFTH, File.H),
-    H6(Rank.SIXTH, File.H),
-    H7(Rank.SEVENTH, File.H),
-    H8(Rank.EIGHTH, File.H);
-
+    H1(File.H, Rank.FIRST),
+    H2(File.H, Rank.SECOND),
+    H3(File.H, Rank.THIRD),
+    H4(File.H, Rank.FOURTH),
+    H5(File.H, Rank.FIFTH),
+    H6(File.H, Rank.SIXTH),
+    H7(File.H, Rank.SEVENTH),
+    H8(File.H, Rank.EIGHTH);
 
     companion object {
-        fun at(rank: Rank?, file: File?): Square? {
+        fun at(file: File?, rank: Rank?): Square? {
             return Square.values().firstOrNull { it.rank == rank && it.file == file }
         }
 
         fun at(algebraicNotation: String): Square {
-            return at(Rank.at(algebraicNotation[1].digitToInt()), File.at(algebraicNotation[0].toString()))
-                ?: throw IllegalArgumentException("Square $algebraicNotation does not exist")
+            return at(
+                File.at(algebraicNotation[0].toString()),
+                Rank.at(algebraicNotation[1].digitToInt())
+            ) ?: throw IllegalArgumentException("Square $algebraicNotation does not exist")
         }
     }
 
-    fun withRank(newRank: Rank): Square? {
-        return at(newRank, file)
-    }
+    fun withRank(newRank: Rank): Square? = at(file, newRank)
 
-    fun upLeft(): Square? {
-        return at(rank.top(), file.left())
-    }
+    fun upLeft(): Square? = at(file.left(), rank.top())
 
-    fun upRight(): Square? {
-        return at(rank.top(), file.right())
-    }
+    fun upRight(): Square? = at(file.right(), rank.top())
 
-    fun downLeft(): Square? {
-        return at(rank.bottom(), file.left())
-    }
+    fun downLeft(): Square? = at(file.left(), rank.bottom())
 
-    fun downRight(): Square? {
-        return at(rank.bottom(), file.right())
-    }
+    fun downRight(): Square? = at(file.right(), rank.bottom())
 
-    fun up(): Square? {
-        return at(rank.top(), file)
-    }
+    fun up(): Square? = at(file, rank.top())
 
-    fun down(): Square? {
-        return at(rank.bottom(), file)
-    }
+    fun down(): Square? = at(file, rank.bottom())
 
-    fun left(): Square? {
-        return at(rank, file.left())
-    }
+    fun left(): Square? = at(file.left(), rank)
 
-    fun right(): Square? {
-        return at(rank, file.right())
-    }
+    fun right(): Square? = at(file.right(), rank)
 
-    fun toTheVeryLeft(): Square {
-        return at(rank, File.A)!!
-    }
+    fun toTheVeryLeft(): Square = at(File.A, rank)!!
 
-
-    private val algebraicNotation: String = file.label + rank.label
-
-
-    override fun toString(): String {
-        return algebraicNotation
-    }
+    override fun toString(): String = file.label + rank.label
 }
