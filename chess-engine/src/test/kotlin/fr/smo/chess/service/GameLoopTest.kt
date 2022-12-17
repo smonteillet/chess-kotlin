@@ -1,5 +1,6 @@
 package fr.smo.chess.service
 
+import fr.smo.chess.ai.NegamaxAIPlayer
 import fr.smo.chess.helper.RandomAIPlayer
 import fr.smo.chess.model.*
 import fr.smo.chess.model.Piece.Companion.blackKing
@@ -7,6 +8,7 @@ import fr.smo.chess.model.Piece.Companion.blackRook
 import fr.smo.chess.model.Piece.Companion.whiteKing
 import fr.smo.chess.model.Piece.Companion.whiteRook
 import fr.smo.chess.model.Square.Companion.square
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -48,7 +50,15 @@ internal class GameLoopTest {
         )
     }
 
+    @Test
+    fun `negamax with more depth AI player should win against negamax with lower depth`() {
+       val player1 = NegamaxAIPlayer(3)
+       val player2 = NegamaxAIPlayer(1)
+        GameLoop(gameStateChangeNotifier = { assertGameStateInvariantsAfterEachMove(it) }).run(player1, player2)
+    }
+
     private fun assertGameStateInvariantsAfterEachMove(gameState: GameState) {
+        println(PGN().export(gameState))
         assertThatSumOfCaptureAndRemainingPieceIs32(gameState)
         assertThatLastMovingPieceIsOnItsDestinationSquare(gameState)
         assertThatLastMovingHasLeftABlankSquareAfterMoving(gameState)

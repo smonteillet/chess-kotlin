@@ -18,7 +18,13 @@ data class Chessboard(
     val piecesOnBoard: List<Position> = listOf(),
 ) {
 
-    data class Position(val square: Square, val piece: Piece)
+    data class Position(val square: Square, val piece: Piece) {
+
+        fun hasNotSameColorPiece(other: Position) : Boolean {
+            return piece.color != other.piece.color
+        }
+    }
+
 
 
     companion object {

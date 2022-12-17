@@ -1,9 +1,12 @@
 package fr.smo.chess.model
 
+import fr.smo.chess.model.Color.BLACK
+import fr.smo.chess.model.Color.WHITE
+
 data class GameState(
     val chessboard: Chessboard = Chessboard.initNewBoard(),
     val moveHistory: List<Move> = listOf(),
-    val sideToMove: Color = Color.WHITE,
+    val sideToMove: Color = WHITE,
     val isWhiteKingCastlePossible : Boolean = true,
     val isWhiteQueenCastlePossible : Boolean = true,
     val isBlackKingCastlePossible : Boolean = true,
@@ -30,5 +33,9 @@ data class GameState(
             enPassantTargetSquare = null,
         )
     }
+
+    fun isWhiteCastlePossible(): Boolean = sideToMove == WHITE && isWhiteKingCastlePossible && isWhiteQueenCastlePossible
+    fun isBlackCastlePossible(): Boolean = sideToMove == BLACK && isBlackKingCastlePossible && isBlackQueenCastlePossible
+
 
 }

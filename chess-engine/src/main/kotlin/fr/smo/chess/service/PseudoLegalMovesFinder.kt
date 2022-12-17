@@ -17,18 +17,18 @@ import fr.smo.chess.model.Square.Companion.square
  */
 class PseudoLegalMovesFinder {
 
-    fun getAllPseudoLegalMoves(fromPosition : Position, gameState: GameState): List<Move> {
+    fun getAllPseudoLegalMoves(fromPosition: Position, gameState: GameState): List<Move> {
         return when (fromPosition.piece.type) {
-            PAWN ->   getPawnPseudoLegalMoves(fromPosition, gameState)
+            PAWN -> getPawnPseudoLegalMoves(fromPosition, gameState)
             BISHOP -> getBishopPseudoLegalMoves(fromPosition, gameState.chessboard)
             KNIGHT -> getKnightPseudoLegalMoves(fromPosition, gameState.chessboard)
-            QUEEN ->  getQueenPseudoLegalMoves(fromPosition, gameState.chessboard)
-            KING ->   getKingPseudoLegalMoves(fromPosition, gameState)
-            ROOK ->   getRookPseudoLegalMoves(fromPosition, gameState.chessboard)
+            QUEEN -> getQueenPseudoLegalMoves(fromPosition, gameState.chessboard)
+            KING -> getKingPseudoLegalMoves(fromPosition, gameState)
+            ROOK -> getRookPseudoLegalMoves(fromPosition, gameState.chessboard)
         }
     }
 
-    fun getAllPseudoLegalMovesForPlayer(color : Color, gameState: GameState): List<Move> {
+    fun getAllPseudoLegalMovesForPlayer(color: Color, gameState: GameState): List<Move> {
         return gameState.chessboard.piecesOnBoard
             .filter { it.piece.color == color }
             .flatMap {
@@ -36,7 +36,7 @@ class PseudoLegalMovesFinder {
             }
     }
 
-    private fun getKnightPseudoLegalMoves(knightPosition : Position, chessboard: Chessboard): List<Move> {
+    private fun getKnightPseudoLegalMoves(knightPosition: Position, chessboard: Chessboard): List<Move> {
         return listOfNotNull(
             knightPosition.square.up()?.up()?.left(),
             knightPosition.square.up()?.up()?.right(),
@@ -58,40 +58,43 @@ class PseudoLegalMovesFinder {
     }
 
 
-    private fun getPawnPseudoLegalMoves(pawnPosition : Position, gameState: GameState): List<Move> {
-        val moves = mutableListOf<Move>()
-        if (pawnPosition.piece.color == WHITE) {
+    private fun getPawnPseudoLegalMoves(pawnPosition: Position, gameState: GameState): List<Move> =
+        (if (pawnPosition.piece.color == WHITE) {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = gameState.chessboard,
                 pawnPosition = pawnPosition,
                 hasPawnNotAlreadyMoved = pawnPosition.square.row == 2,
                 pawnFrontMoveFunction = { it.up() },
-            ).let { moves.addAll(it) }
-            getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.upRight() }?.let { moves.add(it) }
-            getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.upLeft() }?.let { moves.add(it) }
-        }
-        if (pawnPosition.piece.color == BLACK) {
+            ).plus(
+                getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.upRight() }
+            ).plus(
+                getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.upLeft() }
+            )
+        } else {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = gameState.chessboard,
                 pawnPosition = pawnPosition,
                 hasPawnNotAlreadyMoved = pawnPosition.square.row == 7,
                 pawnFrontMoveFunction = { it.down() },
-            ).let { moves.addAll(it) }
-            getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.downRight() }?.let { moves.add(it) }
-            getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.downLeft() }?.let { moves.add(it) }
-        }
-        getPawnEnPassantMove(pawnPosition, gameState)?.let { moves.add(it) }
-        return moves
-    }
+            ).plus(
+                getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.downRight() }
+            ).plus(
+                getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.downLeft() }
+            )
+        }.plus(
+            getPawnEnPassantMove(pawnPosition, gameState)
+        )
+                ).filterNotNull()
 
-    private fun getPawnEnPassantMove(pawnPosition: Position, gameState: GameState) : Move? {
+
+    private fun getPawnEnPassantMove(pawnPosition: Position, gameState: GameState): Move? {
         if (gameState.enPassantTargetSquare != null) {
             if (
                 pawnPosition.piece.color == WHITE &&
                 (
-                    gameState.enPassantTargetSquare == pawnPosition.square.up()?.right() ||
-                    gameState.enPassantTargetSquare == pawnPosition.square.up()?.left()
-                )
+                        gameState.enPassantTargetSquare == pawnPosition.square.up()?.right() ||
+                                gameState.enPassantTargetSquare == pawnPosition.square.up()?.left()
+                        )
             ) {
                 return Move(
                     piece = pawnPosition.piece,
@@ -102,10 +105,10 @@ class PseudoLegalMovesFinder {
             } else if (
                 pawnPosition.piece.color == BLACK &&
                 (
-                    gameState.enPassantTargetSquare == pawnPosition.square.down()?.right() ||
-                    gameState.enPassantTargetSquare == pawnPosition.square.down()?.left()
-                )
-            ){
+                        gameState.enPassantTargetSquare == pawnPosition.square.down()?.right() ||
+                                gameState.enPassantTargetSquare == pawnPosition.square.down()?.left()
+                        )
+            ) {
                 return Move(
                     piece = pawnPosition.piece,
                     capturedPiece = whitePawn(),
@@ -123,43 +126,60 @@ class PseudoLegalMovesFinder {
         hasPawnNotAlreadyMoved: Boolean,
         pawnFrontMoveFunction: (Square) -> Square?
     ): List<Move> {
-        val oneSquareMove = pawnFrontMoveFunction.invoke(pawnPosition.square)
-        val moves = mutableListOf<Move>()
-        if (oneSquareMove != null && chessboard.getPositionAt(oneSquareMove) == null) {
-            val promotedPiecesMoves = getPromotedPieces(pawnPosition.piece.color, oneSquareMove)
-            if (promotedPiecesMoves.isEmpty()) {
-                moves.add(
-                    Move(
-                        piece = pawnPosition.piece,
-                        from = pawnPosition.square,
-                        destination = oneSquareMove,
-                    )
+        return pawnFrontMoveFunction.invoke(pawnPosition.square)?.let { oneSquareMove ->
+            if (chessboard.getPositionAt(oneSquareMove) == null) {
+                getOneSquarePawnMoves(pawnPosition, oneSquareMove)
+                    .plus(
+                        getPawnTwoSquaresMove(hasPawnNotAlreadyMoved, pawnFrontMoveFunction, chessboard, pawnPosition)
+                    ).filterNotNull()
+            } else {
+                emptyList()
+            }
+        } ?: emptyList()
+    }
+
+    private fun getPawnTwoSquaresMove(
+        hasPawnNotAlreadyMoved: Boolean,
+        pawnFrontMoveFunction: (Square) -> Square?,
+        chessboard: Chessboard,
+        pawnPosition: Position
+    ): Move? {
+        return if (hasPawnNotAlreadyMoved) {
+            val twoSquaresMove = pawnFrontMoveFunction.invoke(
+                pawnFrontMoveFunction.invoke(pawnPosition.square)!!
+            )
+            if (twoSquaresMove != null && chessboard.getPositionAt(twoSquaresMove) == null) {
+                Move(
+                    piece = pawnPosition.piece,
+                    from = pawnPosition.square,
+                    destination = twoSquaresMove,
                 )
             } else {
-                moves.addAll(promotedPiecesMoves.map {
-                    Move(
-                        piece = pawnPosition.piece,
-                        from = pawnPosition.square,
-                        destination = oneSquareMove,
-                        promotedTo = it
-                    )
-                })
+                null
             }
-            if (hasPawnNotAlreadyMoved) {
-                val twoSquaresMove = pawnFrontMoveFunction.invoke(oneSquareMove)
-                if (twoSquaresMove != null && chessboard.getPositionAt(twoSquaresMove) == null) {
-                    moves.add(
-                        Move(
-                            piece = pawnPosition.piece,
-                            from = pawnPosition.square,
-                            destination = twoSquaresMove,
-                        )
-                    )
-                }
-            }
+        } else {
+            null
         }
-        return moves
     }
+
+    private fun getOneSquarePawnMoves(pawnPosition: Position, oneSquareMove: Square): List<Move> =
+        getPromotedPieces(pawnPosition.piece.color, oneSquareMove).map {
+            Move(
+                piece = pawnPosition.piece,
+                from = pawnPosition.square,
+                destination = oneSquareMove,
+                promotedTo = it
+            )
+        }.ifEmpty {
+            listOf(
+                Move(
+                    piece = pawnPosition.piece,
+                    from = pawnPosition.square,
+                    destination = oneSquareMove,
+                )
+            )
+        }
+
 
     private fun getPromotedPieces(color: Color, position: Square): List<Piece> {
         return if (color == WHITE && position.row == 8) {
@@ -191,30 +211,33 @@ class PseudoLegalMovesFinder {
         return null
     }
 
-    private fun getQueenPseudoLegalMoves(queenPosition: Position, chessboard: Chessboard): List<Move> {
-        return  getLegalMovesFollowingDirection(queenPosition, chessboard) { it.up() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.down() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.left() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.right() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.upLeft() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.upRight() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.downLeft() } +
-                getLegalMovesFollowingDirection(queenPosition, chessboard) { it.downRight() }
-
-    }
+    private fun getQueenPseudoLegalMoves(queenPosition: Position, chessboard: Chessboard): List<Move> =
+        getBishopPseudoLegalMoves(queenPosition, chessboard).plus(getRookPseudoLegalMoves(queenPosition, chessboard))
 
     private fun getRookPseudoLegalMoves(rookPosition: Position, chessboard: Chessboard): List<Move> {
-        return  getLegalMovesFollowingDirection(rookPosition, chessboard) { it.up() } +
-                getLegalMovesFollowingDirection(rookPosition, chessboard) { it.down() } +
-                getLegalMovesFollowingDirection(rookPosition, chessboard) { it.left() } +
-                getLegalMovesFollowingDirection(rookPosition, chessboard) { it.right() }
+        return getLegalMovesFollowingDirection(fromPosition = rookPosition, chessboard = chessboard) { it.up() } +
+                getLegalMovesFollowingDirection(fromPosition = rookPosition, chessboard = chessboard) { it.down() } +
+                getLegalMovesFollowingDirection(fromPosition = rookPosition, chessboard = chessboard) { it.left() } +
+                getLegalMovesFollowingDirection(fromPosition = rookPosition, chessboard = chessboard) { it.right() }
     }
 
-    private fun getBishopPseudoLegalMoves(bishopPosition : Position, chessboard: Chessboard): List<Move> {
-        return  getLegalMovesFollowingDirection(bishopPosition, chessboard) { it.upLeft() } +
-                getLegalMovesFollowingDirection(bishopPosition, chessboard) { it.upRight() } +
-                getLegalMovesFollowingDirection(bishopPosition, chessboard) { it.downLeft() } +
-                getLegalMovesFollowingDirection(bishopPosition, chessboard) { it.downRight() }
+    private fun getBishopPseudoLegalMoves(bishopPosition: Position, chessboard: Chessboard): List<Move> {
+        return getLegalMovesFollowingDirection(
+            fromPosition = bishopPosition,
+            chessboard = chessboard
+        ) { it.upLeft() } +
+                getLegalMovesFollowingDirection(
+                    fromPosition = bishopPosition,
+                    chessboard = chessboard
+                ) { it.upRight() } +
+                getLegalMovesFollowingDirection(
+                    fromPosition = bishopPosition,
+                    chessboard = chessboard
+                ) { it.downLeft() } +
+                getLegalMovesFollowingDirection(
+                    fromPosition = bishopPosition,
+                    chessboard = chessboard
+                ) { it.downRight() }
     }
 
     private fun getKingPseudoLegalMoves(kingPosition: Position, gameState: GameState): List<Move> {
@@ -248,53 +271,44 @@ class PseudoLegalMovesFinder {
         kingDestinationQueenCastle: Square,
         kingCastlingPathSquares: List<Square>,
         queenCastlingPathSquares: List<Square>,
-    ): MutableList<Move> {
-        val castleMoves = mutableListOf<Move>()
+    ): List<Move> {
         val isTherePiecesOnQueenCastlingPath = gameState.chessboard.piecesOnBoard
-            .any {queenCastlingPathSquares.minus(kingPosition.square).contains(it.square)  }
+            .any { queenCastlingPathSquares.minus(kingPosition.square).contains(it.square) }
         val isTherePiecesOnKingCastlingPath = gameState.chessboard.piecesOnBoard
             .any { kingCastlingPathSquares.minus(kingPosition.square).contains(it.square) }
         val gameStateWithoutCastling = gameState.copy(
             isWhiteKingCastlePossible = false, isWhiteQueenCastlePossible = false, isBlackQueenCastlePossible = false,
             isBlackKingCastlePossible = false, enPassantTargetSquare = null,
         )
-        val hasKingCastleSquaresUnderAttack: Boolean = getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
+        val hasKingCastleSquaresUnderAttack: Boolean =
+            getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
                 .any { kingCastlingPathSquares.contains(it.destination) }
-        val hasQueenCastleSquaresUnderAttack: Boolean = getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
+        val hasQueenCastleSquaresUnderAttack: Boolean =
+            getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
                 .any { queenCastlingPathSquares.contains(it.destination) }
-        if (isKingCastlePossible && !isTherePiecesOnKingCastlingPath && !hasKingCastleSquaresUnderAttack) {
-            castleMoves.add(
+
+        return listOfNotNull(
+            if (isKingCastlePossible && !isTherePiecesOnKingCastlingPath && !hasKingCastleSquaresUnderAttack) {
                 Move(
                     piece = kingPosition.piece,
                     from = kingPosition.square,
                     destination = kingDestinationKingCastle,
                     isKingCastle = true,
                 )
-            )
-        }
-        if (isQueenCastlePossible && !isTherePiecesOnQueenCastlingPath && !hasQueenCastleSquaresUnderAttack) {
-            castleMoves.add(
+            } else null,
+            if (isQueenCastlePossible && !isTherePiecesOnQueenCastlingPath && !hasQueenCastleSquaresUnderAttack) {
                 Move(
                     piece = kingPosition.piece,
                     from = kingPosition.square,
                     destination = kingDestinationQueenCastle,
                     isQueenCastle = true,
                 )
-            )
-        }
-        return castleMoves
-
+            } else null
+        )
     }
 
     private fun getCastleMoveIfPossible(kingPosition: Position, gameState: GameState): List<Move> {
-        val castleMoves = mutableListOf<Move>()
-        val castleHasAlreadyBeenPerformed =
-            (kingPosition.piece.color == WHITE && !gameState.isWhiteKingCastlePossible && !gameState.isWhiteQueenCastlePossible) ||
-            (kingPosition.piece.color == BLACK && !gameState.isBlackQueenCastlePossible && !gameState.isBlackKingCastlePossible)
-        if (castleHasAlreadyBeenPerformed) {
-            return emptyList()
-        }
-        if (kingPosition.piece.color == WHITE) {
+        return if (gameState.isWhiteCastlePossible()) {
             getCastleMoves(
                 gameState = gameState,
                 kingPosition = kingPosition,
@@ -304,8 +318,8 @@ class PseudoLegalMovesFinder {
                 kingDestinationQueenCastle = square("c1"),
                 kingCastlingPathSquares = listOf(square("e1"), square("f1"), square("g1")),
                 queenCastlingPathSquares = listOf(square("e1"), square("d1"), square("c1")),
-            ).let { castleMoves.addAll(it) }
-        } else if (kingPosition.piece.color == BLACK) {
+            )
+        } else if (gameState.isBlackCastlePossible()) {
             getCastleMoves(
                 gameState = gameState,
                 kingPosition = kingPosition,
@@ -315,44 +329,43 @@ class PseudoLegalMovesFinder {
                 kingDestinationQueenCastle = square("c8"),
                 kingCastlingPathSquares = listOf(square("e8"), square("f8"), square("g8")),
                 queenCastlingPathSquares = listOf(square("e8"), square("d8"), square("c8")),
-            ).let { castleMoves.addAll(it) }
+            )
+        } else {
+            emptyList()
         }
-        return castleMoves
     }
 
     private fun getLegalMovesFollowingDirection(
         fromPosition: Position,
+        currentSquare: Square = fromPosition.square,
         chessboard: Chessboard,
         direction: (from: Square) -> Square?
     ): List<Move> {
-        var currentSquare = direction.invoke(fromPosition.square)
-        val legalMoves = mutableListOf<Move>()
-        while (currentSquare != null) {
-            val newPosition = chessboard.getPositionAt(currentSquare)
-            if (newPosition == null) {
-                legalMoves.add(
-                    Move(
-                        piece = fromPosition.piece,
-                        from = fromPosition.square,
-                        destination = currentSquare,
+        return direction.invoke(currentSquare).let { newSquare ->
+            if (newSquare != null) {
+                val newPosition = chessboard.getPositionAt(newSquare)
+                if (newPosition == null) {
+                    getLegalMovesFollowingDirection(fromPosition, newSquare, chessboard, direction) +
+                            Move(
+                                piece = fromPosition.piece,
+                                from = fromPosition.square,
+                                destination = newSquare,
+                            )
+                } else if (newPosition.hasNotSameColorPiece(fromPosition)) {
+                    listOf(
+                        Move(
+                            piece = fromPosition.piece,
+                            from = fromPosition.square,
+                            destination = newSquare,
+                            capturedPiece = newPosition.piece,
+                        )
                     )
-                )
-            } else if (newPosition.piece.color != fromPosition.piece.color) {
-                legalMoves.add(
-                    Move(
-                        piece = fromPosition.piece,
-                        from = fromPosition.square,
-                        destination = currentSquare,
-                        capturedPiece = newPosition.piece,
-                    )
-                )
-                return legalMoves
+                } else {
+                    emptyList()
+                }
+            } else {
+                emptyList()
             }
-            else {
-                return legalMoves
-            }
-            currentSquare = direction.invoke(currentSquare)
         }
-        return legalMoves
     }
 }

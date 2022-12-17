@@ -1,7 +1,5 @@
 package fr.smo.chess.model
 
-import java.lang.IllegalArgumentException
-
 data class Square(
     private val column: Int, val row: Int
 ) {
