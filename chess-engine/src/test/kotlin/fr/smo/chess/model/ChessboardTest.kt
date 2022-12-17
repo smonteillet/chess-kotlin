@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Assertions.*
 
 internal class ChessboardTest {
 
-    private val board = Chessboard.initNewBoard()
+    private val board = GameState.NEW_STANDARD_CHESS_GAME.chessboard
 
     @Test
     fun `get existing Position at corresponding square returns piece`() {
         val foundPosition = board.getPositionAt(square("a1"))
-        assertEquals(foundPosition, Chessboard.Position(square("a1"), piece(ROOK, WHITE)))
+        assertEquals(foundPosition, Position(square("a1"), piece(ROOK, WHITE)))
     }
 
     @Test

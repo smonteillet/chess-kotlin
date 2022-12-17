@@ -1,10 +1,8 @@
 package fr.smo.chess.helper
 
-import fr.smo.chess.model.Chessboard.Position
-import fr.smo.chess.service.PseudoLegalMovesFinder
 import fr.smo.chess.model.*
 import fr.smo.chess.service.GameStateAggregate
-import java.lang.Exception
+import fr.smo.chess.service.PseudoLegalMovesFinder
 import kotlin.random.Random
 
 class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {

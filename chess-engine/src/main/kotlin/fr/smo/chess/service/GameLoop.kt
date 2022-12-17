@@ -13,7 +13,7 @@ class GameLoop(
 ) {
 
     fun run(player1: Player, player2: Player): GameState {
-        var gameState = GameState()
+        var gameState =  GameState.NEW_STANDARD_CHESS_GAME
         val players = mapOf(WHITE to player1, BLACK to player2)
         player1.registerColor(WHITE)
         player2.registerColor(BLACK)

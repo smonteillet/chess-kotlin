@@ -1,6 +1,6 @@
 package fr.smo.chess.service
 
-import fr.smo.chess.model.Chessboard.Position
+import fr.smo.chess.model.*
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.Piece.Companion.blackKing
@@ -9,12 +9,9 @@ import fr.smo.chess.model.Piece.Companion.blackRook
 import fr.smo.chess.model.Piece.Companion.whiteKing
 import fr.smo.chess.model.Piece.Companion.whitePawn
 import fr.smo.chess.model.Piece.Companion.whiteRook
+import fr.smo.chess.model.Piece.Type.KING
 import fr.smo.chess.model.Piece.Type.PAWN
 import fr.smo.chess.model.Square.Companion.square
-import fr.smo.chess.model.*
-import fr.smo.chess.model.Piece.Type.KING
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 
 class GameStateAggregate(
     private val pseudoLegalMovesFinder : PseudoLegalMovesFinder = PseudoLegalMovesFinder()

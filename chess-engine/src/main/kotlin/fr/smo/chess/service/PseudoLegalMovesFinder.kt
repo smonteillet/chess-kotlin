@@ -1,6 +1,5 @@
 package fr.smo.chess.service
 
-import fr.smo.chess.model.Chessboard.Position
 import fr.smo.chess.model.*
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
@@ -308,7 +307,7 @@ class PseudoLegalMovesFinder {
     }
 
     private fun getCastleMoveIfPossible(kingPosition: Position, gameState: GameState): List<Move> {
-        return if (gameState.isWhiteCastlePossible()) {
+        return if (gameState.isNextPlayCouldBeWhiteCastle) {
             getCastleMoves(
                 gameState = gameState,
                 kingPosition = kingPosition,
@@ -319,7 +318,7 @@ class PseudoLegalMovesFinder {
                 kingCastlingPathSquares = listOf(square("e1"), square("f1"), square("g1")),
                 queenCastlingPathSquares = listOf(square("e1"), square("d1"), square("c1")),
             )
-        } else if (gameState.isBlackCastlePossible()) {
+        } else if (gameState.isNextPlayCouldBeBlackCastle) {
             getCastleMoves(
                 gameState = gameState,
                 kingPosition = kingPosition,

@@ -1,13 +1,11 @@
 package fr.smo.chess.service
 
 import fr.smo.chess.model.*
-import fr.smo.chess.model.Chessboard.Position
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.Piece.Companion.piece
 import fr.smo.chess.model.Piece.Type.*
 import fr.smo.chess.model.Square.Companion.square
-import java.lang.IllegalArgumentException
 import java.util.*
 
 const val STARTING_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"

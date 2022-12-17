@@ -1,7 +1,6 @@
 package fr.smo.chess.service
 
 import fr.smo.chess.fixtures.GameStateFixtures.Companion.givenAChessGame
-import fr.smo.chess.model.Chessboard.Position
 import fr.smo.chess.model.Color.BLACK
 import fr.smo.chess.model.Color.WHITE
 import fr.smo.chess.model.Move
@@ -15,6 +14,7 @@ import fr.smo.chess.model.Piece.Companion.whitePawn
 import fr.smo.chess.model.Piece.Companion.whiteQueen
 import fr.smo.chess.model.Piece.Companion.whiteRook
 import fr.smo.chess.model.Piece.Type.*
+import fr.smo.chess.model.Position
 import fr.smo.chess.model.Square.Companion.square
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

@@ -8,6 +8,7 @@ import fr.smo.chess.model.Piece.Companion.blackRook
 import fr.smo.chess.model.Piece.Companion.whiteKing
 import fr.smo.chess.model.Piece.Companion.whiteRook
 import fr.smo.chess.model.Square.Companion.square
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -24,11 +25,11 @@ internal class GameLoopTest {
 
     companion object {
         @JvmStatic
-        fun randomSeeds() = (0..100).toList().map { Arguments.of(Random.nextInt()) }
+        fun randomSeeds() = (0..10).toList().map { Arguments.of(Random.nextInt()) }
 
         @JvmStatic
-        fun specificSeeds() = listOf(
-            Arguments.of(1987108903L)
+        fun specificSeeds() : List<Long> = listOf(
+            //Arguments.of(1987108903L)
         )
     }
 
@@ -51,6 +52,7 @@ internal class GameLoopTest {
     }
 
     @Test
+    @Disabled
     fun `negamax with more depth AI player should win against negamax with lower depth`() {
        val player1 = NegamaxAIPlayer(3)
        val player2 = NegamaxAIPlayer(1)
@@ -133,6 +135,6 @@ internal class GameLoopTest {
         expectThat(
             gameState.moveHistory.count { it.capturedPiece != null } +
                     gameState.chessboard.piecesOnBoard.size
-        ) isEqualTo GameState().chessboard.piecesOnBoard.size
+        ) isEqualTo GameState.StartingPositions.NEW_STANDARD_CHESS_GAME.chessboard.piecesOnBoard.size
     }
 }

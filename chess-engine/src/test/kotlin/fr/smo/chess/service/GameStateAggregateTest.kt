@@ -38,7 +38,7 @@ class GameStateAggregateTest {
         @Test
         fun `should mark game as won when performing Scholar's mate`() {
             // Given
-            var gameState = GameState()
+            var gameState = GameState.NEW_STANDARD_CHESS_GAME
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","e4"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","e5"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("f1","c4"), gameState)
@@ -118,7 +118,7 @@ class GameStateAggregateTest {
         @Test
         fun `should pawn moved without capture lead to no pieces amount changed on chessboard`() {
             // Given
-            var gameState = GameState()
+            var gameState = GameState.NEW_STANDARD_CHESS_GAME
             // When
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("h2","h4"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("h7", "h5" ),gameState)
@@ -371,7 +371,7 @@ class GameStateAggregateTest {
         @Test
         fun `should test updating full move counter in game state after white move`() {
             // Given
-            var gameState = GameState()
+            var gameState =  GameState.StartingPositions.NEW_STANDARD_CHESS_GAME
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","e4"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","e5"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("f1","c4"), gameState)
@@ -385,7 +385,7 @@ class GameStateAggregateTest {
         @Test
         fun `should test updating full move counter in game state after black move`() {
             // Given
-            var gameState = GameState()
+            var gameState = GameState.StartingPositions.NEW_STANDARD_CHESS_GAME
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2","e4"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7","e5"), gameState)
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("f1","c4"), gameState)
@@ -449,7 +449,7 @@ class GameStateAggregateTest {
 
         @Test
         fun `should change en passant target square in game state and set it back to null when necessary`() {
-            var gameState = GameState()
+            var gameState = GameState.StartingPositions.NEW_STANDARD_CHESS_GAME
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e2", "e4"), gameState)
             expectThat(gameState.enPassantTargetSquare) isEqualTo square("e3")
             gameState = gameStateAggregate.applyMoveRequest(moveRequest("e7", "e5"), gameState)
