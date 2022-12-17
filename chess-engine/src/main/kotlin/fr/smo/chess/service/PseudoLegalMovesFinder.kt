@@ -219,22 +219,10 @@ class PseudoLegalMovesFinder {
     }
 
     private fun getBishopPseudoLegalMoves(bishopPosition: Position, chessboard: Chessboard): List<Move> {
-        return getLegalMovesFollowingDirection(
-            fromPosition = bishopPosition,
-            chessboard = chessboard
-        ) { it.upLeft() } +
-                getLegalMovesFollowingDirection(
-                    fromPosition = bishopPosition,
-                    chessboard = chessboard
-                ) { it.upRight() } +
-                getLegalMovesFollowingDirection(
-                    fromPosition = bishopPosition,
-                    chessboard = chessboard
-                ) { it.downLeft() } +
-                getLegalMovesFollowingDirection(
-                    fromPosition = bishopPosition,
-                    chessboard = chessboard
-                ) { it.downRight() }
+        return getLegalMovesFollowingDirection(fromPosition = bishopPosition, chessboard = chessboard) { it.upLeft() } +
+                getLegalMovesFollowingDirection(fromPosition = bishopPosition, chessboard = chessboard) { it.upRight() } +
+                getLegalMovesFollowingDirection(fromPosition = bishopPosition, chessboard = chessboard) { it.downLeft() } +
+                getLegalMovesFollowingDirection(fromPosition = bishopPosition, chessboard = chessboard) { it.downRight() }
     }
 
     private fun getKingPseudoLegalMoves(kingPosition: Position, gameState: GameState): List<Move> {
@@ -277,12 +265,9 @@ class PseudoLegalMovesFinder {
             isWhiteKingCastlePossible = false, isWhiteQueenCastlePossible = false, isBlackQueenCastlePossible = false,
             isBlackKingCastlePossible = false, enPassantTargetSquare = null,
         )
-        val hasKingCastleSquaresUnderAttack: Boolean =
-            getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
-                .any { kingCastlingPathSquares.contains(it.destination) }
-        val hasQueenCastleSquaresUnderAttack: Boolean =
-            getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
-                .any { queenCastlingPathSquares.contains(it.destination) }
+        val allPseudoLegalMovesForPlayer = getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameStateWithoutCastling)
+        val hasKingCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { kingCastlingPathSquares.contains(it.destination) }
+        val hasQueenCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { queenCastlingPathSquares.contains(it.destination) }
 
         return listOfNotNull(
             if (isKingCastlePossible && !isTherePiecesOnKingCastlingPath && !hasKingCastleSquaresUnderAttack) {

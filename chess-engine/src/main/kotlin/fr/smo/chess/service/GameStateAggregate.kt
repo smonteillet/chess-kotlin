@@ -30,9 +30,11 @@ class GameStateAggregate(
     private fun buildNewGameState(moveRequest : MoveRequest, currentGameState: GameState) : GameState {
         val fromPosition = getFromPosition(currentGameState, moveRequest)
         val move : Move = extractContextualizedMove(fromPosition, currentGameState, moveRequest)
-        var newBoardPositions = applyMoveOnBoard(move, currentGameState)
-        newBoardPositions = applyPromotions(move, newBoardPositions)
-        newBoardPositions = applyRookMovesForCastling(move, newBoardPositions)
+        val newBoardPositions = applyRookMovesForCastling(move,
+            applyPromotions(move,
+                applyMoveOnBoard(move, currentGameState)
+            )
+        )
         return GameState(
             chessboard = Chessboard(piecesOnBoard = newBoardPositions),
             moveHistory = currentGameState.moveHistory.plus(move),
