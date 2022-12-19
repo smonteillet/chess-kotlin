@@ -6,8 +6,7 @@ import fr.smo.chess.core.Move
 import fr.smo.chess.core.Square
 import fr.smo.chess.server.notation.STARTING_POSITION_FEN
 import fr.smo.chess.server.notation.FEN
-
-import java.util.*
+import fr.smo.chess.server.util.GameRenderer
 
 class GameStateFixtures {
 
@@ -16,9 +15,7 @@ class GameStateFixtures {
 
 
         fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): GameState {
-            return FEN.import(fullFEN).apply {
-                logLichessEditorUrl(this)
-            }
+            return FEN.import(fullFEN).apply { render(this) }
         }
 
         fun givenAChessGame(
@@ -46,16 +43,12 @@ class GameStateFixtures {
                 gameOutcome = gameOutcome,
                 halfMoveClock = halfMoveClock,
                 fullMoveCounter = fullMoveCounter,
-            ).apply {
-                logLichessEditorUrl(this)
-            }
+            ).apply { render(this) }
         }
 
-        private fun logLichessEditorUrl(gameState: GameState) {
-            val exportedFEN = FEN.export(gameState)
-            println("https://lichess.org/editor/${exportedFEN.replace(" ", "_")}?color=" +
-                    gameState.sideToMove.toString().lowercase(Locale.getDefault())
-            )
+        private fun render(gameState: GameState) {
+            println(GameRenderer.lichessUrlRenderer(gameState))
+            println(GameRenderer.consoleRender(gameState))
         }
     }
 
