@@ -82,7 +82,7 @@ internal class SquareTest {
     }
     @Test
     fun testWithRow() {
-        expectThat(H7.withRank(Rank.THIRD)) isEqualTo H3
+        expectThat(H7.withRank(Rank.RANK_3)) isEqualTo H3
     }
 
     @Test

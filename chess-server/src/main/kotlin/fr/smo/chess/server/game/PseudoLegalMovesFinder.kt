@@ -60,7 +60,7 @@ class PseudoLegalMovesFinder {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = gameState.chessboard,
                 pawnPosition = pawnPosition,
-                hasPawnNotAlreadyMoved = pawnPosition.square.rank == Rank.SECOND,
+                hasPawnNotAlreadyMoved = pawnPosition.square.rank == Rank.RANK_2,
                 pawnFrontMoveFunction = { it.up() },
             ).plus(
                 getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.upRight() }
@@ -71,7 +71,7 @@ class PseudoLegalMovesFinder {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = gameState.chessboard,
                 pawnPosition = pawnPosition,
-                hasPawnNotAlreadyMoved = pawnPosition.square.rank == Rank.SEVENTH,
+                hasPawnNotAlreadyMoved = pawnPosition.square.rank == Rank.RANK_7,
                 pawnFrontMoveFunction = { it.down() },
             ).plus(
                 getPawnDiagonalMoves(gameState.chessboard, pawnPosition) { it.downRight() }
@@ -179,9 +179,9 @@ class PseudoLegalMovesFinder {
 
 
     private fun getPromotedPieces(color: Color, position: Square): List<Piece> {
-        return if (color == WHITE && position.rank == Rank.EIGHTH) {
+        return if (color == WHITE && position.rank == Rank.RANK_8) {
             listOf(WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT)
-        } else if (color == BLACK && position.rank == Rank.FIRST) {
+        } else if (color == BLACK && position.rank == Rank.RANK_1) {
             listOf(BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT)
         } else {
             emptyList()

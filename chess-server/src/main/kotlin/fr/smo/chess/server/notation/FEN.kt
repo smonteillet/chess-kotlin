@@ -129,7 +129,7 @@ class FEN {
                 var currentIndex = currentChar.toString().toIntOrNull()
                 if (currentIndex == null) {
                     board.add(Position(currentSquare,getPiece(currentChar.toString())))
-                    if (currentSquare.file != File.H) {
+                    if (currentSquare.file != File.FILE_H) {
                         currentSquare = currentSquare.right()!!
                     }
                 } else
@@ -142,7 +142,7 @@ class FEN {
 
             }
             currentSquare = currentSquare.toTheVeryLeft()
-            if (currentSquare.rank != Rank.FIRST) {
+            if (currentSquare.rank != Rank.RANK_1) {
                 currentSquare = currentSquare.down()!!
             }
         }

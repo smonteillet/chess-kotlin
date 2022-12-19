@@ -89,11 +89,11 @@ class MoveApplier(
     }
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
-        return if (move.piece == WHITE_PAWN && move.from.rank == SECOND && move.destination.rank == FOURTH) {
-            move.from.withRank(THIRD)
+        return if (move.piece == WHITE_PAWN && move.from.rank == RANK_2 && move.destination.rank == RANK_4) {
+            move.from.withRank(RANK_3)
         }
-        else if (move.piece == BLACK_PAWN && move.from.rank == SEVENTH && move.destination.rank == FIFTH) {
-            move.from.withRank(SIXTH)
+        else if (move.piece == BLACK_PAWN && move.from.rank == RANK_7 && move.destination.rank == RANK_5) {
+            move.from.withRank(RANK_6)
         }
         else
             null
