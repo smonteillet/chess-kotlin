@@ -1,22 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-}
-
 plugins {
-	kotlin("jvm") version "1.7.21" apply false
+	kotlin("jvm") version "1.7.21"
 }
 
 allprojects {
+	apply(plugin = "kotlin")
+
 	group = "fr.smo"
 	version = "0.0.1-SNAPSHOT"
 
 	tasks.withType<KotlinCompile> {
 		kotlinOptions {
-			freeCompilerArgs = listOf("-Xjsr305=strict")
 			jvmTarget = "17"
 		}
 	}
@@ -25,10 +20,20 @@ allprojects {
 		useJUnitPlatform()
 	}
 
-}
+	dependencies {
+		val junitVersion = "5.9.0"
+		val striktVersion = "0.34.1"
+		implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+		testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+		testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+		testImplementation("io.strikt:strikt-core:$striktVersion")
+	}
 
-subprojects {
 	repositories {
 		mavenCentral()
 	}
+
 }
