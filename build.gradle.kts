@@ -7,8 +7,7 @@ buildscript {
 }
 
 plugins {
-	kotlin("jvm") version "1.6.21" apply false
-	kotlin("plugin.spring") version "1.6.21" apply false
+	kotlin("jvm") version "1.7.21" apply false
 }
 
 allprojects {
