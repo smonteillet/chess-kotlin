@@ -10,6 +10,12 @@ data class Chessboard(
         return this.piecesOnBoard.firstOrNull { it.square == square }
     }
 
+    fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
+        return game.chessboard.piecesOnBoard
+            .filter { it.piece.color == color }
+            .flatMap { it.getAllPseudoLegalMoves(game) }
+    }
+
     fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard {
         val opponentPawnThatHasBeenEnPassant =
             if (move.destination == enPassantTargetSquare && move.piece.type == PieceType.PAWN) {

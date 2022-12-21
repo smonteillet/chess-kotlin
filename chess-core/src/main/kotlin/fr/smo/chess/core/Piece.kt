@@ -6,7 +6,7 @@ import fr.smo.chess.core.PieceType.*
 
 
 enum class Piece(
-    val type: PieceType, val color: Color,
+    val type: PieceType, val color: Color
 ) {
 
     WHITE_KING(KING, WHITE),
@@ -22,6 +22,7 @@ enum class Piece(
     BLACK_BISHOP(BISHOP, BLACK),
     BLACK_KNIGHT(KNIGHT, BLACK),
     BLACK_PAWN(PAWN, BLACK);
+
 
 
 }

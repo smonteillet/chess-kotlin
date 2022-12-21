@@ -4,8 +4,6 @@ import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.PieceType.KING
-import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMoves
-import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMovesForPlayer
 import fr.smo.chess.core.Rank.*
 
 data class Game(
@@ -69,12 +67,12 @@ data class Game(
     }
 
     private fun isChecked(kingColorThatMayBeChecked: Color): Boolean {
-        return getAllPseudoLegalMovesForPlayer(kingColorThatMayBeChecked.opposite(), this)
+        return chessboard.getAllPseudoLegalMovesForColor(kingColorThatMayBeChecked.opposite(), this)
             .count { it.capturedPiece?.type == KING } > 0
     }
 
     private fun isStaleMate(colorThatMayHaveNoMove: Color): Boolean {
-        return getAllPseudoLegalMovesForPlayer(colorThatMayHaveNoMove, this)
+        return chessboard.getAllPseudoLegalMovesForColor(colorThatMayHaveNoMove, this)
             .map { MoveRequest(it.from, it.destination, it.promotedTo?.type) }
             .map { buildNewGameState(it) }
             .all { it.isChecked(colorThatMayHaveNoMove) }
@@ -82,14 +80,13 @@ data class Game(
 
     private fun isCheckMate(kingColorThatMayBeCheckMate: Color): Boolean {
         if (isChecked(kingColorThatMayBeCheckMate)) {
-            return getAllPseudoLegalMovesForPlayer(kingColorThatMayBeCheckMate, this)
+            return chessboard.getAllPseudoLegalMovesForColor(kingColorThatMayBeCheckMate, this)
                 .map { MoveRequest(it.from, it.destination, it.promotedTo?.type) }
                 .map { buildNewGameState(it) }
                 .all { it.isChecked(kingColorThatMayBeCheckMate) }
         }
         return false
     }
-
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
         return if (move.piece == WHITE_PAWN && move.from.rank == RANK_2 && move.destination.rank == RANK_4) {
@@ -122,7 +119,7 @@ data class Game(
         fromPosition: Position,
         moveRequest: MoveRequest
     ): Move {
-        return getAllPseudoLegalMoves(fromPosition, this)
+        return fromPosition.getAllPseudoLegalMoves(this)
             .firstOrNull { it.destination == moveRequest.destination && it.promotedTo?.type == moveRequest.promotedPiece }
             ?: throw IllegalStateException("Invalid move $moveRequest")
     }

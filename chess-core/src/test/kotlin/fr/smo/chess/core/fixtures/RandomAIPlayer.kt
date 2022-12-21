@@ -1,7 +1,6 @@
 package fr.smo.chess.core.fixtures
 
 import fr.smo.chess.core.*
-import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMoves
 import kotlin.random.Random
 
 class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
@@ -20,7 +19,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
         while(selectedMove == null) {
             randomPosition = allRemainingColorPositions.random(random)
             allRemainingColorPositions = allRemainingColorPositions.minus(randomPosition)
-            var pieceLegalMoves = getAllPseudoLegalMoves(randomPosition, game)
+            var pieceLegalMoves = randomPosition.getAllPseudoLegalMoves(game)
             while (pieceLegalMoves.isNotEmpty() && selectedMove == null) {
                 selectedMove = pieceLegalMoves.random(random)
                 pieceLegalMoves = pieceLegalMoves.minus(selectedMove)
