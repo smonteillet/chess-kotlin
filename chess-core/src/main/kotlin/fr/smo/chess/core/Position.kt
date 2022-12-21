@@ -2,8 +2,7 @@ package fr.smo.chess.core
 
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
-import fr.smo.chess.core.Rank.RANK_2
-import fr.smo.chess.core.Rank.RANK_7
+import fr.smo.chess.core.Rank.*
 
 data class Position(val square: Square, val piece: Piece) {
 
@@ -154,7 +153,7 @@ data class Position(val square: Square, val piece: Piece) {
     }
 
     private fun getOneSquarePawnMoves(pawnPosition: Position, oneSquareMove: Square): List<Move> =
-        getPromotedPieces(pawnPosition.piece.color, oneSquareMove).map {
+        getPromotedPieces(oneSquareMove).map {
             Move(
                 piece = pawnPosition.piece,
                 from = pawnPosition.square,
@@ -172,10 +171,10 @@ data class Position(val square: Square, val piece: Piece) {
         }
 
 
-    private fun getPromotedPieces(color: Color, position: Square): List<Piece> {
-        return if (color == WHITE && position.rank == Rank.RANK_8) {
+    private fun getPromotedPieces(newPosition: Square): List<Piece> {
+        return if (piece.color == WHITE && newPosition.rank == RANK_8) {
             listOf(Piece.WHITE_QUEEN, Piece.WHITE_ROOK, Piece.WHITE_BISHOP, Piece.WHITE_KNIGHT)
-        } else if (color == BLACK && position.rank == Rank.RANK_1) {
+        } else if (piece.color == BLACK && newPosition.rank == RANK_1) {
             listOf(Piece.BLACK_QUEEN, Piece.BLACK_ROOK, Piece.BLACK_BISHOP, Piece.BLACK_KNIGHT)
         } else {
             emptyList()
