@@ -1,11 +1,11 @@
-package fr.smo.chess.server.notation
+package fr.smo.chess.core.notation
 
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
+import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.Position
 import fr.smo.chess.core.Square.*
-import fr.smo.chess.server.game.GameVariants
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -16,17 +16,15 @@ import strikt.assertions.isEqualTo
 
 class FENTest {
 
-    private val fen = FEN()
-
     @Nested
     inner class Export {
 
         @Test
         fun `should export to starting position`() {
             // Given
-            val gameState = GameVariants.createStandardGame()
+            val game = GameFactory.createStandardGame()
             // When
-            val fen = fen.export(gameState)
+            val fen = exportFEN(game)
             // Then
             expectThat(fen) isEqualTo STARTING_POSITION_FEN
         }
@@ -43,9 +41,9 @@ class FENTest {
                 // Given
                 val fen = STARTING_POSITION_FEN
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(GameVariants.createStandardGame().chessboard.piecesOnBoard)
+                expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(GameFactory.createStandardGame().chessboard.piecesOnBoard)
             }
 
             @Test
@@ -53,9 +51,9 @@ class FENTest {
                 // Given
                 val fen = "8/8/8/8/8/8/8/8 w KQkq - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.chessboard.piecesOnBoard).isEmpty()
+                expectThat(game.chessboard.piecesOnBoard).isEmpty()
             }
 
             @Test
@@ -63,9 +61,9 @@ class FENTest {
                 // Given
                 val fen = "r3r2Q/8/8/8/8/8/8/8 w KQkq - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
+                expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
                     Position(A8, BLACK_ROOK),
                     Position(E8, BLACK_ROOK),
                     Position(H8, WHITE_QUEEN)
@@ -77,9 +75,9 @@ class FENTest {
                 // Given
                 val fen = "8/8/8/8/8/8/P7/K7 w KQkq - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
+                expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
                     Position(A1, WHITE_KING),
                     Position(A2, WHITE_PAWN),
                 )
@@ -90,9 +88,9 @@ class FENTest {
                 // Given
                 val fen = "1Q6/8/8/8/8/8/8/8 w KQkq - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
+                expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
                     Position(B8, WHITE_QUEEN)
                 )
             }
@@ -105,9 +103,9 @@ class FENTest {
                 // Given
                 val fen = STARTING_POSITION_FEN
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.sideToMove) isEqualTo WHITE
+                expectThat(game.sideToMove) isEqualTo WHITE
             }
 
             @Test
@@ -115,9 +113,9 @@ class FENTest {
                 // Given
                 val fen = "r3r2Q/8/8/8/8/8/8/8 b KQkq - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.sideToMove) isEqualTo BLACK
+                expectThat(game.sideToMove) isEqualTo BLACK
             }
         }
 
@@ -128,12 +126,12 @@ class FENTest {
                 // Given
                 val fen = STARTING_POSITION_FEN
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo true
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo true
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo true
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo true
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo true
+                expectThat(game.isBlackKingCastlePossible) isEqualTo true
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo true
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo true
             }
 
             @Test
@@ -141,12 +139,12 @@ class FENTest {
                 // Given
                 val fen = "k7/8/8/8/8/8/8/4K2R b K - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo true
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo true
             }
 
             @Test
@@ -154,12 +152,12 @@ class FENTest {
                 // Given
                 val fen = "1k6/8/8/8/8/8/8/R3K3 b Q - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo true
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo true
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
             }
 
             @Test
@@ -167,12 +165,12 @@ class FENTest {
                 // Given
                 val fen = "1k6/8/8/8/8/8/8/R3K2R b KQ - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo true
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo true
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo true
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo true
             }
 
             @Test
@@ -180,12 +178,12 @@ class FENTest {
                 // Given
                 val fen = "k7/8/8/8/8/8/8/4K2R b k - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo true
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.isBlackKingCastlePossible) isEqualTo true
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
             }
 
             @Test
@@ -193,12 +191,12 @@ class FENTest {
                 // Given
                 val fen = "1k6/8/8/8/8/8/8/R3K3 b q - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo true
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo true
+                expectThat(game.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
             }
 
             @Test
@@ -206,12 +204,12 @@ class FENTest {
                 // Given
                 val fen = "1k6/8/8/8/8/8/8/R3K3 b - - 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isBlackKingCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(gameState.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
             }
         }
 
@@ -223,9 +221,9 @@ class FENTest {
                 // Given
                 val fen = STARTING_POSITION_FEN
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.enPassantTargetSquare) isEqualTo null
+                expectThat(game.enPassantTargetSquare) isEqualTo null
             }
 
             @Test
@@ -233,9 +231,9 @@ class FENTest {
                 // Given
                 val fen = "rnbqkbnr/p1pppppp/8/1p6/8/8/PPPPPPPP/RNBQKBNR w KQkq b6 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.enPassantTargetSquare) isEqualTo B6
+                expectThat(game.enPassantTargetSquare) isEqualTo B6
             }
 
             @Test
@@ -243,9 +241,9 @@ class FENTest {
                 // Given
                 val fen = "rnbqkbnr/pppppppp/8/8/1P6/8/P1PPPPPP/RNBQKBNR w KQkq b3 0 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.enPassantTargetSquare) isEqualTo B3
+                expectThat(game.enPassantTargetSquare) isEqualTo B3
             }
         }
 
@@ -263,9 +261,9 @@ class FENTest {
                 // Given
                 val fen = STARTING_POSITION_FEN
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.halfMoveClock) isEqualTo 0
+                expectThat(game.halfMoveClock) isEqualTo 0
             }
 
             @Test
@@ -273,9 +271,9 @@ class FENTest {
                 // Given
                 val fen = "k7/8/8/8/8/8/8/4K2R b k - 21 1"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.halfMoveClock) isEqualTo 21
+                expectThat(game.halfMoveClock) isEqualTo 21
             }
         }
 
@@ -292,9 +290,9 @@ class FENTest {
                 // Given
                 val fen = STARTING_POSITION_FEN
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.fullMoveCounter) isEqualTo 1
+                expectThat(game.fullMoveCounter) isEqualTo 1
             }
 
             @Test
@@ -302,9 +300,9 @@ class FENTest {
                 // Given
                 val fen = "k7/8/8/8/8/8/8/4K2R b k - 21 39"
                 // When
-                val gameState = this@FENTest.fen.import(fen)
+                val game = importFEN(fen)
                 // Then
-                expectThat(gameState.fullMoveCounter) isEqualTo 39
+                expectThat(game.fullMoveCounter) isEqualTo 39
             }
         }
     }

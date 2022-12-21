@@ -1,0 +1,37 @@
+package fr.smo.chess.core.fixtures
+
+import fr.smo.chess.core.*
+import fr.smo.chess.core.Color.BLACK
+import fr.smo.chess.core.Color.WHITE
+import fr.smo.chess.core.notation.exportFEN
+import fr.smo.chess.core.notation.exportPGN
+
+class GameLoop(
+    private val afterMoveCallback: ((Game) -> Unit) = {},
+) {
+
+    fun run(player1: Player, player2: Player): Game {
+        var game = GameFactory.createStandardGame()
+        val players = mapOf(WHITE to player1, BLACK to player2)
+        player1.registerColor(WHITE)
+        player2.registerColor(BLACK)
+        while (!game.gameIsOver) {
+            val moveRequest = players[game.sideToMove]!!.nextPlay(game)
+            game = game.applyMove(moveRequest, afterMoveCallback)
+        }
+        logGameState(game)
+        return game
+    }
+
+    private fun logGameState(game: Game) {
+        println(exportPGN(game))
+        println(exportFEN(game))
+        println(game.status)
+    }
+
+}
+
+interface Player {
+    fun nextPlay(game: Game) : MoveRequest
+    fun registerColor(colorForTheGame : Color)
+}

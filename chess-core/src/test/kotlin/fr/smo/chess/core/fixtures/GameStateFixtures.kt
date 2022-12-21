@@ -1,21 +1,20 @@
-package fr.smo.chess.server.fixtures
+package fr.smo.chess.core.fixtures
 
 import fr.smo.chess.core.Color
-import fr.smo.chess.core.GameState
+import fr.smo.chess.core.Game
 import fr.smo.chess.core.Move
 import fr.smo.chess.core.Square
-import fr.smo.chess.server.notation.STARTING_POSITION_FEN
-import fr.smo.chess.server.notation.FEN
-import fr.smo.chess.server.util.GameRenderer
+import fr.smo.chess.core.notation.STARTING_POSITION_FEN
+import fr.smo.chess.core.notation.getChessboardFromFenPiecePlacement
+import fr.smo.chess.core.notation.importFEN
+import fr.smo.chess.core.renderer.GameRenderer
 
 class GameStateFixtures {
 
     companion object {
-        private val FEN = FEN()
 
-
-        fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): GameState {
-            return FEN.import(fullFEN).apply { render(this) }
+        fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Game {
+            return importFEN(fullFEN).apply { render(this) }
         }
 
         fun givenAChessGame(
@@ -27,12 +26,12 @@ class GameStateFixtures {
             isBlackKingCastlePossible: Boolean = false,
             isBlackQueenCastlePossible: Boolean = false,
             enPassantTargetSquare: Square? = null,
-            gameOutcome: GameState.GameOutcome = GameState.GameOutcome.NOT_FINISHED_YET,
+            status: Game.Status = Game.Status.IN_PROGRESS,
             halfMoveClock: Int = 0,
             fullMoveCounter: Int = 1,
-        ): GameState {
-            return GameState(
-                chessboard = FEN.getChessboardFromFenPiecePlacement(fenPiecePlacementOnly),
+        ): Game {
+            return Game(
+                chessboard = getChessboardFromFenPiecePlacement(fenPiecePlacementOnly),
                 moveHistory = moveHistory,
                 sideToMove = sideToMove,
                 isWhiteKingCastlePossible = isWhiteKingCastlePossible,
@@ -40,15 +39,15 @@ class GameStateFixtures {
                 isBlackKingCastlePossible = isBlackKingCastlePossible,
                 isBlackQueenCastlePossible = isBlackQueenCastlePossible,
                 enPassantTargetSquare = enPassantTargetSquare,
-                gameOutcome = gameOutcome,
+                status = status,
                 halfMoveClock = halfMoveClock,
                 fullMoveCounter = fullMoveCounter,
             ).apply { render(this) }
         }
 
-        private fun render(gameState: GameState) {
-            println(GameRenderer.lichessUrlRenderer(gameState))
-            println(GameRenderer.consoleRender(gameState))
+        private fun render(game: Game) {
+            println(GameRenderer.lichessUrlRenderer(game))
+            println(GameRenderer.consoleRender(game))
         }
     }
 

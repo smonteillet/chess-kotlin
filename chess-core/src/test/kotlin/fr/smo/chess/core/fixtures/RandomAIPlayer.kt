@@ -1,33 +1,31 @@
-package fr.smo.chess.server.fixtures
+package fr.smo.chess.core.fixtures
 
 import fr.smo.chess.core.*
-import fr.smo.chess.server.game.MoveApplier
-import fr.smo.chess.server.game.PseudoLegalMovesFinder
+import fr.smo.chess.core.PseudoLegalMovesFinder
 import kotlin.random.Random
 
 class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
 
     private var color : Color? = null
     private val pseudoLegalMovesFinder  = PseudoLegalMovesFinder()
-    private val moveApplier = MoveApplier()
     private val random = Random(seed)
 
     init {
         println("RandomAIPlayer seed: $seed")
     }
 
-    override fun nextPlay(gameState: GameState): MoveRequest {
+    override fun nextPlay(game: Game): MoveRequest {
         var randomPosition : Position?
         var selectedMove : Move? = null
-        var allRemainingColorPositions = gameState.chessboard.piecesOnBoard.filter { it.piece.color == color }
+        var allRemainingColorPositions = game.chessboard.piecesOnBoard.filter { it.piece.color == color }
         while(selectedMove == null) {
             randomPosition = allRemainingColorPositions.random(random)
             allRemainingColorPositions = allRemainingColorPositions.minus(randomPosition)
-            var pieceLegalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(randomPosition, gameState)
+            var pieceLegalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(randomPosition, game)
             while (pieceLegalMoves.isNotEmpty() && selectedMove == null) {
                 selectedMove = pieceLegalMoves.random(random)
                 pieceLegalMoves = pieceLegalMoves.minus(selectedMove)
-                if (!isMoveLegal(selectedMove, gameState)) {
+                if (!isMoveLegal(selectedMove, game)) {
                     selectedMove = null
                 }
             }
@@ -39,14 +37,14 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
         )
     }
 
-    private fun isMoveLegal(move: Move, gamestate: GameState): Boolean {
+    private fun isMoveLegal(move: Move, game: Game): Boolean {
         try {
-            moveApplier.applyMoveRequest(
+            game.applyMove(
                 MoveRequest(
                     from = move.from,
                     destination = move.destination,
                     promotedPiece = move.promotedTo?.type,
-                ), gamestate
+                )
             )
         } catch (e: Exception) {
             return false

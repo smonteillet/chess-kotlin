@@ -1,18 +1,21 @@
-package fr.smo.chess.server.util
+package fr.smo.chess.core.renderer
 
-import fr.smo.chess.core.*
+import fr.smo.chess.core.File
+import fr.smo.chess.core.Game
 import fr.smo.chess.core.Piece.*
-import fr.smo.chess.server.notation.FEN
+import fr.smo.chess.core.Rank
+import fr.smo.chess.core.Square
+import fr.smo.chess.core.notation.exportFEN
 import java.util.*
 
 class GameRenderer {
 
     companion object {
 
-        fun consoleRender(gameState : GameState): String =
+        fun consoleRender(game : Game): String =
             Rank.values().reversed().joinToString("\n") { rank ->
                 "|" + File.values().joinToString("|") { file ->
-                    when (gameState.chessboard.getPositionAt(Square.at(file, rank)!!)?.piece) {
+                    when (game.chessboard.getPositionAt(Square.at(file, rank)!!)?.piece) {
                         null -> " "
                         WHITE_KING -> "♔"
                         WHITE_QUEEN -> "♕"
@@ -28,12 +31,12 @@ class GameRenderer {
                         BLACK_PAWN -> "♟"
                     }
                 } + "| " + rank.label
-            } + "\n A B C D E F G H"
+            } + "\n|A B C D E F G H"
 
-        fun lichessUrlRenderer(gameState : GameState): String {
-            val exportedFEN = FEN().export(gameState)
+        fun lichessUrlRenderer(game : Game): String {
+            val exportedFEN = exportFEN(game)
             return "https://lichess.org/editor/${exportedFEN.replace(" ", "_")}?color=" +
-                    gameState.sideToMove.toString().lowercase(Locale.getDefault())
+                    game.sideToMove.toString().lowercase(Locale.getDefault())
         }
     }
 }

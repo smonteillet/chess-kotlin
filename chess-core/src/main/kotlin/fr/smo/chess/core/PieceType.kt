@@ -1,10 +1,11 @@
 package fr.smo.chess.core
 
-enum class PieceType {
+enum class PieceType{
     PAWN,
     BISHOP,
     KNIGHT,
     QUEEN,
     KING,
-    ROOK,
+    ROOK;
+
 }
