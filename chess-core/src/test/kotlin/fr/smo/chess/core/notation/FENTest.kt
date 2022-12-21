@@ -265,7 +265,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.halfMoveClock) isEqualTo 0
+                expectThat(game.history.halfMoveClock) isEqualTo 0
             }
 
             @Test
@@ -275,7 +275,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.halfMoveClock) isEqualTo 21
+                expectThat(game.history.halfMoveClock) isEqualTo 21
             }
         }
 
@@ -294,7 +294,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.fullMoveCounter) isEqualTo 1
+                expectThat(game.history.fullMoveCounter) isEqualTo 1
             }
 
             @Test
@@ -304,7 +304,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.fullMoveCounter) isEqualTo 39
+                expectThat(game.history.fullMoveCounter) isEqualTo 39
             }
         }
     }

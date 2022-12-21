@@ -22,8 +22,10 @@ object FEN {
                 isWhiteKingCastlePossible = fenSplit[2].contains("K"),
             ),
             enPassantTargetSquare = enPassantTargetSquare(fenSplit[3]),
-            halfMoveClock = fenSplit[4].toInt(),
-            fullMoveCounter = fenSplit[5].toInt(),
+            history = History(
+                halfMoveClock = fenSplit[4].toInt(),
+                fullMoveCounter = fenSplit[5].toInt(),
+            )
         )
     }
 
@@ -32,8 +34,8 @@ object FEN {
                 getFenSideToMoveFromGameState(game) + " " +
                 getFenCastlingFromGameState(game) + " " +
                 (game.enPassantTargetSquare?.toString() ?: "-") + " " +
-                game.halfMoveClock + " " +
-                game.fullMoveCounter
+                game.history.halfMoveClock + " " +
+                game.history.fullMoveCounter
     }
 
     private fun getFenSideToMoveFromGameState(game: Game): String {

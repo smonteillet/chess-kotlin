@@ -7,7 +7,7 @@ import fr.smo.chess.core.PieceType.*
 object PGN {
 
     fun exportPGN(game: Game): String {
-        val pgnHistory = game.moveHistory.mapIndexed { index, move ->
+        val pgnHistory = game.history.moves.mapIndexed { index, move ->
             val indexStr = if (index % 2 == 0) "${index / 2 + 1}. " else ""
             return@mapIndexed indexStr + moveToPgn(move)
         }.joinToString(" ")

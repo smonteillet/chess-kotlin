@@ -104,7 +104,7 @@ class GameTest {
                 MoveRequest(H2, H4), MoveRequest(H7, H5)
             )
             // Then
-            expectThat(game.moveHistory.none { it.capturedPiece != null })
+            expectThat(game.history.moves.none { it.capturedPiece != null })
             expectThat(game.chessboard.piecesOnBoard.size) isEqualTo 32
         }
     }
@@ -242,7 +242,9 @@ class GameTest {
             // Given When
             val game = givenAChessGame(
                 fenPiecePlacementOnly = "r7/4k3/2p5/8/8/2P5/4K3/7R",
-                halfMoveClock = 49,
+                history = History(
+                    halfMoveClock = 49,
+                ),
                 sideToMove = BLACK,
             ).applyMove(MoveRequest(A8, A1))
             // Then
@@ -332,7 +334,7 @@ class GameTest {
                 MoveRequest(D1, H5),
             )
             // Then
-            expectThat(game.fullMoveCounter) isEqualTo 3
+            expectThat(game.history.fullMoveCounter) isEqualTo 3
         }
 
         @Test
@@ -347,7 +349,7 @@ class GameTest {
                 MoveRequest(G8, F6),
             )
             // Then
-            expectThat(game.fullMoveCounter) isEqualTo 4
+            expectThat(game.history.fullMoveCounter) isEqualTo 4
         }
     }
 
@@ -358,11 +360,13 @@ class GameTest {
             // Given When
             val game = givenAChessGame(
                 fenPiecePlacementOnly = "4k2r/8/2p5/8/8/3P4/2K5/R7",
-                halfMoveClock = 10,
+                history = History(
+                    halfMoveClock = 10,
+                ),
                 sideToMove = WHITE,
             ).applyMove(MoveRequest(A1, A2))
             // Then
-            expectThat(game.halfMoveClock) isEqualTo 11
+            expectThat(game.history.halfMoveClock) isEqualTo 11
         }
 
         @Test
@@ -370,11 +374,13 @@ class GameTest {
             // Given When
             val game = givenAChessGame(
                 fenPiecePlacementOnly = "4k2r/8/2p5/8/8/3P4/2K5/R7",
-                halfMoveClock = 10,
+                history = History(
+                    halfMoveClock = 10,
+                ),
                 sideToMove = WHITE,
             ).applyMove(MoveRequest(D3, D4))
             // Then
-            expectThat(game.halfMoveClock) isEqualTo 0
+            expectThat(game.history.halfMoveClock) isEqualTo 0
         }
 
         @Test
@@ -382,11 +388,13 @@ class GameTest {
             // Given When
             val game = givenAChessGame(
                 fenPiecePlacementOnly = "4k2r/8/2p4P/8/8/3P4/2K5/R7",
-                halfMoveClock = 10,
+                history = History(
+                    halfMoveClock = 10,
+                ),
                 sideToMove = BLACK,
             ).applyMove(MoveRequest(H8, H6))
             // Then
-            expectThat(game.halfMoveClock) isEqualTo 0
+            expectThat(game.history.halfMoveClock) isEqualTo 0
         }
     }
 

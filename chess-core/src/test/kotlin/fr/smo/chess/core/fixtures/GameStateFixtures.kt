@@ -15,7 +15,6 @@ object GameStateFixtures {
 
     fun givenAChessGame(
         fenPiecePlacementOnly: String = STARTING_POSITION_FEN,
-        moveHistory: List<Move> = listOf(),
         sideToMove: Color = Color.WHITE,
         isWhiteKingCastlePossible: Boolean = false,
         isWhiteQueenCastlePossible: Boolean = false,
@@ -23,12 +22,11 @@ object GameStateFixtures {
         isBlackQueenCastlePossible: Boolean = false,
         enPassantTargetSquare: Square? = null,
         status: Game.Status = Game.Status.IN_PROGRESS,
-        halfMoveClock: Int = 0,
-        fullMoveCounter: Int = 1,
+        history: History = History(),
     ): Game {
         return Game(
             chessboard = getChessboardFromFenPiecePlacement(fenPiecePlacementOnly),
-            moveHistory = moveHistory,
+            history = history,
             sideToMove = sideToMove,
             castling = Castling(
                 isWhiteKingCastlePossible = isWhiteKingCastlePossible,
@@ -38,8 +36,6 @@ object GameStateFixtures {
             ),
             enPassantTargetSquare = enPassantTargetSquare,
             status = status,
-            halfMoveClock = halfMoveClock,
-            fullMoveCounter = fullMoveCounter,
         ).apply { render(this) }
     }
 

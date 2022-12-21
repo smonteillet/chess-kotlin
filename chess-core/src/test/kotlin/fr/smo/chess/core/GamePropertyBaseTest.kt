@@ -55,14 +55,14 @@ class GamePropertyBaseTest {
     }
 
     private fun assertThatLastMovingPieceIsOnItsDestinationSquare(game: Game) {
-        val lastMove = game.moveHistory.last()
+        val lastMove = game.history.moves.last()
         if (lastMove.promotedTo == null) {
             expectThat(
                 lastMove.let {
                     game.chessboard.getPositionAt(it.destination)?.piece == it.piece
                 }
             ).describedAs(
-                "At turn ${game.fullMoveCounter}, last move $lastMove should lead to a filled " +
+                "At turn ${game.history.fullMoveCounter}, last move $lastMove should lead to a filled " +
                         "square at ${lastMove.destination} with a ${lastMove.piece} but was " +
                         game.chessboard.getPositionAt(lastMove.destination)
             )
@@ -73,7 +73,7 @@ class GamePropertyBaseTest {
                     game.chessboard.getPositionAt(it.destination)?.piece == it.promotedTo
                 }
             ).describedAs(
-                "At turn ${game.fullMoveCounter}, last move $lastMove should lead to a filled " +
+                "At turn ${game.history.fullMoveCounter}, last move $lastMove should lead to a filled " +
                         "square at ${lastMove.destination} with a ${lastMove.promotedTo} because of promotion but was " +
                         game.chessboard.getPositionAt(lastMove.destination)
             )
@@ -112,7 +112,7 @@ class GamePropertyBaseTest {
 
     private fun assertThatLastMovingHasLeftABlankSquareAfterMoving(game: Game) {
         expectThat(
-            game.moveHistory.last().let {
+            game.history.moves.last().let {
                 game.chessboard.getPositionAt(it.from)
             }
         ).isNull()
@@ -120,7 +120,7 @@ class GamePropertyBaseTest {
 
     private fun assertThatSumOfCaptureAndRemainingPieceIs32(game: Game) {
         expectThat(
-            game.moveHistory.count { it.capturedPiece != null } +
+            game.history.moves.count { it.capturedPiece != null } +
                     game.chessboard.piecesOnBoard.size
         ) isEqualTo GameFactory.createStandardGame().chessboard.piecesOnBoard.size
     }

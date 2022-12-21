@@ -12,13 +12,11 @@ import fr.smo.chess.core.Square.*
 
 data class Game(
     val chessboard: Chessboard,
-    val moveHistory: List<Move> = listOf(),  // FIXME put that property in a History class
+    val history: History,
     val sideToMove: Color = WHITE,
     val castling: Castling,
     val enPassantTargetSquare: Square? = null,
     val status: Status = Status.NOT_STARTED_YET,
-    val fullMoveCounter: Int = 1, // FIXME put that property in a History class
-    val halfMoveClock: Int = 0, // FIXME put that property in a History class
 ) {
     val isNextPlayCouldBeWhiteCastle: Boolean = sideToMove == WHITE &&
             castling.isWhiteKingCastlePossible &&
@@ -70,7 +68,7 @@ data class Game(
         )
         return Game(
             chessboard = Chessboard(piecesOnBoard = newBoardPositions),
-            moveHistory = moveHistory.plus(move),
+            history = history.addMove(move),
             sideToMove = sideToMove.opposite(),
             castling = Castling(
                 isBlackKingCastlePossible = isBlackKingSideCastlingStillPossible(move),
@@ -79,8 +77,6 @@ data class Game(
                 isWhiteKingCastlePossible = isWhiteKingSideCastlingStillPossible(move),
             ),
             enPassantTargetSquare = getEnPassantTargetSquare(move),
-            fullMoveCounter = getNewFullMoveCounter(move),
-            halfMoveClock = getHalfMoveClock(move),
         )
     }
 
@@ -106,21 +102,6 @@ data class Game(
         return false
     }
 
-    private fun getHalfMoveClock(move: Move): Int {
-        return if (move.capturedPiece != null || move.piece.type == PAWN) {
-            0
-        } else {
-            halfMoveClock + 1
-        }
-    }
-
-    private fun getNewFullMoveCounter(move: Move): Int {
-        return if (move.piece.color == BLACK) {
-            fullMoveCounter + 1
-        } else {
-            fullMoveCounter
-        }
-    }
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
         return if (move.piece == WHITE_PAWN && move.from.rank == RANK_2 && move.destination.rank == RANK_4) {
@@ -131,19 +112,7 @@ data class Game(
             null
     }
 
-    private fun is3Repetitions(): Boolean {
-        val moveCount = moveHistory.size
-        return moveHistory.size >= 12 &&
-                moveHistory[moveCount - 1] == moveHistory[moveCount - 5] &&
-                moveHistory[moveCount - 1] == moveHistory[moveCount - 9] &&
-                moveHistory[moveCount - 2] == moveHistory[moveCount - 6] &&
-                moveHistory[moveCount - 2] == moveHistory[moveCount - 10] &&
-                moveHistory[moveCount - 3] == moveHistory[moveCount - 7] &&
-                moveHistory[moveCount - 3] == moveHistory[moveCount - 11] &&
-                moveHistory[moveCount - 4] == moveHistory[moveCount - 8] &&
-                moveHistory[moveCount - 4] == moveHistory[moveCount - 12]
 
-    }
 
     private fun updateGameOutcome(): Game {
         return if (isCheckMate(sideToMove)) {
@@ -153,9 +122,9 @@ data class Game(
                 Status.WHITE_WIN
             }
             copy(status = status)
-        } else if (halfMoveClock == 50) {
+        } else if (history.isFiftyMovesRule()) {
             copy(status = Status.DRAW)
-        } else if (is3Repetitions()) {
+        } else if (history.isThreefoldRepetitions()) {
             copy(status = Status.DRAW)
         } else if (isStaleMate(sideToMove)) {
             copy(status = Status.DRAW)
