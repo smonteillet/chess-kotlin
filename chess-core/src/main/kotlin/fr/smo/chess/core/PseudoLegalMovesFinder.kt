@@ -11,7 +11,7 @@ import fr.smo.chess.core.Square.*
  * if they'll leave the king in check. It is left up to the move-making function to test the move, or it is even possible
  * to let the king remain in check and only test for the capture of the king on the next move
  */
-class PseudoLegalMovesFinder {
+object PseudoLegalMovesFinder {
 
     fun getAllPseudoLegalMoves(fromPosition: Position, game: Game): List<Move> {
         return when (fromPosition.piece.type) {
@@ -262,8 +262,12 @@ class PseudoLegalMovesFinder {
             .any { kingCastlingPathSquares.minus(kingPosition.square).contains(it.square) }
         //FIXME feels weird now
         val gameWithoutCastling = game.copy(
-            isWhiteKingCastlePossible = false, isWhiteQueenCastlePossible = false, isBlackQueenCastlePossible = false,
-            isBlackKingCastlePossible = false, enPassantTargetSquare = null,
+            castling = game.castling.copy(
+                isWhiteKingCastlePossible = false,
+                isWhiteQueenCastlePossible = false,
+                isBlackQueenCastlePossible = false,
+                isBlackKingCastlePossible = false),
+            enPassantTargetSquare = null,
         )
         val allPseudoLegalMovesForPlayer = getAllPseudoLegalMovesForPlayer(kingPosition.piece.color.opposite(), gameWithoutCastling)
         val hasKingCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { kingCastlingPathSquares.contains(it.destination) }
@@ -294,8 +298,8 @@ class PseudoLegalMovesFinder {
             getCastleMoves(
                 game = game,
                 kingPosition = kingPosition,
-                isKingCastlePossible = game.isWhiteKingCastlePossible,
-                isQueenCastlePossible = game.isWhiteQueenCastlePossible,
+                isKingCastlePossible = game.castling.isWhiteKingCastlePossible,
+                isQueenCastlePossible = game.castling.isWhiteQueenCastlePossible,
                 kingDestinationKingCastle = G1,
                 kingDestinationQueenCastle = C1,
                 kingCastlingPathSquares = listOf(E1, F1, G1),
@@ -305,8 +309,8 @@ class PseudoLegalMovesFinder {
             getCastleMoves(
                 game = game,
                 kingPosition = kingPosition,
-                isKingCastlePossible = game.isBlackKingCastlePossible,
-                isQueenCastlePossible = game.isBlackQueenCastlePossible,
+                isKingCastlePossible = game.castling.isBlackKingCastlePossible,
+                isQueenCastlePossible = game.castling.isBlackQueenCastlePossible,
                 kingDestinationKingCastle = G8,
                 kingDestinationQueenCastle = C8,
                 kingCastlingPathSquares = listOf(E8, F8, G8),

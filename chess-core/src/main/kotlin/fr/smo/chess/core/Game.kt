@@ -5,6 +5,8 @@ import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.PieceType.KING
 import fr.smo.chess.core.PieceType.PAWN
+import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMoves
+import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMovesForPlayer
 import fr.smo.chess.core.Rank.*
 import fr.smo.chess.core.Square.*
 
@@ -12,23 +14,20 @@ data class Game(
     val chessboard: Chessboard,
     val moveHistory: List<Move> = listOf(),  // FIXME put that property in a History class
     val sideToMove: Color = WHITE,
-    val isWhiteKingCastlePossible: Boolean = true, // FIXME put that property in a CastlingPossibility class
-    val isWhiteQueenCastlePossible: Boolean = true, // FIXME put that property in a CastlingPossibility class
-    val isBlackKingCastlePossible: Boolean = true, // FIXME put that property in a CastlingPossibility class
-    val isBlackQueenCastlePossible: Boolean = true, // FIXME put that property in a CastlingPossibility class
+    val castling: Castling,
     val enPassantTargetSquare: Square? = null,
     val status: Status = Status.NOT_STARTED_YET,
     val fullMoveCounter: Int = 1, // FIXME put that property in a History class
     val halfMoveClock: Int = 0, // FIXME put that property in a History class
 ) {
+    val isNextPlayCouldBeWhiteCastle: Boolean = sideToMove == WHITE &&
+            castling.isWhiteKingCastlePossible &&
+            castling.isWhiteQueenCastlePossible
 
-    private val pseudoLegalMovesFinder = PseudoLegalMovesFinder() //FIXME move elsewhere in a more object compliant way
+    val isNextPlayCouldBeBlackCastle: Boolean = sideToMove == BLACK &&
+            castling.isBlackKingCastlePossible &&
+            castling.isBlackQueenCastlePossible
 
-    // FIXME put that property in a CastlingPossibility class
-    val isNextPlayCouldBeWhiteCastle: Boolean = sideToMove == WHITE && isWhiteKingCastlePossible && isWhiteQueenCastlePossible
-
-    // FIXME put that property in a CastlingPossibility class
-    val isNextPlayCouldBeBlackCastle: Boolean = sideToMove == BLACK && isBlackKingCastlePossible && isBlackQueenCastlePossible
     val gameIsOver: Boolean = status == Status.BLACK_WIN || status == Status.WHITE_WIN || status == Status.DRAW
 
     enum class Status {
@@ -73,10 +72,12 @@ data class Game(
             chessboard = Chessboard(piecesOnBoard = newBoardPositions),
             moveHistory = moveHistory.plus(move),
             sideToMove = sideToMove.opposite(),
-            isBlackKingCastlePossible = isBlackKingSideCastlingStillPossible(move),
-            isBlackQueenCastlePossible = isBlackQueenSideCastlingStillPossible(move),
-            isWhiteQueenCastlePossible = isWhiteQueenSideCastlingStillPossible(move),
-            isWhiteKingCastlePossible = isWhiteKingSideCastlingStillPossible(move),
+            castling = Castling(
+                isBlackKingCastlePossible = isBlackKingSideCastlingStillPossible(move),
+                isBlackQueenCastlePossible = isBlackQueenSideCastlingStillPossible(move),
+                isWhiteQueenCastlePossible = isWhiteQueenSideCastlingStillPossible(move),
+                isWhiteKingCastlePossible = isWhiteKingSideCastlingStillPossible(move),
+            ),
             enPassantTargetSquare = getEnPassantTargetSquare(move),
             fullMoveCounter = getNewFullMoveCounter(move),
             halfMoveClock = getHalfMoveClock(move),
@@ -84,12 +85,12 @@ data class Game(
     }
 
     private fun isChecked(kingColorThatMayBeChecked: Color): Boolean {
-        return pseudoLegalMovesFinder.getAllPseudoLegalMovesForPlayer(kingColorThatMayBeChecked.opposite(), this)
+        return getAllPseudoLegalMovesForPlayer(kingColorThatMayBeChecked.opposite(), this)
             .count { it.capturedPiece?.type == KING } > 0
     }
 
     private fun isStaleMate(colorThatMayHaveNoMove: Color): Boolean {
-        return pseudoLegalMovesFinder.getAllPseudoLegalMovesForPlayer(colorThatMayHaveNoMove, this)
+        return getAllPseudoLegalMovesForPlayer(colorThatMayHaveNoMove, this)
             .map { MoveRequest(it.from, it.destination, it.promotedTo?.type) }
             .map { buildNewGameState(it) }
             .all { it.isChecked(colorThatMayHaveNoMove) }
@@ -97,7 +98,7 @@ data class Game(
 
     private fun isCheckMate(kingColorThatMayBeCheckMate: Color): Boolean {
         if (isChecked(kingColorThatMayBeCheckMate)) {
-            return pseudoLegalMovesFinder.getAllPseudoLegalMovesForPlayer(kingColorThatMayBeCheckMate, this)
+            return getAllPseudoLegalMovesForPlayer(kingColorThatMayBeCheckMate, this)
                 .map { MoveRequest(it.from, it.destination, it.promotedTo?.type) }
                 .map { buildNewGameState(it) }
                 .all { it.isChecked(kingColorThatMayBeCheckMate) }
@@ -166,7 +167,7 @@ data class Game(
         fromPosition: Position,
         moveRequest: MoveRequest
     ): Move {
-        return pseudoLegalMovesFinder.getAllPseudoLegalMoves(fromPosition, this)
+        return getAllPseudoLegalMoves(fromPosition, this)
             .firstOrNull { it.destination == moveRequest.destination && it.promotedTo?.type == moveRequest.promotedPiece }
             ?: throw IllegalStateException("Invalid move $moveRequest")
     }
@@ -177,7 +178,7 @@ data class Game(
     }
 
     private fun isWhiteKingSideCastlingStillPossible(move: Move): Boolean {
-        return isWhiteKingCastlePossible &&
+        return castling.isWhiteKingCastlePossible &&
                 (
                         (
                                 move.piece.color == BLACK &&
@@ -192,7 +193,7 @@ data class Game(
     }
 
     private fun isWhiteQueenSideCastlingStillPossible(move: Move): Boolean {
-        return isWhiteQueenCastlePossible &&
+        return castling.isWhiteQueenCastlePossible &&
                 (
                         (
                                 move.piece.color == BLACK &&
@@ -207,7 +208,7 @@ data class Game(
     }
 
     private fun isBlackKingSideCastlingStillPossible(move: Move): Boolean {
-        return isBlackKingCastlePossible &&
+        return castling.isBlackKingCastlePossible &&
                 (
                         (
                                 move.piece.color == WHITE &&
@@ -222,7 +223,7 @@ data class Game(
     }
 
     private fun isBlackQueenSideCastlingStillPossible(move: Move): Boolean {
-        return isBlackQueenCastlePossible &&
+        return castling.isBlackQueenCastlePossible &&
                 (
                         (
                                 move.piece.color == WHITE &&

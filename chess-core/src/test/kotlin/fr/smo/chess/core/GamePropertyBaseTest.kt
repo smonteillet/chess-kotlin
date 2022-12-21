@@ -82,29 +82,29 @@ class GamePropertyBaseTest {
     }
 
     private fun assertVariousThingsAboutCastling(game: Game) {
-        if (game.isBlackQueenCastlePossible) {
+        if (game.castling.isBlackQueenCastlePossible) {
             expectThat(game.chessboard.getPositionAt(A8)).isNotNull()
             expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo BLACK_ROOK
         }
-        if (game.isBlackKingCastlePossible) {
+        if (game.castling.isBlackKingCastlePossible) {
             expectThat(game.chessboard.getPositionAt(H8)).isNotNull()
             expectThat(game.chessboard.getPositionAt(H8)?.piece) isEqualTo BLACK_ROOK
         }
-        if (game.isWhiteQueenCastlePossible) {
+        if (game.castling.isWhiteQueenCastlePossible) {
             expectThat(game.chessboard.getPositionAt(A1)).isNotNull()
             expectThat(game.chessboard.getPositionAt(A1)?.piece) isEqualTo WHITE_ROOK
         }
-        if (game.isWhiteKingCastlePossible) {
+        if (game.castling.isWhiteKingCastlePossible) {
             expectThat(game.chessboard.getPositionAt(H1)).isNotNull()
             expectThat(game.chessboard.getPositionAt(H1)?.piece) isEqualTo WHITE_ROOK
         }
 
-        if (game.isWhiteKingCastlePossible || game.isWhiteQueenCastlePossible) {
+        if (game.castling.isWhiteKingCastlePossible || game.castling.isWhiteQueenCastlePossible) {
             expectThat(game.chessboard.getPositionAt(E1)).isNotNull()
             expectThat(game.chessboard.getPositionAt(E1)?.piece) isEqualTo WHITE_KING
         }
 
-        if (game.isBlackQueenCastlePossible || game.isBlackKingCastlePossible) {
+        if (game.castling.isBlackQueenCastlePossible || game.castling.isBlackKingCastlePossible) {
             expectThat(game.chessboard.getPositionAt(E8)).isNotNull()
             expectThat(game.chessboard.getPositionAt(E8)?.piece) isEqualTo BLACK_KING
         }

@@ -6,6 +6,8 @@ import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.Position
 import fr.smo.chess.core.Square.*
+import fr.smo.chess.core.notation.FEN.exportFEN
+import fr.smo.chess.core.notation.FEN.importFEN
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -128,10 +130,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo true
-                expectThat(game.isBlackKingCastlePossible) isEqualTo true
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo true
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo true
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo true
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo true
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo true
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo true
             }
 
             @Test
@@ -141,10 +143,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(game.isBlackKingCastlePossible) isEqualTo false
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo true
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo true
             }
 
             @Test
@@ -154,10 +156,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(game.isBlackKingCastlePossible) isEqualTo false
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo true
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo true
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo false
             }
 
             @Test
@@ -167,10 +169,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(game.isBlackKingCastlePossible) isEqualTo false
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo true
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo true
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo true
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo true
             }
 
             @Test
@@ -180,10 +182,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(game.isBlackKingCastlePossible) isEqualTo true
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo true
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo false
             }
 
             @Test
@@ -193,10 +195,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo true
-                expectThat(game.isBlackKingCastlePossible) isEqualTo false
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo true
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo false
             }
 
             @Test
@@ -206,10 +208,10 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.isBlackQueenCastlePossible) isEqualTo false
-                expectThat(game.isBlackKingCastlePossible) isEqualTo false
-                expectThat(game.isWhiteQueenCastlePossible) isEqualTo false
-                expectThat(game.isWhiteKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isBlackKingCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteQueenCastlePossible) isEqualTo false
+                expectThat(game.castling.isWhiteKingCastlePossible) isEqualTo false
             }
         }
 

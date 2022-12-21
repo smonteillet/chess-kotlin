@@ -1,10 +1,13 @@
 package fr.smo.chess.core.fixtures
 
-import fr.smo.chess.core.*
+import fr.smo.chess.core.Color
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
-import fr.smo.chess.core.notation.exportFEN
-import fr.smo.chess.core.notation.exportPGN
+import fr.smo.chess.core.Game
+import fr.smo.chess.core.GameFactory
+import fr.smo.chess.core.MoveRequest
+import fr.smo.chess.core.notation.FEN.exportFEN
+import fr.smo.chess.core.notation.PGN.exportPGN
 
 class GameLoop(
     private val afterMoveCallback: ((Game) -> Unit) = {},

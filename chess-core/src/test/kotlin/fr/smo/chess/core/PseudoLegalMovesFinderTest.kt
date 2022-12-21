@@ -4,8 +4,9 @@ import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.PieceType.*
+import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMoves
 import fr.smo.chess.core.Square.*
-import fr.smo.chess.core.fixtures.GameStateFixtures.Companion.givenAChessGame
+import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -15,8 +16,6 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
 internal class PseudoLegalMovesFinderTest {
-
-    private val pseudoLegalMovesFinder = PseudoLegalMovesFinder()
 
     @Nested
     inner class Pawn {
@@ -30,7 +29,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/1P6/8/1P6/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B2, WHITE_PAWN),
                     game
                 )
@@ -45,7 +44,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/1P6/1P6/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B2, WHITE_PAWN),
                     game
                 )
@@ -60,7 +59,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/1p6/1P6/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B2, WHITE_PAWN),
                     game
                 )
@@ -75,7 +74,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/1P6/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B2, WHITE_PAWN),
                     game
                 )
@@ -90,7 +89,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/1P6/8/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B3, WHITE_PAWN),
                     game
                 )
@@ -105,7 +104,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/2p5/1P6/8/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B3, WHITE_PAWN),
                     game
                 )
@@ -129,7 +128,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/p7/1P6/8/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B3, WHITE_PAWN),
                     game
                 )
@@ -152,7 +151,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/p1p5/1P6/8/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B3, WHITE_PAWN),
                     game
                 )
@@ -183,7 +182,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/2P5/8/8/8/8/8/8",
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(C7, WHITE_PAWN),
                     game
                 )
@@ -209,7 +208,7 @@ internal class PseudoLegalMovesFinderTest {
                        enPassantTargetSquare = C6
                    )
                    // when
-                   val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                   val legalMoves = getAllPseudoLegalMoves(
                        Position(D5, WHITE_PAWN),
                        game
                    )
@@ -228,7 +227,7 @@ internal class PseudoLegalMovesFinderTest {
                         enPassantTargetSquare = E6
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(D5, WHITE_PAWN),
                         game
                     )
@@ -246,7 +245,7 @@ internal class PseudoLegalMovesFinderTest {
                         fenPiecePlacementOnly = "8/8/8/2bP4/8/8/8/8"
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(D5, WHITE_PAWN),
                         game
                     )
@@ -266,7 +265,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/1p6/8/1p6/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B7, BLACK_PAWN),
                     game
                 )
@@ -281,7 +280,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/1p6/1p6/8/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B7, BLACK_PAWN),
                     game
                 )
@@ -296,7 +295,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/1p6/1P6/8/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B7, BLACK_PAWN),
                     game
                 )
@@ -311,7 +310,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/1p6/8/8/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B7, BLACK_PAWN),
                     game
                 )
@@ -326,7 +325,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/1p6/8/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B6, BLACK_PAWN),
                     game
                 )
@@ -341,7 +340,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/1p6/2P5/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B6, BLACK_PAWN),
                     game
                 )
@@ -365,7 +364,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/1p6/P7/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B6, BLACK_PAWN),
                     game
                 )
@@ -388,7 +387,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/1p6/P1P5/8/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B6, BLACK_PAWN),
                     game
                 )
@@ -419,7 +418,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/1p6/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(B2, BLACK_PAWN),
                     game
                 )
@@ -445,7 +444,7 @@ internal class PseudoLegalMovesFinderTest {
                         enPassantTargetSquare = D3,
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E4, BLACK_PAWN),
                         game
                     )
@@ -468,7 +467,7 @@ internal class PseudoLegalMovesFinderTest {
                         enPassantTargetSquare = D3,
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(C4, BLACK_PAWN),
                         game
                     )
@@ -491,7 +490,7 @@ internal class PseudoLegalMovesFinderTest {
                         enPassantTargetSquare = null,
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(D4, BLACK_PAWN),
                         game
                     )
@@ -506,7 +505,7 @@ internal class PseudoLegalMovesFinderTest {
                         enPassantTargetSquare = null,
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(D4, BLACK_PAWN),
                         game
                     )
@@ -526,7 +525,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/4N3/8/8/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(E4, WHITE_KNIGHT),
                 game
             )
@@ -543,7 +542,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/8/N7",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(A1, WHITE_KNIGHT),
                 game
             )
@@ -560,7 +559,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/6B1/4N3/8/8/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(E4, WHITE_KNIGHT),
                 game
             )
@@ -577,7 +576,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/6b1/4N3/8/8/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(E4, WHITE_KNIGHT),
                 game
             )
@@ -605,7 +604,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/1Q6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_QUEEN),
                 game
             )
@@ -625,7 +624,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/1P6/8/8/8/8/1Q6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_QUEEN),
                 game
             )
@@ -645,7 +644,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/1p6/8/8/8/8/1Q6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_QUEEN),
                 game
             )
@@ -673,7 +672,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/5p2/8/8/8/1Q6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_QUEEN),
                 game
             )
@@ -701,7 +700,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/PB6/QN6",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(A1, WHITE_QUEEN),
                 game
             )
@@ -720,7 +719,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/1R6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_ROOK),
                 game
             )
@@ -738,7 +737,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/1P6/8/8/8/8/1R6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_ROOK),
                 game
             )
@@ -756,7 +755,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/1p6/8/8/8/8/1R6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_ROOK),
                 game
             )
@@ -782,7 +781,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/PB6/RN6",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(A1, WHITE_QUEEN),
                 game
             )
@@ -801,7 +800,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/1B6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_BISHOP),
                 game
             )
@@ -819,7 +818,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/2P5/1B6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_BISHOP),
                 game
             )
@@ -836,7 +835,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/2p5/1B6/8",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(B2, WHITE_BISHOP),
                 game
             )
@@ -861,7 +860,7 @@ internal class PseudoLegalMovesFinderTest {
                 fenPiecePlacementOnly = "8/8/8/8/8/8/1P6/B7",
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(A1, WHITE_BISHOP),
                 game
             )
@@ -885,7 +884,7 @@ internal class PseudoLegalMovesFinderTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/8/8/R3K2R",
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E1, WHITE_KING),
                         game
                     )
@@ -908,7 +907,7 @@ internal class PseudoLegalMovesFinderTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/8/8/R3K2R",
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E1, WHITE_KING),
                         game
                     )
@@ -929,7 +928,7 @@ internal class PseudoLegalMovesFinderTest {
                     // Given
                     val game =  givenAChessGame()
                     // When
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E1, WHITE_KING),
                         game
                     )
@@ -942,7 +941,7 @@ internal class PseudoLegalMovesFinderTest {
                     // Given
                     val game =  givenAChessGame()
                     // When
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E1, WHITE_KING),
                         game
                     )
@@ -959,7 +958,7 @@ internal class PseudoLegalMovesFinderTest {
                         isWhiteQueenCastlePossible = true,
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E1, WHITE_KING),
                         game
                     )
@@ -976,7 +975,7 @@ internal class PseudoLegalMovesFinderTest {
                         isWhiteQueenCastlePossible = false,
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E1, WHITE_KING),
                         game
                     )
@@ -995,7 +994,7 @@ internal class PseudoLegalMovesFinderTest {
                         fenPiecePlacementOnly = "r3k2r/8/8/8/8/8/8/8",
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E8, WHITE_KING),
                         game
                     )
@@ -1018,7 +1017,7 @@ internal class PseudoLegalMovesFinderTest {
                         fenPiecePlacementOnly = "r3k2r/8/8/8/8/8/8/8",
                     )
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E8, WHITE_KING),
                         game
                     )
@@ -1039,7 +1038,7 @@ internal class PseudoLegalMovesFinderTest {
                     // given
                     val game =  givenAChessGame()
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E8, BLACK_KING),
                         game
                     )
@@ -1052,7 +1051,7 @@ internal class PseudoLegalMovesFinderTest {
                     // given
                     val game =  givenAChessGame()
                     // when
-                    val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                    val legalMoves = getAllPseudoLegalMoves(
                         Position(E8, BLACK_KING),
                         game
                     )
@@ -1070,7 +1069,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "r3k2r/8/8/8/4R3/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(E8, BLACK_KING),
                     game
                 )
@@ -1085,7 +1084,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "r3k2r/8/8/8/5R2/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(E8, BLACK_KING),
                     game
                 )
@@ -1100,7 +1099,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "r3k2r/8/8/8/6R1/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(E8, BLACK_KING),
                     game
                 )
@@ -1115,7 +1114,7 @@ internal class PseudoLegalMovesFinderTest {
                     fenPiecePlacementOnly = "r3k2r/8/8/8/6R1/8/8/8"
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(E8, BLACK_KING),
                     game
                 )
@@ -1132,7 +1131,7 @@ internal class PseudoLegalMovesFinderTest {
                     isBlackQueenCastlePossible = true,
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(E8, BLACK_KING),
                     game
                 )
@@ -1149,7 +1148,7 @@ internal class PseudoLegalMovesFinderTest {
                     isBlackQueenCastlePossible = false,
                 )
                 // when
-                val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+                val legalMoves = getAllPseudoLegalMoves(
                     Position(E8, BLACK_KING),
                     game
                 )
@@ -1169,7 +1168,7 @@ internal class PseudoLegalMovesFinderTest {
                 isWhiteKingCastlePossible = false,
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(D4, WHITE_KING),
                 game
             )
@@ -1190,7 +1189,7 @@ internal class PseudoLegalMovesFinderTest {
                 isWhiteKingCastlePossible = false,
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(D4, WHITE_KING),
                 game
             )
@@ -1219,7 +1218,7 @@ internal class PseudoLegalMovesFinderTest {
                 isWhiteKingCastlePossible = false,
             )
             // when
-            val legalMoves = pseudoLegalMovesFinder.getAllPseudoLegalMoves(
+            val legalMoves = getAllPseudoLegalMoves(
                 Position(A1, WHITE_KING),
                 game
             )

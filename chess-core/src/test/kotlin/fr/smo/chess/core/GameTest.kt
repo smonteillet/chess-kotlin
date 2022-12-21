@@ -6,7 +6,7 @@ import fr.smo.chess.core.Game.Status.*
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.PieceType.*
 import fr.smo.chess.core.Square.*
-import fr.smo.chess.core.fixtures.GameStateFixtures.Companion.givenAChessGame
+import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -490,10 +490,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(A8, A7))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
         }
 
         @Test
@@ -508,10 +508,10 @@ class GameTest {
                 isWhiteKingCastlePossible = false,
             ).applyMove(MoveRequest(D5, A8))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
         }
 
         @Test
@@ -526,10 +526,10 @@ class GameTest {
                 isWhiteKingCastlePossible = false,
             ).applyMove(MoveRequest(E5, H8))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
         }
 
         @Test
@@ -544,10 +544,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(D4, A1))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
         }
 
         @Test
@@ -562,10 +562,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(E4, H1))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
         }
 
         @Test
@@ -580,10 +580,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(H8, H7))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
         }
 
         @Test
@@ -598,10 +598,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(A1, A2))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
         }
 
         @Test
@@ -616,10 +616,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(H1, H2))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
         }
 
         @Test
@@ -634,10 +634,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(E1, E2))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
         }
 
         @Test
@@ -652,10 +652,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(E8, E7))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
         }
 
         @Test
@@ -670,10 +670,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(E1, G1))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
             expectThat(game.chessboard.getPositionAt(H1)).isNull()
             expectThat(game.chessboard.getPositionAt(E1)).isNull()
             expectThat(game.chessboard.getPositionAt(G1)?.piece) isEqualTo WHITE_KING
@@ -692,10 +692,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(E1, C1))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isTrue()
-            expectThat(game.isBlackKingCastlePossible).isTrue()
-            expectThat(game.isWhiteKingCastlePossible).isFalse()
-            expectThat(game.isWhiteQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
             expectThat(game.chessboard.getPositionAt(A1)).isNull()
             expectThat(game.chessboard.getPositionAt(E1)).isNull()
             expectThat(game.chessboard.getPositionAt(C1)?.piece) isEqualTo WHITE_KING
@@ -714,10 +714,10 @@ class GameTest {
                 isWhiteKingCastlePossible = true,
             ).applyMove(MoveRequest(E8, G8))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
             expectThat(game.chessboard.getPositionAt(H8)).isNull()
             expectThat(game.chessboard.getPositionAt(E8)).isNull()
             expectThat(game.chessboard.getPositionAt(G8)?.piece) isEqualTo BLACK_KING
@@ -736,10 +736,10 @@ class GameTest {
                 sideToMove = BLACK
             ).applyMove(MoveRequest(E8, C8))
             // Then
-            expectThat(game.isBlackQueenCastlePossible).isFalse()
-            expectThat(game.isBlackKingCastlePossible).isFalse()
-            expectThat(game.isWhiteKingCastlePossible).isTrue()
-            expectThat(game.isWhiteQueenCastlePossible).isTrue()
+            expectThat(game.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(game.castling.isBlackKingCastlePossible).isFalse()
+            expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
+            expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
             expectThat(game.chessboard.getPositionAt(A8)).isNull()
             expectThat(game.chessboard.getPositionAt(E8)).isNull()
             expectThat(game.chessboard.getPositionAt(C8)?.piece) isEqualTo BLACK_KING
