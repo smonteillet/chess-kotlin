@@ -4,11 +4,9 @@ import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.PieceType.KING
-import fr.smo.chess.core.PieceType.PAWN
 import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMoves
 import fr.smo.chess.core.PseudoLegalMovesFinder.getAllPseudoLegalMovesForPlayer
 import fr.smo.chess.core.Rank.*
-import fr.smo.chess.core.Square.*
 
 data class Game(
     val chessboard: Chessboard,
@@ -56,26 +54,16 @@ data class Game(
     }
 
     private fun buildNewGameState(moveRequest: MoveRequest): Game {
-        val fromPosition = getFromPosition(moveRequest)
-        val move: Move = extractContextualizedMove(fromPosition, moveRequest)
-        //FIXME code is not clear here
-        val newBoardPositions = applyRookMovesForCastling(
-            move,
-            applyPromotions(
-                move,
-                applyMoveOnBoard(move)
-            )
-        )
+        val move: Move = buildMove(getFromPosition(moveRequest), moveRequest)
+        val newChessboard = chessboard
+            .applyMoveOnBoard(move, enPassantTargetSquare)
+            .applyPromotions(move)
+            .applyRookMovesForCastling(move)
         return Game(
-            chessboard = Chessboard(piecesOnBoard = newBoardPositions),
+            chessboard = newChessboard,
             history = history.addMove(move),
             sideToMove = sideToMove.opposite(),
-            castling = Castling(
-                isBlackKingCastlePossible = isBlackKingSideCastlingStillPossible(move),
-                isBlackQueenCastlePossible = isBlackQueenSideCastlingStillPossible(move),
-                isWhiteQueenCastlePossible = isWhiteQueenSideCastlingStillPossible(move),
-                isWhiteKingCastlePossible = isWhiteKingSideCastlingStillPossible(move),
-            ),
+            castling = castling.updateCastlingAfterMove(move),
             enPassantTargetSquare = getEnPassantTargetSquare(move),
         )
     }
@@ -112,8 +100,6 @@ data class Game(
             null
     }
 
-
-
     private fun updateGameOutcome(): Game {
         return if (isCheckMate(sideToMove)) {
             val status = if (sideToMove == WHITE) {
@@ -132,7 +118,7 @@ data class Game(
             copy(status = Status.IN_PROGRESS)
     }
 
-    private fun extractContextualizedMove(
+    private fun buildMove(
         fromPosition: Position,
         moveRequest: MoveRequest
     ): Move {
@@ -144,114 +130,5 @@ data class Game(
     private fun getFromPosition(moveRequest: MoveRequest): Position {
         return chessboard.getPositionAt(moveRequest.from)
             ?: throw IllegalStateException("There is no piece at ${moveRequest.from}")
-    }
-
-    private fun isWhiteKingSideCastlingStillPossible(move: Move): Boolean {
-        return castling.isWhiteKingCastlePossible &&
-                (
-                        (
-                                move.piece.color == BLACK &&
-                                        ((move.capturedPiece != null && move.destination != H1) || move.capturedPiece == null)
-                                ) ||
-                                (
-                                        move.piece.color == WHITE &&
-                                                move.piece != WHITE_KING &&
-                                                (move.piece != WHITE_ROOK || move.from != H1)
-                                        )
-                        )
-    }
-
-    private fun isWhiteQueenSideCastlingStillPossible(move: Move): Boolean {
-        return castling.isWhiteQueenCastlePossible &&
-                (
-                        (
-                                move.piece.color == BLACK &&
-                                        ((move.capturedPiece != null && move.destination != A1) || move.capturedPiece == null)
-                                ) ||
-                                (
-                                        move.piece.color == WHITE &&
-                                                move.piece != WHITE_KING &&
-                                                (move.piece != WHITE_ROOK || move.from != A1)
-                                        )
-                        )
-    }
-
-    private fun isBlackKingSideCastlingStillPossible(move: Move): Boolean {
-        return castling.isBlackKingCastlePossible &&
-                (
-                        (
-                                move.piece.color == WHITE &&
-                                        ((move.capturedPiece != null && move.destination != H8) || move.capturedPiece == null)
-                                ) ||
-                                (
-                                        move.piece.color == BLACK &&
-                                                move.piece != BLACK_KING &&
-                                                (move.piece != BLACK_ROOK || move.from != H8)
-                                        )
-                        )
-    }
-
-    private fun isBlackQueenSideCastlingStillPossible(move: Move): Boolean {
-        return castling.isBlackQueenCastlePossible &&
-                (
-                        (
-                                move.piece.color == WHITE &&
-                                        ((move.capturedPiece != null && move.destination != A8) || move.capturedPiece == null)
-                                ) ||
-                                (
-                                        move.piece.color == BLACK &&
-                                                move.piece != BLACK_KING &&
-                                                (move.piece != BLACK_ROOK || move.from != A8)
-                                        )
-                        )
-    }
-
-    private fun applyMoveOnBoard(move: Move): List<Position> {
-        val opponentPawnThatHasBeenEnPassant =
-            if (move.destination == enPassantTargetSquare && move.piece.type == PAWN) {
-                if (move.piece.color == WHITE) {
-                    enPassantTargetSquare.down()!!
-                } else {
-                    enPassantTargetSquare.up()!!
-                }
-            } else {
-                null
-            }
-        return chessboard.piecesOnBoard
-            .filter { it.square != move.from }
-            .filter { it.square != move.destination }
-            .filter { it.square != opponentPawnThatHasBeenEnPassant }
-            .plus(Position(move.destination, move.piece))
-    }
-
-    private fun applyPromotions(move: Move, positions: List<Position>): List<Position> {
-        if (move.piece.type == PAWN && move.promotedTo != null) {
-            return positions
-                .filter { it.square != move.destination }
-                .plus(Position(move.destination, move.promotedTo))
-        }
-        return positions
-    }
-
-    private fun applyRookMovesForCastling(move: Move, positions: List<Position>): List<Position> {
-        if (move.isKingCastle && move.piece.color == WHITE) {
-            return positions
-                .filter { it.square != H1 }
-                .plus(Position(F1, WHITE_ROOK))
-        } else if (move.isQueenCastle && move.piece.color == WHITE) {
-            return positions
-                .filter { it.square != A1 }
-                .plus(Position(D1, WHITE_ROOK))
-        } else if (move.isKingCastle && move.piece.color == BLACK) {
-            return positions
-                .filter { it.square != H8 }
-                .plus(Position(F8, BLACK_ROOK))
-        } else if (move.isQueenCastle && move.piece.color == BLACK) {
-            return positions
-                .filter { it.square != A8 }
-                .plus(Position(D8, BLACK_ROOK))
-        } else {
-            return positions
-        }
     }
 }
