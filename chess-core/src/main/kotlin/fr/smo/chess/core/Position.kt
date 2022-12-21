@@ -1,5 +1,7 @@
 package fr.smo.chess.core
 
+import fr.smo.chess.core.Color.BLACK
+import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.RANK_2
 import fr.smo.chess.core.Rank.RANK_7
 
@@ -48,7 +50,7 @@ data class Position(val square: Square, val piece: Piece) {
 
 
     private fun getPawnPseudoLegalMoves(game: Game): List<Move> =
-        (if (piece.color == Color.WHITE) {
+        (if (piece.color == WHITE) {
             getPawnOneSquareAndTwoSquaresMoves(
                 chessboard = game.chessboard,
                 pawnPosition = this,
@@ -79,7 +81,7 @@ data class Position(val square: Square, val piece: Piece) {
     private fun getPawnEnPassantMove(game: Game): Move? {
         if (game.enPassantTargetSquare != null) {
             if (
-                piece.color == Color.WHITE &&
+                piece.color == WHITE &&
                 (
                         game.enPassantTargetSquare == square.up()?.right() ||
                                 game.enPassantTargetSquare == square.up()?.left()
@@ -92,7 +94,7 @@ data class Position(val square: Square, val piece: Piece) {
                     destination = game.enPassantTargetSquare,
                 )
             } else if (
-                piece.color == Color.BLACK &&
+                piece.color == BLACK &&
                 (
                         game.enPassantTargetSquare == square.down()?.right() ||
                                 game.enPassantTargetSquare == square.down()?.left()
@@ -171,9 +173,9 @@ data class Position(val square: Square, val piece: Piece) {
 
 
     private fun getPromotedPieces(color: Color, position: Square): List<Piece> {
-        return if (color == Color.WHITE && position.rank == Rank.RANK_8) {
+        return if (color == WHITE && position.rank == Rank.RANK_8) {
             listOf(Piece.WHITE_QUEEN, Piece.WHITE_ROOK, Piece.WHITE_BISHOP, Piece.WHITE_KNIGHT)
-        } else if (color == Color.BLACK && position.rank == Rank.RANK_1) {
+        } else if (color == BLACK && position.rank == Rank.RANK_1) {
             listOf(Piece.BLACK_QUEEN, Piece.BLACK_ROOK, Piece.BLACK_BISHOP, Piece.BLACK_KNIGHT)
         } else {
             emptyList()
@@ -247,19 +249,17 @@ data class Position(val square: Square, val piece: Piece) {
         kingCastlingPathSquares: List<Square>,
         queenCastlingPathSquares: List<Square>,
     ): List<Move> {
-        val isTherePiecesOnQueenCastlingPath = game.chessboard.piecesOnBoard
-            .any { queenCastlingPathSquares.minus(square).contains(it.square) }
-        val isTherePiecesOnKingCastlingPath = game.chessboard.piecesOnBoard
-            .any { kingCastlingPathSquares.minus(square).contains(it.square) }
-        //FIXME feels weird now
+        val isTherePiecesOnQueenCastlingPath = game.chessboard.piecesOnBoard.any { queenCastlingPathSquares.minus(square).contains(it.square) }
+        val isTherePiecesOnKingCastlingPath = game.chessboard.piecesOnBoard.any { kingCastlingPathSquares.minus(square).contains(it.square) }
+        // We don't need to check if opponent can castle from this position, we just want to check if one of its legal moves can threaten one of king
+        // castling path squares. Furthermore, considering castle here would create an infinite loop / stack overflow.
         val gameWithoutCastling = game.copy(
-            castling = game.castling.copy(
+            castling = Castling(
                 isWhiteKingCastlePossible = false,
                 isWhiteQueenCastlePossible = false,
                 isBlackQueenCastlePossible = false,
                 isBlackKingCastlePossible = false
             ),
-            enPassantTargetSquare = null,
         )
         val allPseudoLegalMovesForPlayer = game.chessboard.getAllPseudoLegalMovesForColor(piece.color.opposite(), gameWithoutCastling)
         val hasKingCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { kingCastlingPathSquares.contains(it.destination) }
@@ -286,7 +286,7 @@ data class Position(val square: Square, val piece: Piece) {
     }
 
     private fun getCastleMoveIfPossible(game: Game): List<Move> {
-        return if (game.isNextPlayCouldBeWhiteCastle) {
+        return if (game.castling.isCastlingPossibleForWhite && game.sideToMove == WHITE ) {
             getCastleMoves(
                 game = game,
                 isKingCastlePossible = game.castling.isWhiteKingCastlePossible,
@@ -296,7 +296,7 @@ data class Position(val square: Square, val piece: Piece) {
                 kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
                 queenCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
             )
-        } else if (game.isNextPlayCouldBeBlackCastle) {
+        } else if (game.castling.isCastlingPossibleForBlack && game.sideToMove == BLACK) {
             getCastleMoves(
                 game = game,
                 isKingCastlePossible = game.castling.isBlackKingCastlePossible,

@@ -1,13 +1,17 @@
 package fr.smo.chess.core
 
+import fr.smo.chess.core.Color.WHITE
+
 data class Castling(
     val isWhiteKingCastlePossible: Boolean = true,
     val isWhiteQueenCastlePossible: Boolean = true,
     val isBlackKingCastlePossible: Boolean = true,
     val isBlackQueenCastlePossible: Boolean = true,
 ) {
+    val isCastlingPossibleForWhite: Boolean = isWhiteKingCastlePossible || isWhiteQueenCastlePossible
+    val isCastlingPossibleForBlack: Boolean = isBlackKingCastlePossible || isBlackQueenCastlePossible
 
-    fun updateCastlingAfterMove(move: Move) : Castling {
+    fun updateCastlingAfterMove(move: Move): Castling {
         return Castling(
             isBlackKingCastlePossible = isBlackKingSideCastlingStillPossible(move),
             isBlackQueenCastlePossible = isBlackQueenSideCastlingStillPossible(move),
@@ -24,7 +28,7 @@ data class Castling(
                                         ((move.capturedPiece != null && move.destination != Square.H1) || move.capturedPiece == null)
                                 ) ||
                                 (
-                                        move.piece.color == Color.WHITE &&
+                                        move.piece.color == WHITE &&
                                                 move.piece != Piece.WHITE_KING &&
                                                 (move.piece != Piece.WHITE_ROOK || move.from != Square.H1)
                                         )
@@ -39,7 +43,7 @@ data class Castling(
                                         ((move.capturedPiece != null && move.destination != Square.A1) || move.capturedPiece == null)
                                 ) ||
                                 (
-                                        move.piece.color == Color.WHITE &&
+                                        move.piece.color == WHITE &&
                                                 move.piece != Piece.WHITE_KING &&
                                                 (move.piece != Piece.WHITE_ROOK || move.from != Square.A1)
                                         )
@@ -50,7 +54,7 @@ data class Castling(
         return isBlackKingCastlePossible &&
                 (
                         (
-                                move.piece.color == Color.WHITE &&
+                                move.piece.color == WHITE &&
                                         ((move.capturedPiece != null && move.destination != Square.H8) || move.capturedPiece == null)
                                 ) ||
                                 (
@@ -65,7 +69,7 @@ data class Castling(
         return isBlackQueenCastlePossible &&
                 (
                         (
-                                move.piece.color == Color.WHITE &&
+                                move.piece.color == WHITE &&
                                         ((move.capturedPiece != null && move.destination != Square.A8) || move.capturedPiece == null)
                                 ) ||
                                 (

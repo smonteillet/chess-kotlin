@@ -1,8 +1,8 @@
 package fr.smo.chess.core
 
-import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
-import fr.smo.chess.core.Piece.*
+import fr.smo.chess.core.Piece.BLACK_PAWN
+import fr.smo.chess.core.Piece.WHITE_PAWN
 import fr.smo.chess.core.PieceType.KING
 import fr.smo.chess.core.Rank.*
 
@@ -14,14 +14,6 @@ data class Game(
     val enPassantTargetSquare: Square? = null,
     val status: Status = Status.NOT_STARTED_YET,
 ) {
-    val isNextPlayCouldBeWhiteCastle: Boolean = sideToMove == WHITE &&
-            castling.isWhiteKingCastlePossible &&
-            castling.isWhiteQueenCastlePossible
-
-    val isNextPlayCouldBeBlackCastle: Boolean = sideToMove == BLACK &&
-            castling.isBlackKingCastlePossible &&
-            castling.isBlackQueenCastlePossible
-
     val gameIsOver: Boolean = status == Status.BLACK_WIN || status == Status.WHITE_WIN || status == Status.DRAW
 
     enum class Status {
