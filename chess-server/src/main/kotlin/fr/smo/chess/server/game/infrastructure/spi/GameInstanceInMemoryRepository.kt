@@ -25,4 +25,8 @@ class GameInstanceInMemoryRepository : GameInstanceRepository {
     override fun findOnlyChessGame() : GameInstance {
         return gameInstanceCache.values.first()
     }
+
+    override fun remove(updatedGame: GameInstance) : GameInstance {
+        return gameInstanceCache.remove(updatedGame.gameId)!!
+    }
 }

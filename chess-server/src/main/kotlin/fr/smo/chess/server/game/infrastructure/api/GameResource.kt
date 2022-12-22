@@ -26,7 +26,7 @@ class GameResource(
     @PostMapping("/create/{playerId}")
     fun createGame(@PathVariable playerId: String): GameId {
        return gameInstanceService
-            .createChessGame()
+            .createStandardChessGame()
             .let { gameInstanceService.registerNewPlayer(it.gameId, PlayerId.of(playerId)) }
             .gameId
     }
@@ -36,35 +36,32 @@ class GameResource(
     fun joinGame(@PathVariable gameId: GameId, @PathVariable playerId: String) {
         gameInstanceService.registerNewPlayer(gameId, PlayerId.of(playerId))
         val chessGame = gameInstanceService.startGame(gameId)
-        simpMessagingTemplate.convertAndSend(
+        simpMessagingTemplate.convertAndSend( // fixme this should be handle in a clean architecture way inside the applyMove method
             "/move/receive",
-            ChessGameWebSocketResponse(
-                renderedChessboard = GameRenderer.consoleRender(chessGame.game),
-                playerIdToPlay = chessGame.players[Color.WHITE]!!
+            GameInstanceResponseDTO(
+                gameId = gameId,
+                renderedGame = GameRenderer.consoleRender(chessGame.game),
+                playerIdToMove = chessGame.players[Color.WHITE]!!
             )
         )
     }
 
     @MessageMapping("/send")
     @SendTo("/move/receive")
-    fun sendMove(@Payload request: ChessGameWebSocketRequest): ChessGameWebSocketResponse {
+    fun sendMove(@Payload request: GameInstanceRequestDTO): GameInstanceResponseDTO
+ {
         return gameInstanceService.applyMove(
-            MoveRequest(
-                from = Square.Companion.at(request.from),
-                destination = Square.Companion.at(request.destination),
+            gameId = request.gameId,
+            moveRequest = MoveRequest(
+                from = Square.Companion.at(request.moveFrom),
+                destination = Square.Companion.at(request.moveDestination),
             )
-        ).let { chessGame -> // fixme this should be handle in a clean architecture way inside the applyMove method
-            ChessGameWebSocketResponse(
-                renderedChessboard = GameRenderer.consoleRender(chessGame.game),
-                playerIdToPlay = chessGame.players[chessGame.game.sideToMove]!!
+        ).let { chessGame ->
+            GameInstanceResponseDTO(
+                gameId = chessGame.gameId,
+                renderedGame = GameRenderer.consoleRender(chessGame.game),
+                playerIdToMove = chessGame.players[chessGame.game.sideToMove]!!
             )
         }
     }
-
-    data class ChessGameWebSocketRequest(val from: String, val destination: String)
-    data class ChessGameWebSocketResponse(
-        val renderedChessboard: String,
-        val playerIdToPlay : PlayerId,
-    )
-
 }

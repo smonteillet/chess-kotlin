@@ -12,7 +12,7 @@ class GameInstanceService(
     private val gameInstanceRepository: GameInstanceRepository,
 ) {
 
-    fun createChessGame(): GameInstance =
+    fun createStandardChessGame(): GameInstance =
         gameInstanceRepository.save(GameInstance(
             gameId = GameId.create(),
             game = GameFactory.createStandardGame(),
@@ -20,21 +20,27 @@ class GameInstanceService(
         ))
 
     fun registerNewPlayer(gameId: GameId, playerId: PlayerId): GameInstance =
-        gameInstanceRepository.findById(gameId).let { currentGameInstance ->
-            currentGameInstance.registerNewPlayer(playerId)
+        gameInstanceRepository.findById(gameId).let { gameInstance ->
+            gameInstance.registerNewPlayer(playerId)
                 .also { gameInstanceRepository.save(it) }
         }
 
     fun startGame(gameId: GameId): GameInstance =
-        gameInstanceRepository.findById(gameId).let { currentChessGame ->
-            currentChessGame.copy(
-                game = currentChessGame.game.copy(status = Game.Status.IN_PROGRESS)
+        gameInstanceRepository.findById(gameId).let { gameInstance ->
+            gameInstance.copy(
+                game = gameInstance.game.copy(status = Game.Status.IN_PROGRESS)
             ).also { gameInstanceRepository.save(it) }
         }
 
-    fun applyMove(moveRequest: MoveRequest): GameInstance =
+    fun applyMove(gameId : GameId, moveRequest: MoveRequest): GameInstance =
         gameInstanceRepository
-            .findOnlyChessGame() // FIXME, we shall have gameId to find GameInstance here
+            .findById(gameId)
             .applyMove(moveRequest)
-            .also { gameInstanceRepository.save(it) } //FIXME handle game over
+            .also { updatedGame ->
+                if (updatedGame.game.gameIsOver)
+                    gameInstanceRepository.remove(updatedGame)
+                else
+                    gameInstanceRepository.save(updatedGame)
+
+            }
 }
