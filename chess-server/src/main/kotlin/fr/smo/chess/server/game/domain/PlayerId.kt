@@ -4,7 +4,7 @@ class PlayerId(
     val value : String
 ) {
     companion object {
-        fun create() = GameId(System.currentTimeMillis().toString())
+        fun create() = PlayerId(System.currentTimeMillis().toString())
         fun of(value : String) = PlayerId(value)
     }
 }

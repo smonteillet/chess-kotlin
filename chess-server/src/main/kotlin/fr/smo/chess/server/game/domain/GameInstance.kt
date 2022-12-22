@@ -12,19 +12,14 @@ data class GameInstance(
     val callbackAfterMove: (Game) -> Unit = {},
 ) {
 
-
-    fun registerNewPlayer(id: PlayerId): GameInstance {
-        val color = if (players.size == 1) {
-            players.keys.iterator().next().opposite()
-        } else if (players.isEmpty()) {
-            if (Random().nextInt() % 2 == 0) Color.WHITE else Color.BLACK
-        } else {
-            throw IllegalStateException("Could not register more than 2 players on a game")
+    fun registerNewPlayer(playerId: PlayerId): GameInstance {
+        val assignedColor = when (players.size) {
+            0 -> if (Random().nextInt() % 2 == 0) Color.WHITE else Color.BLACK
+            1 -> players.keys.first().opposite()
+            else -> throw IllegalStateException("Could not register more than 2 players on a game")
         }
-        val newPlayers = players.toMutableMap()
-        newPlayers[color] = id
         return this.copy(
-            players = newPlayers
+            players = players.plus(assignedColor to playerId)
         )
     }
 

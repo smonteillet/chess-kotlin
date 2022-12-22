@@ -4,12 +4,10 @@ import fr.smo.chess.core.Game
 import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.MoveRequest
 import fr.smo.chess.core.renderer.GameRenderer
-import org.springframework.stereotype.Component
 
-//FIXME remove spring annotation
-@Component
 class GameInstanceService(
     private val gameInstanceRepository: GameInstanceRepository,
+    private val updatedGameNotifier: UpdatedGameNotifier,
 ) {
 
     fun createStandardChessGame(): GameInstance =
@@ -29,7 +27,10 @@ class GameInstanceService(
         gameInstanceRepository.findById(gameId).let { gameInstance ->
             gameInstance.copy(
                 game = gameInstance.game.copy(status = Game.Status.IN_PROGRESS)
-            ).also { gameInstanceRepository.save(it) }
+            ).also {
+                gameInstanceRepository.save(it)
+                updatedGameNotifier.sendUpdatedGameToPlayers(it)
+            }
         }
 
     fun applyMove(gameId : GameId, moveRequest: MoveRequest): GameInstance =
@@ -37,10 +38,10 @@ class GameInstanceService(
             .findById(gameId)
             .applyMove(moveRequest)
             .also { updatedGame ->
+                updatedGameNotifier.sendUpdatedGameToPlayers(updatedGame)
                 if (updatedGame.game.gameIsOver)
                     gameInstanceRepository.remove(updatedGame)
                 else
                     gameInstanceRepository.save(updatedGame)
-
             }
 }

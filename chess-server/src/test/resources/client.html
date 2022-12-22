@@ -1,11 +1,13 @@
 <html>
 <head>
-    <title>Chat WebSocket</title>
+    <title>Chessica</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
     <script type="text/javascript">
         let stompClient = null;
         let playerId = null;
+        let gameId = null;
+        let subscription = null;
 
         function setConnected(connected) {
             document.getElementById('preGame').style.visibility = !connected ? 'visible' : 'hidden';
@@ -13,7 +15,7 @@
             document.getElementById('response').innerHTML = '';
         }
 
-        function connect() {
+        function connect(gameIdToSubscribeTo, onConnectCallback = () => {}) {
             stompClient = new StompJs.Client({
                 brokerURL: 'ws://localhost:8080/chessWS',
                 reconnectDelay: 5000,
@@ -22,11 +24,13 @@
             });
 
             stompClient.onConnect = function (frame) {
-                console.log('Connected')
-                const subscription = stompClient.subscribe('/move/receive', function (messageOutput) {
-                    console.log('received : ' + messageOutput.body)
+                console.log('Connected to WS')
+                console.log('Subscribe to /update')
+                subscription = stompClient.subscribe('/update', function (messageOutput) {
+                    console.log('received new game state: ' + messageOutput.body)
                     handleReceivedData(JSON.parse(messageOutput.body));
                 });
+                onConnectCallback()
             };
 
             stompClient.onStompError = function (frame) {
@@ -51,10 +55,12 @@
             const from = document.getElementById('fromText').value;
             const to = document.getElementById('destinationText').value;
             stompClient.publish({
-                destination: '/app/send',
+                destination: '/game/send',
                 body: JSON.stringify({
-                    from: from,
-                    destination: to
+                    moveFrom: from,
+                    moveDestination: to,
+                    playerId: playerId,
+                    gameId: gameId,
                 }),
                 skipContentLengthHeader: true,
             });
@@ -71,58 +77,63 @@
             p.style.wordWrap = 'break-word';
             let tt = document.createElement('tt')
             tt.style.fontSize = '30'
-            tt.appendChild(document.createTextNode(response.renderedChessboard));
+            tt.appendChild(document.createTextNode(response.renderedGame));
             p.appendChild(tt)
             responseElement.appendChild(p);
 
-            if (response.playerIdToPlay.value == playerId) {
+            if (response.playerIdToMove.value == playerId) {
                 document.getElementById('sendMove').disabled = false
             } else {
                 document.getElementById('sendMove').disabled = true
             }
+            gameId = response.gameId.value
         }
 
         function createGame() {
             playerId = document.getElementById('playerId').value
-            connect()
+            console.log('Sending POST to /game/create ... ')
             fetch('http://localhost:8080/game/create/' + playerId,
                 {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin':'*'
+                        'Access-Control-Allow-Origin': '*'
                     },
                     method: 'POST',
                 })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log('created gameId : ' + data.value)
+                    gameId = data.value
+                    console.log('Sending POST to /game/create OK. Game Id : ' + data.value)
+                    connect(gameId)
                 })
+
         }
 
         function joinGame() {
             playerId = document.getElementById('playerId').value
-            let gameId = document.getElementById('gameId').value
-            connect()
-            fetch('http://localhost:8080/game/join/' + gameId + '/' + playerId,
-                {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin':'*'
-                    },
-                    method: 'POST',
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log('joined game')
-                })
+            gameId = document.getElementById('gameId').value
+            connect(
+                gameId,
+                () => fetch('http://localhost:8080/game/join/' + gameId + '/' + playerId,
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        },
+                        method: 'POST',
+                    })
+                    .then((_) => {
+                        console.log('joined game')
+                    })
+            )
         }
 
 
     </script>
 </head>
-<body onload="disconnect()">
+<body>
 <div>
     <div id="preGame">
         <div>

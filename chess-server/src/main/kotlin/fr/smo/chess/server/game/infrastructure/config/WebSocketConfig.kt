@@ -14,8 +14,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 open class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
-        config.enableSimpleBroker("/move/receive")
-        config.setApplicationDestinationPrefixes("/app")
+        config.enableSimpleBroker("/update")
+        config.setApplicationDestinationPrefixes("/game")
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
