@@ -15,7 +15,7 @@ class UpdatedGameWebSocketNotifier(
     override fun sendUpdatedGameToPlayers(gameInstance: GameInstance) {
         println("Broadcasting new game state for ${gameInstance.gameId}")
         simpMessagingTemplate.convertAndSend(
-            "/update",
+            "/update/${gameInstance.gameId.value}",
             GameInstanceResponseDTO(
                 gameId = gameInstance.gameId,
                 renderedGame = GameRenderer.consoleRender(gameInstance.game),

@@ -25,8 +25,8 @@
 
             stompClient.onConnect = function (frame) {
                 console.log('Connected to WS')
-                console.log('Subscribe to /update')
-                subscription = stompClient.subscribe('/update', function (messageOutput) {
+                console.log('Subscribe to /update/' + gameId)
+                subscription = stompClient.subscribe('/update/' + gameId, function (messageOutput) {
                     console.log('received new game state: ' + messageOutput.body)
                     handleReceivedData(JSON.parse(messageOutput.body));
                 });
@@ -55,7 +55,7 @@
             const from = document.getElementById('fromText').value;
             const to = document.getElementById('destinationText').value;
             stompClient.publish({
-                destination: '/game/send',
+                destination: `/game/send/${gameId}`,
                 body: JSON.stringify({
                     moveFrom: from,
                     moveDestination: to,

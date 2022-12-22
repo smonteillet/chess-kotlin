@@ -3,8 +3,10 @@ package fr.smo.chess.server.game.infrastructure.api
 import fr.smo.chess.core.MoveRequest
 import fr.smo.chess.core.Square
 import fr.smo.chess.server.game.domain.GameId
+import fr.smo.chess.server.game.domain.GameInstance
 import fr.smo.chess.server.game.domain.GameInstanceService
 import fr.smo.chess.server.game.domain.PlayerId
+import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,11 +34,10 @@ class GameResource(
         return gameInstanceService.startGame(gameId).gameId
     }
 
-    @MessageMapping("/send")
-//    @SendTo("/update")
-    fun sendMove(@Payload request: GameInstanceRequestDTO) {
-        gameInstanceService.applyMove(
-            gameId = request.gameId,
+    @MessageMapping("/send/{gameId}")
+    fun sendMove(@DestinationVariable gameId : String, @Payload request: GameInstanceRequestDTO) : GameInstance {
+        return gameInstanceService.applyMove(
+            gameId = GameId(gameId),
             moveRequest = MoveRequest(
                 from = Square.Companion.at(request.moveFrom),
                 destination = Square.Companion.at(request.moveDestination),
