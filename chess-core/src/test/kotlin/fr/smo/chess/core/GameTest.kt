@@ -92,6 +92,17 @@ class GameTest {
             // Then
             expectThat(game.status) isEqualTo BLACK_WIN
         }
+
+        @Test
+        fun `should mark as won after a pinned pawn checkmate`() {
+            // Given When
+            val game = givenAChessGame(
+                fenPiecePlacementOnly = "7k/6p1/7r/8/2Q4R/2B5/8/8", sideToMove = WHITE
+            ).applyMove(MoveRequest(H4, H6))
+            // Then
+            expectThat(game.status) isEqualTo WHITE_WIN
+
+        }
     }
 
     @Nested
