@@ -1,10 +1,10 @@
 import React from 'react';
-import Chessboard from './components/Chessboard';
+import GamePage from './page/GamePage';
 
 function App() {
   return (
     <div>
-        <Chessboard></Chessboard>
+        <GamePage></GamePage>
     </div>
   );
 }
