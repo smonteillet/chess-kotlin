@@ -1,8 +1,5 @@
 package fr.smo.chess.core
 
-import fr.smo.chess.core.Color.BLACK
-import fr.smo.chess.core.Color.WHITE
-
 data class Castling(
     val isWhiteKingCastlePossible: Boolean = true,
     val isWhiteQueenCastlePossible: Boolean = true,
@@ -22,38 +19,19 @@ data class Castling(
     }
 
     private fun isWhiteKingSideCastlingStillPossible(move: Move): Boolean {
-        return isWhiteKingCastlePossible &&
-                if (move.piece.color == BLACK) {
-                    ((move.capturedPiece != null && move.destination != Square.H1) || move.capturedPiece == null)
-                } else {
-                    move.piece != Piece.WHITE_KING && (move.piece != Piece.WHITE_ROOK || move.from != Square.H1)
-                }
+        return isWhiteKingCastlePossible && move.piece != Piece.WHITE_KING && move.from != Square.H1 && move.destination != Square.H1
     }
 
     private fun isWhiteQueenSideCastlingStillPossible(move: Move): Boolean {
-        return isWhiteQueenCastlePossible &&
-                if (move.piece.color == BLACK) {
-                    ((move.capturedPiece != null && move.destination != Square.A1) || move.capturedPiece == null)
-                } else {
-                    move.piece != Piece.WHITE_KING && (move.piece != Piece.WHITE_ROOK || move.from != Square.A1)
-                }
+        return isWhiteQueenCastlePossible && move.piece != Piece.WHITE_KING && move.from != Square.A1 && move.destination != Square.A1
     }
 
     private fun isBlackKingSideCastlingStillPossible(move: Move): Boolean {
-        return isBlackKingCastlePossible &&
-                if (move.piece.color == WHITE) {
-                    ((move.capturedPiece != null && move.destination != Square.H8) || move.capturedPiece == null)
-                } else {
-                    move.piece != Piece.BLACK_KING && (move.piece != Piece.BLACK_ROOK || move.from != Square.H8)
-                }
+        return isBlackKingCastlePossible && move.piece != Piece.BLACK_KING && move.from != Square.H8 && move.destination != Square.H8
     }
 
     private fun isBlackQueenSideCastlingStillPossible(move: Move): Boolean {
-        return isBlackQueenCastlePossible &&
-                if (move.piece.color == WHITE) {
-                    ((move.capturedPiece != null && move.destination != Square.A8) || move.capturedPiece == null)
-                } else {
-                    move.piece != Piece.BLACK_KING && (move.piece != Piece.BLACK_ROOK || move.from != Square.A8)
-                }
+        return isBlackQueenCastlePossible && move.piece != Piece.BLACK_KING && move.from != Square.A8 && move.destination != Square.A8
     }
+
 }
