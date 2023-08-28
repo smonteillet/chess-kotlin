@@ -1,12 +1,13 @@
 import styled from 'styled-components';
+import Theme from './Theme';
 
 const Button = styled.button`
   width: 100%;
   font: inherit;
   padding: 0.5rem 1.5rem;
-  border: 1px solid #8b005d;
+  border: 1px solid ${Theme.darkSquare};
   color: white;
-  background: #8b005d;
+  background: ${Theme.darkSquare};
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
   cursor: pointer;
 
@@ -20,8 +21,8 @@ const Button = styled.button`
 
   &:hover,
   &:active {
-    background: #ac0e77;
-    border-color: #ac0e77;
+    background: ${Theme.darkSquare};
+    border-color: ${Theme.darkSquare};
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
   }
 `;

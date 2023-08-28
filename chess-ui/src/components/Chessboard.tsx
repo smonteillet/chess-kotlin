@@ -11,7 +11,6 @@ const ChessboardContainer = styled.div`
   width: ${_ => `${Size.squareSize * 8}px`};
   height: ${_ => `${Size.squareSize * 8}px`};
   display: grid;
-  margin: 0 auto;
   grid-template-columns: ${_ => `repeat(8, ${Size.squareSize}px)`};
   grid-template-rows: ${_ => `repeat(8, ${Size.squareSize}px)`};
 `
@@ -31,7 +30,7 @@ const Chessboard: React.FC<ChessboardProps> = (props) => {
             ))}
             <PiecesContainer>
                 {props.state.positions.map(position =>
-                    <PieceComponent position={{square: position.square, piece: position.piece, color: position.color}}></PieceComponent>
+                    <PieceComponent position={{square: position.square, piece: position.piece, color: position.color}} key={position.square}></PieceComponent>
                 )}
             </PiecesContainer>
         </ChessboardContainer>

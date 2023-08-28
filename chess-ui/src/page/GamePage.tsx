@@ -1,9 +1,23 @@
 import Chessboard from '../components/Chessboard';
 import {GameState} from '../domain/GameState';
+import styled from 'styled-components';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
+import {useParams} from 'react-router-dom';
+import {WebSocketClient} from '../service/WebSocketClient';
+import {useEffect, useState} from 'react';
+
+const GamePageContainer = styled.div`
+  margin: 20px 20px;
+`
+
+const MoveFormContainer = styled.div`
+  margin-top: 20px;
+`
 
 const GamePage = () => {
-    const state : GameState = {
-        positions : [
+    const [gameState, setGameState]  = useState<GameState>({
+        positions: [
             {square: 'a8', piece: 'rook', color: 'black'},
             {square: 'b8', piece: 'knight', color: 'black'},
             {square: 'c8', piece: 'bishop', color: 'black'},
@@ -37,7 +51,31 @@ const GamePage = () => {
             {square: 'g2', piece: 'pawn', color: 'white'},
             {square: 'h2', piece: 'pawn', color: 'white'},
         ]
+    })
+
+    const receivedData = (data : any) => {
+
     }
-    return <Chessboard state={state}></Chessboard>
+
+    const [webSocket, setWebSocket] = useState<WebSocketClient>()
+
+
+    const { gameId } = useParams();
+    useEffect(() => {
+        const webSocketClient = new WebSocketClient(
+            'ws://localhost:8080/chessWS', `/update/${gameId}`, `/game/send/${gameId}`, receivedData
+        );
+        webSocketClient.connect()
+        setWebSocket(webSocketClient)
+    }, [])
+
+    return <GamePageContainer>
+        <Chessboard state={gameState}></Chessboard>
+        <MoveFormContainer>
+            <Input type="text"  placeholder="from"/>
+            <Input type="text" placeholder="destination"/>
+            <Button>Send Move</Button>
+        </MoveFormContainer>
+    </GamePageContainer>
 }
 export default GamePage

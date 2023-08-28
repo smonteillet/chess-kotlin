@@ -52,8 +52,6 @@ const H1SquareRankIndicator = styled.div<SquareComponentProps>`
   width: 50%;
 `
 
-
-
 const isDarkSquare = (square : Square) => {
     const rankIndex = ranks.indexOf(parseInt(square[1]) as Rank)
     const fileIndex = files.indexOf(square[0] as File)
