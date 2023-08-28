@@ -14,7 +14,10 @@ data class Game(
     val enPassantTargetSquare: Square? = null,
     val status: Status = Status.NOT_STARTED_YET,
 ) {
-    val gameIsOver: Boolean = status == Status.BLACK_WIN || status == Status.WHITE_WIN || status == Status.DRAW
+    val gameIsOver: Boolean = when (status) {
+        Status.BLACK_WIN, Status.WHITE_WIN, Status.DRAW  -> true
+        else -> false
+    }
 
     enum class Status {
         NOT_STARTED_YET,
