@@ -18,7 +18,7 @@ class GameLoop(
         val players = mapOf(WHITE to player1, BLACK to player2)
         player1.registerColor(WHITE)
         player2.registerColor(BLACK)
-        while (!game.gameIsOver) {
+        while (!game.status.gameIsOver) {
             val moveRequest = players[game.sideToMove]!!.nextPlay(game)
             game = game.applyMove(moveRequest)
             afterMoveCallback.invoke(game)

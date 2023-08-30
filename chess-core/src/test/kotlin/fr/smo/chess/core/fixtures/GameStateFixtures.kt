@@ -21,7 +21,7 @@ object GameStateFixtures {
         isBlackKingCastlePossible: Boolean = false,
         isBlackQueenCastlePossible: Boolean = false,
         enPassantTargetSquare: Square? = null,
-        status: Game.Status = Game.Status.IN_PROGRESS,
+        status: Status = Status.STARTED,
         history: History = History(),
     ): Game {
         return Game(

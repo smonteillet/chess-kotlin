@@ -2,10 +2,10 @@ package fr.smo.chess.core
 
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
-import fr.smo.chess.core.Game.Status.*
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.PieceType.*
 import fr.smo.chess.core.Square.*
+import fr.smo.chess.core.Status.*
 import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/3n4/8/8/K7", sideToMove = BLACK).applyMove(MoveCommand(D4, C2))
             // Then
-            expectThat(game.gameIsOver).isFalse()
+            expectThat(game.status.gameIsOver).isFalse()
         }
 
         @Test

@@ -26,9 +26,9 @@ object PGN {
             return@mapIndexed indexStr + moveToPgn(move)
         }.joinToString(" ")
         val pgnOutcome = when (game.status) {
-            Game.Status.BLACK_WIN -> BLACK_WIN_PGN
-            Game.Status.WHITE_WIN -> WHITE_WIN_PGN
-            Game.Status.DRAW -> DRAWN_PGN
+            Status.BLACK_WIN -> BLACK_WIN_PGN
+            Status.WHITE_WIN -> WHITE_WIN_PGN
+            Status.DRAW -> DRAWN_PGN
             else -> ""
         }
         return pgnHistory + pgnOutcome
@@ -96,10 +96,10 @@ object PGN {
 
     private fun importGameEndIfNecessary(game: Game, pgnMove: String): Game? =
         when (pgnMove) {
-            DRAWN_PGN -> game.copy(status = Game.Status.DRAW)
-            BLACK_WIN_PGN -> game.copy(status = Game.Status.BLACK_WIN)
-            WHITE_WIN_PGN -> game.copy(status = Game.Status.WHITE_WIN)
-            UNKNOWN_RESULT_PGN -> game.copy(status = Game.Status.UNKNOWN_RESULT)
+            DRAWN_PGN -> game.copy(status = Status.DRAW)
+            BLACK_WIN_PGN -> game.copy(status = Status.BLACK_WIN)
+            WHITE_WIN_PGN -> game.copy(status = Status.WHITE_WIN)
+            UNKNOWN_RESULT_PGN -> game.copy(status = Status.UNKNOWN_RESULT)
             else -> null
         }
 

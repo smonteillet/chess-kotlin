@@ -3,6 +3,7 @@ package fr.smo.chess.server.game.domain
 import fr.smo.chess.core.Game
 import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.MoveCommand
+import fr.smo.chess.core.Status
 import fr.smo.chess.core.renderer.GameRenderer
 
 class GameInstanceService(
@@ -26,7 +27,7 @@ class GameInstanceService(
     fun startGame(gameId: GameId): GameInstance =
         gameInstanceRepository.findById(gameId).let { gameInstance ->
             gameInstance.copy(
-                game = gameInstance.game.copy(status = Game.Status.IN_PROGRESS)
+                game = gameInstance.game.copy(status = Status.STARTED)
             ).also {
                 gameInstanceRepository.save(it)
                 updatedGameNotifier.sendUpdatedGameToPlayers(it)
@@ -39,7 +40,7 @@ class GameInstanceService(
             .applyMove(moveCommand)
             .also { updatedGame ->
                 updatedGameNotifier.sendUpdatedGameToPlayers(updatedGame)
-                if (updatedGame.game.gameIsOver)
+                if (updatedGame.game.status.gameIsOver)
                     gameInstanceRepository.remove(updatedGame)
                 else
                     gameInstanceRepository.save(updatedGame)

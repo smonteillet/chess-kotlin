@@ -5,7 +5,6 @@ import fr.smo.chess.core.Piece.BLACK_PAWN
 import fr.smo.chess.core.Piece.WHITE_PAWN
 import fr.smo.chess.core.PieceType.KING
 import fr.smo.chess.core.Rank.*
-import fr.smo.chess.core.notation.PGN
 
 data class Game(
     val chessboard: Chessboard,
@@ -13,22 +12,8 @@ data class Game(
     val sideToMove: Color = WHITE,
     val castling: Castling,
     val enPassantTargetSquare: Square? = null,
-    val status: Status = Status.NOT_STARTED_YET,
+    val status: Status = Status.CREATED,
 ) {
-    val gameIsOver: Boolean = when (status) {
-        Status.BLACK_WIN, Status.WHITE_WIN, Status.DRAW, Status.UNKNOWN_RESULT  -> true
-        else -> false
-    }
-
-    enum class Status {
-        NOT_STARTED_YET,
-        IN_PROGRESS,
-        BLACK_WIN,
-        WHITE_WIN,
-        DRAW,
-        UNKNOWN_RESULT,
-    }
-
     fun applyMove(moveCommand: MoveCommand): Game =
         buildNewGameState(moveCommand).let{ updatedGame ->
             updatedGame.checkIfCurrentColorKingIsCheckedAfterCurrentColorMove(moveCommand)
@@ -109,7 +94,7 @@ data class Game(
         } else if (isStaleMate(sideToMove)) {
             copy(status = Status.DRAW)
         } else
-            copy(status = Status.IN_PROGRESS)
+            copy(status = Status.STARTED)
     }
 
     private fun buildMove(

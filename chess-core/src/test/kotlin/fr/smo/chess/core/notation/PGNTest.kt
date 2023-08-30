@@ -259,8 +259,8 @@ class PGNTest {
                     36.e6 d3 37.e7 Re8 38.Qd7 Qg3+ 39.Rg2 Qe3+ 40.Kh2 Rxe7 41.Qd8 Rxf4 42.Rg3 Rf2+
                     43.Rg2 Qf4+  *
                 """.trimIndent())
-            expectThat(importedGame.status) isEqualTo Game.Status.UNKNOWN_RESULT
-            expectThat(importedGame.gameIsOver).isTrue()
+            expectThat(importedGame.status) isEqualTo Status.UNKNOWN_RESULT
+            expectThat(importedGame.status.gameIsOver).isTrue()
         }
 
         @Nested
