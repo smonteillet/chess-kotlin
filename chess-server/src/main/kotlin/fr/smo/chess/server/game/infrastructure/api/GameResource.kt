@@ -1,6 +1,6 @@
 package fr.smo.chess.server.game.infrastructure.api
 
-import fr.smo.chess.core.MoveRequest
+import fr.smo.chess.core.MoveCommand
 import fr.smo.chess.core.Square
 import fr.smo.chess.server.game.domain.GameId
 import fr.smo.chess.server.game.domain.GameInstance
@@ -38,7 +38,7 @@ class GameResource(
     fun sendMove(@DestinationVariable gameId : String, @Payload request: GameInstanceRequestDTO) : GameInstance {
         return gameInstanceService.applyMove(
             gameId = GameId(gameId),
-            moveRequest = MoveRequest(
+            moveCommand = MoveCommand(
                 origin = Square.Companion.at(request.moveFrom),
                 destination = Square.Companion.at(request.moveDestination),
             )

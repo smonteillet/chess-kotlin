@@ -5,7 +5,7 @@ import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Game
 import fr.smo.chess.core.GameFactory
-import fr.smo.chess.core.MoveRequest
+import fr.smo.chess.core.MoveCommand
 import fr.smo.chess.core.notation.FEN.exportFEN
 import fr.smo.chess.core.notation.PGN.exportPGN
 
@@ -36,6 +36,6 @@ class GameLoop(
 }
 
 interface Player {
-    fun nextPlay(game: Game) : MoveRequest
+    fun nextPlay(game: Game) : MoveCommand
     fun registerColor(colorForTheGame : Color)
 }

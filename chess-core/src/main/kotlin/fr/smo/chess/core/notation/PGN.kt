@@ -54,7 +54,7 @@ object PGN {
         val pgnMove = PgnMove.parse(pgnMoveStr, color)
         val originSquare = extractOriginSquare(game, pgnMove)
         return game.applyMove(
-            moveRequest = MoveRequest(
+            moveCommand = MoveCommand(
                 origin = originSquare,
                 destination = pgnMove.destination,
                 promotedPiece = pgnMove.promotedPiece,
@@ -80,7 +80,7 @@ object PGN {
                 var isGoodMove = true
                 try {
                     game.applyMove(
-                        MoveRequest(
+                        MoveCommand(
                             origin = it.origin,
                             destination = it.destination,
                             promotedPiece = it.promotedTo?.type,
@@ -121,7 +121,7 @@ object PGN {
                 .firstOrNull { castleMoveChecker(it) }
                 ?: throw IllegalArgumentException("cannot find perform castle move $pgnMove for ${game.sideToMove}")
             return game.applyMove(
-                moveRequest = MoveRequest(
+                moveCommand = MoveCommand(
                     origin = castleMove.origin,
                     destination = castleMove.destination,
                     promotedPiece = null,

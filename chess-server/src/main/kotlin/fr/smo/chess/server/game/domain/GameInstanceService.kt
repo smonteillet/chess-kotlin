@@ -2,7 +2,7 @@ package fr.smo.chess.server.game.domain
 
 import fr.smo.chess.core.Game
 import fr.smo.chess.core.GameFactory
-import fr.smo.chess.core.MoveRequest
+import fr.smo.chess.core.MoveCommand
 import fr.smo.chess.core.renderer.GameRenderer
 
 class GameInstanceService(
@@ -33,10 +33,10 @@ class GameInstanceService(
             }
         }
 
-    fun applyMove(gameId : GameId, moveRequest: MoveRequest): GameInstance =
+    fun applyMove(gameId : GameId, moveCommand: MoveCommand): GameInstance =
         gameInstanceRepository
             .findById(gameId)
-            .applyMove(moveRequest)
+            .applyMove(moveCommand)
             .also { updatedGame ->
                 updatedGameNotifier.sendUpdatedGameToPlayers(updatedGame)
                 if (updatedGame.game.gameIsOver)

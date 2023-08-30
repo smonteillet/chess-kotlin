@@ -2,7 +2,7 @@ package fr.smo.chess.server.game.domain
 
 import fr.smo.chess.core.Color
 import fr.smo.chess.core.Game
-import fr.smo.chess.core.MoveRequest
+import fr.smo.chess.core.MoveCommand
 import java.util.*
 
 data class GameInstance(
@@ -23,10 +23,10 @@ data class GameInstance(
         )
     }
 
-    fun applyMove(moveRequest: MoveRequest): GameInstance {
+    fun applyMove(moveCommand: MoveCommand): GameInstance {
         return this.copy(
-            game = game.applyMove(moveRequest, callbackAfterMove)
-        )
+            game = game.applyMove(moveCommand)
+        ).also { callbackAfterMove.invoke(it.game) }
     }
 
 }

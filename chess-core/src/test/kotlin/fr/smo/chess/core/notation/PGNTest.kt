@@ -37,8 +37,8 @@ class PGNTest {
         fun `should import a pgn with one turn of move`() {
             val game = PGN.import("1. e4 e5")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
-                MoveRequest(E2, E4),
-                MoveRequest(E7, E5),
+                MoveCommand(E2, E4),
+                MoveCommand(E7, E5),
             )
         }
 
@@ -47,8 +47,8 @@ class PGNTest {
         fun `should import a pgn with move comment`() {
             val game = PGN.import("1. e4 e5 {this is a comment}")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
-                MoveRequest(E2, E4),
-                MoveRequest(E7, E5),
+                MoveCommand(E2, E4),
+                MoveCommand(E7, E5),
             )
         }
 
@@ -56,10 +56,10 @@ class PGNTest {
         fun `should import a pgn with two turns of move`() {
             val game = PGN.import("1. e4 e5 2. a3 a6")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
-                MoveRequest(E2, E4),
-                MoveRequest(E7, E5),
-                MoveRequest(A2, A3),
-                MoveRequest(A7, A6),
+                MoveCommand(E2, E4),
+                MoveCommand(E7, E5),
+                MoveCommand(A2, A3),
+                MoveCommand(A7, A6),
             )
 
         }
@@ -68,8 +68,8 @@ class PGNTest {
         fun `should import a pgn with knight moves`() {
             val game = PGN.import("1. Nc3 Nf6")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
-                MoveRequest(B1, C3),
-                MoveRequest(G8, F6),
+                MoveCommand(B1, C3),
+                MoveCommand(G8, F6),
             )
         }
 
@@ -77,18 +77,18 @@ class PGNTest {
         fun `should import a pgn with all piece types moves`() {
             val game = PGN.import("1. d4 d5 2. Bf4 Nf6 3. Qd3 Qd6 4. Kd2 Bf5 5. Nc3 Kd7 6. Rb1 Rg8")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
-                MoveRequest(D2, D4),
-                MoveRequest(D7, D5),
-                MoveRequest(C1, F4),
-                MoveRequest(G8, F6),
-                MoveRequest(D1, D3),
-                MoveRequest(D8, D6),
-                MoveRequest(E1, D2),
-                MoveRequest(C8, F5),
-                MoveRequest(B1, C3),
-                MoveRequest(E8, D7),
-                MoveRequest(A1, B1),
-                MoveRequest(H8, G8),
+                MoveCommand(D2, D4),
+                MoveCommand(D7, D5),
+                MoveCommand(C1, F4),
+                MoveCommand(G8, F6),
+                MoveCommand(D1, D3),
+                MoveCommand(D8, D6),
+                MoveCommand(E1, D2),
+                MoveCommand(C8, F5),
+                MoveCommand(B1, C3),
+                MoveCommand(E8, D7),
+                MoveCommand(A1, B1),
+                MoveCommand(H8, G8),
             )
         }
 
@@ -96,9 +96,9 @@ class PGNTest {
         fun `should import a pgn with a pawn capturing another pawn`() {
             val importedGame = PGN.import("1. e4 d5 2. exd5")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
-                MoveRequest(E2, E4),
-                MoveRequest(D7, D5),
-                MoveRequest(E4, D5)
+                MoveCommand(E2, E4),
+                MoveCommand(D7, D5),
+                MoveCommand(E4, D5)
             )
             expectThat(importedGame) isEqualTo expectedGame
             val lastMove = importedGame.history.moves.last()
@@ -110,9 +110,9 @@ class PGNTest {
         fun `should import a pgn with a knight capturing another pawn`() {
             val importedGame = PGN.import("1. Nc3 d5 2. Nxd5")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
-                MoveRequest(B1, C3),
-                MoveRequest(D7, D5),
-                MoveRequest(C3, D5)
+                MoveCommand(B1, C3),
+                MoveCommand(D7, D5),
+                MoveCommand(C3, D5)
             )
             expectThat(importedGame) isEqualTo expectedGame
             val lastMove = importedGame.history.moves.last()
@@ -124,14 +124,14 @@ class PGNTest {
         fun `should import a pgn with king castle for both white and black`() {
             val importedGame = PGN.import("1. e4 e5 2. Bc4 Bc5 3. Nf3 Nf6 4. O-O O-O")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
-                MoveRequest(E2, E4),
-                MoveRequest(E7, E5),
-                MoveRequest(F1, C4),
-                MoveRequest(F8, C5),
-                MoveRequest(G1, F3),
-                MoveRequest(G8, F6),
-                MoveRequest(E1, G1),
-                MoveRequest(E8, G8),
+                MoveCommand(E2, E4),
+                MoveCommand(E7, E5),
+                MoveCommand(F1, C4),
+                MoveCommand(F8, C5),
+                MoveCommand(G1, F3),
+                MoveCommand(G8, F6),
+                MoveCommand(E1, G1),
+                MoveCommand(E8, G8),
 
                 )
             expectThat(importedGame) isEqualTo expectedGame
@@ -147,16 +147,16 @@ class PGNTest {
         fun `should import a pgn with queen castle for both white and black`() {
             val importedGame = PGN.import("1. d4 d5 2. Bf4 Bf5 3. Nc3 Nc6 4. Qd3 Qd6 5. O-O-O O-O-O")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
-                MoveRequest(D2, D4),
-                MoveRequest(D7, D5),
-                MoveRequest(C1, F4),
-                MoveRequest(C8, F5),
-                MoveRequest(B1, C3),
-                MoveRequest(B8, C6),
-                MoveRequest(D1, D3),
-                MoveRequest(D8, D6),
-                MoveRequest(E1, C1),
-                MoveRequest(E8, C8),
+                MoveCommand(D2, D4),
+                MoveCommand(D7, D5),
+                MoveCommand(C1, F4),
+                MoveCommand(C8, F5),
+                MoveCommand(B1, C3),
+                MoveCommand(B8, C6),
+                MoveCommand(D1, D3),
+                MoveCommand(D8, D6),
+                MoveCommand(E1, C1),
+                MoveCommand(E8, C8),
 
                 )
             expectThat(importedGame) isEqualTo expectedGame

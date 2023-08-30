@@ -12,7 +12,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
         println("RandomAIPlayer seed: $seed")
     }
 
-    override fun nextPlay(game: Game): MoveRequest {
+    override fun nextPlay(game: Game): MoveCommand {
         var randomPiecePosition : PiecePosition?
         var selectedMove : Move? = null
         var allRemainingColorPositions = game.chessboard.piecesOnBoard.filter { it.piece.color == color }
@@ -28,7 +28,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
                 }
             }
         }
-        return MoveRequest(
+        return MoveCommand(
             origin = selectedMove.origin,
             destination = selectedMove.destination,
             promotedPiece = selectedMove.promotedTo?.type,
@@ -38,7 +38,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
     private fun isMoveLegal(move: Move, game: Game): Boolean {
         try {
             game.applyMove(
-                MoveRequest(
+                MoveCommand(
                     origin = move.origin,
                     destination = move.destination,
                     promotedPiece = move.promotedTo?.type,
