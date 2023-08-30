@@ -46,7 +46,7 @@ object PGN {
 
     }
 
-    private fun applyPGNMove(game: Game, pgnMoveStr: String): Game {
+    fun applyPGNMove(game: Game, pgnMoveStr: String): Game {
         val color = game.sideToMove
         importKingSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
         importQueenSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
@@ -175,7 +175,7 @@ object PGN {
             fun parse(pgnMove: String, color : Color): PgnMove {
                 val matchResult = PGN_MOVE_REGEX.find(pgnMove)!!
                 val pieceType = matchResult.groups["fromPiece"]?.value.let{ PieceType.fromPGNNotation(it ?: "") }
-                val piece = Piece.values().first { it.color == color && it.type == pieceType }
+                val piece = Piece.entries.first { it.color == color && it.type == pieceType }
                 val fromFileAdditionalInfo = matchResult.groups["fromFileAdditionalInfo"]?.value?.let { File.at(it) }
                 val fromRankAdditionalInfo = matchResult.groups["fromRankAdditionalInfo"]?.value?.let { Rank.at(it.toInt()) }
                 val destinationSquare = matchResult.groups["destinationSquare"]?.value!!.let { Square.at(it) }

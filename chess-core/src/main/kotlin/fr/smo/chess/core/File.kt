@@ -12,10 +12,10 @@ enum class File(val value : Int, val label : String) {
     FILE_H(8,"h");
 
     companion object {
-        fun at(index : Int) = File.values().firstOrNull { it.value == index }
+        fun at(index : Int) = entries.firstOrNull { it.value == index }
             ?: throw IllegalArgumentException("File index shall be between 1 and 8. Found: $index")
 
-        fun at(label : String) = File.values().firstOrNull { it.label == label }
+        fun at(label : String) = entries.firstOrNull { it.label == label }
             ?: throw IllegalArgumentException("File index shall be between a and h. Found: $label")
     }
 

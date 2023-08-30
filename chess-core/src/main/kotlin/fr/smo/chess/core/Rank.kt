@@ -15,7 +15,7 @@ enum class Rank(val value: Int) {
 
     companion object {
 
-        fun at(index: Int) = Rank.values().firstOrNull { it.value == index }
+        fun at(index: Int) = entries.firstOrNull { it.value == index }
             ?: throw IllegalArgumentException("Rank index shall be between 1 and 8")
     }
 

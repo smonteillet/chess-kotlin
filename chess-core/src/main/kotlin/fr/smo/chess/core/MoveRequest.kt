@@ -7,11 +7,7 @@ data class MoveRequest(
 ) {
     init {
         require(
-            promotedPiece == null ||
-                    promotedPiece == PieceType.QUEEN ||
-                    promotedPiece == PieceType.BISHOP ||
-                    promotedPiece == PieceType.ROOK ||
-                    promotedPiece == PieceType.KNIGHT
+            promotedPiece == null || promotedPiece.isPromotable
         )
     }
 

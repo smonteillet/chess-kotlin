@@ -5,6 +5,7 @@ import fr.smo.chess.core.Piece.BLACK_PAWN
 import fr.smo.chess.core.Piece.WHITE_PAWN
 import fr.smo.chess.core.PieceType.KING
 import fr.smo.chess.core.Rank.*
+import fr.smo.chess.core.notation.PGN
 
 data class Game(
     val chessboard: Chessboard,
@@ -36,6 +37,10 @@ data class Game(
 
     fun applyMoves(vararg moveRequests: MoveRequest): Game {
         return moveRequests.fold(this) { currentGame, moveRequest -> currentGame.applyMove(moveRequest) }
+    }
+
+    fun applyMove(pgnMove: String) : Game {
+        return PGN.applyPGNMove(this, pgnMove)
     }
 
     private fun checkIfCurrentColorKingIsCheckedAfterCurrentColorMove(move: MoveRequest) {

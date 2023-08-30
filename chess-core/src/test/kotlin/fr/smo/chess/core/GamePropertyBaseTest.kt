@@ -50,6 +50,18 @@ class GamePropertyBaseTest {
         assertThatLastMovingHasLeftABlankSquareAfterMoving(game)
         assertVariousThingsAboutCastling(game)
         assertPawnShouldNotBeUnpromotedOnLastRank(game)
+        assertOneBishopPerSquareColor(game)
+    }
+
+    private fun assertOneBishopPerSquareColor(game: Game) {
+        if (game.history.moves.none { it.promotedTo == WHITE_BISHOP }) {
+            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_BISHOP && it.square.isLightSquare() }) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_BISHOP && !it.square.isLightSquare() }) isLessThanOrEqualTo 1
+        }
+        if (game.history.moves.none { it.promotedTo == BLACK_BISHOP }) {
+            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_BISHOP && it.square.isLightSquare()}) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_BISHOP && !it.square.isLightSquare()}) isLessThanOrEqualTo 1
+        }
     }
 
     private fun assertPawnShouldNotBeUnpromotedOnLastRank(game: Game) {

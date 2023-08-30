@@ -11,8 +11,8 @@ import java.util.*
 object GameRenderer {
 
     fun consoleRender(game: Game): String =
-        Rank.values().reversed().joinToString("\n") { rank ->
-            "|" + File.values().joinToString("|") { file ->
+        Rank.entries.reversed().joinToString("\n") { rank ->
+            "|" + File.entries.joinToString("|") { file ->
                 when (game.chessboard.getPositionAt(Square.at(file, rank)!!)?.piece) {
                     null -> " "
                     WHITE_KING -> "♔"

@@ -454,24 +454,46 @@ class PositionTest {
                         val legalMoves = Position(D4, BLACK_PAWN).getAllPseudoLegalMoves(game)
                         expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3)
                     }
+
+                    @Test
+                    fun `should promote on capture for white`() {
+                        // Given
+                        val game = givenAChessGame("k1qr3r/p1P1b1pp/Qp1p1p2/8/3N1B2/8/PP3PPP/2R3K1 w - - 1 21")
+                        // When
+                        val legalMoves = Position(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
+
+                        // Then
+                        expectThat(legalMoves).containsExactlyInAnyOrder(
+                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_QUEEN),
+                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_KNIGHT),
+                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_ROOK),
+                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_BISHOP),
+                        )
+                    }
+
+                    @Test
+                    fun `should promote on capture for black`() {
+                        // Given
+                        val game = givenAChessGame("7k/8/8/8/8/8/K2p4/4R3 w - - 0 1")
+                        // When
+                        val legalMoves = Position(D2, BLACK_PAWN).getAllPseudoLegalMoves(game)
+
+                        // Then
+                        expectThat(legalMoves).containsExactlyInAnyOrder(
+                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_QUEEN),
+                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_KNIGHT),
+                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_ROOK),
+                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_BISHOP),
+                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_QUEEN),
+                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_KNIGHT),
+                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_ROOK),
+                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_BISHOP),
+                        )
+                    }
                 }
             }
 
-            @Test
-            fun `should promote on capture`() {
-                // Given
-                val game = givenAChessGame("k1qr3r/p1P1b1pp/Qp1p1p2/8/3N1B2/8/PP3PPP/2R3K1 w - - 1 21")
-                // When
-                val legalMoves = Position(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
 
-                // Then
-                expectThat(legalMoves).containsExactlyInAnyOrder(
-                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_QUEEN),
-                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_KNIGHT),
-                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_ROOK),
-                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_BISHOP),
-                )
-            }
 
         }
 

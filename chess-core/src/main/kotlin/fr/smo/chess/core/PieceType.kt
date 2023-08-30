@@ -1,16 +1,14 @@
 package fr.smo.chess.core
 
-enum class PieceType(val pgnNotation: String) {
-    PAWN(""),
-    BISHOP("B"),
-    KNIGHT("N"),
-    QUEEN("Q"),
-    KING("K"),
-    ROOK("R");
+enum class PieceType(val pgnNotation: String, val isPromotable : Boolean) {
+    PAWN("", false),
+    BISHOP("B", true),
+    KNIGHT("N", true),
+    QUEEN("Q", true),
+    KING("K", false),
+    ROOK("R", true);
 
     companion object {
-        fun fromPGNNotation(pgn: String): PieceType? =
-            PieceType.values()
-                .firstOrNull { it.pgnNotation == pgn }
+        fun fromPGNNotation(pgn: String): PieceType? = entries.firstOrNull { it.pgnNotation == pgn }
     }
 }

@@ -16,25 +16,24 @@ data class Chessboard(
             .flatMap { it.getAllPseudoLegalMoves(game) }
     }
 
-    fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard {
-        val opponentPawnThatHasBeenEnPassant =
-            if (move.destination == enPassantTargetSquare && move.piece.type == PieceType.PAWN) {
-                if (move.piece.color == Color.WHITE) {
-                    enPassantTargetSquare.down()!!
-                } else {
-                    enPassantTargetSquare.up()!!
-                }
+    fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard = Chessboard(
+        piecesOnBoard = piecesOnBoard
+            .filter { it.square != move.from }
+            .filter { it.square != move.destination }
+            .filter { it.square != getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare) }
+            .plus(Position(move.destination, move.piece))
+    )
+
+    private fun getOpponentPawnThatHasBeenEnPassant(move: Move, enPassantTargetSquare: Square?) =
+        if (move.destination == enPassantTargetSquare && move.piece.type == PieceType.PAWN) {
+            if (move.piece.color == Color.WHITE) {
+                enPassantTargetSquare.down()!!
             } else {
-                null
+                enPassantTargetSquare.up()!!
             }
-        return Chessboard(
-            piecesOnBoard = piecesOnBoard
-                .filter { it.square != move.from }
-                .filter { it.square != move.destination }
-                .filter { it.square != opponentPawnThatHasBeenEnPassant }
-                .plus(Position(move.destination, move.piece))
-        )
-    }
+        } else {
+            null
+        }
 
     fun applyPromotions(move: Move): Chessboard {
         if (move.piece.type == PieceType.PAWN && move.promotedTo != null) {

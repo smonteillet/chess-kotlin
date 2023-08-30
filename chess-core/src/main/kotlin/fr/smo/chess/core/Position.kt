@@ -6,11 +6,7 @@ import fr.smo.chess.core.Rank.*
 
 data class Position(val square: Square, val piece: Piece) {
 
-    private fun hasNotSameColorPiece(other: Position): Boolean {
-        return piece.color != other.piece.color
-    }
-
-    /**
+     /**
      * In Pseudo-legal move generation pieces obey their normal rules of movement, but they're not checked beforehand to see
      * if they'll leave the king in check. It is left up to the move-making function to test the move, or it is even possible
      * to let the king remain in check and only test for the capture of the king on the next move
@@ -149,9 +145,9 @@ data class Position(val square: Square, val piece: Piece) {
 
     private fun getPromotedPieces(newPosition: Square): List<Piece> {
         return if (piece.color == WHITE && newPosition.rank == RANK_8) {
-            listOf(Piece.WHITE_QUEEN, Piece.WHITE_ROOK, Piece.WHITE_BISHOP, Piece.WHITE_KNIGHT)
+            Piece.entries.filter { it.color == WHITE }.filter { it.type.isPromotable }
         } else if (piece.color == BLACK && newPosition.rank == RANK_1) {
-            listOf(Piece.BLACK_QUEEN, Piece.BLACK_ROOK, Piece.BLACK_BISHOP, Piece.BLACK_KNIGHT)
+            Piece.entries.filter { it.color == BLACK }.filter { it.type.isPromotable }
         } else {
             emptyList()
         }
@@ -171,20 +167,20 @@ data class Position(val square: Square, val piece: Piece) {
     }
 
     private fun getQueenPseudoLegalMoves(chessboard: Chessboard): List<Move> =
-        getBishopPseudoLegalMoves(chessboard).plus(getRookPseudoLegalMoves(chessboard))
+        getBishopPseudoLegalMoves(chessboard) + getRookPseudoLegalMoves(chessboard)
 
     private fun getRookPseudoLegalMoves(chessboard: Chessboard): List<Move> {
-        return getLegalMovesFollowingDirection( fromPosition = this, chessboard = chessboard) { it.up() } +
+        return getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.up() } +
                 getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.down() } +
                 getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.left() } +
                 getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.right() }
     }
 
     private fun getBishopPseudoLegalMoves(chessboard: Chessboard): List<Move> {
-        return getLegalMovesFollowingDirection(  fromPosition = this, chessboard = chessboard) { it.upLeft() } +
-                getLegalMovesFollowingDirection( fromPosition = this, chessboard = chessboard) { it.upRight() } +
-                getLegalMovesFollowingDirection( fromPosition = this, chessboard = chessboard) { it.downLeft() } +
-                getLegalMovesFollowingDirection( fromPosition = this, chessboard = chessboard) { it.downRight() }
+        return getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.upLeft() } +
+                getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.upRight() } +
+                getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.downLeft() } +
+                getLegalMovesFollowingDirection(fromPosition = this, chessboard = chessboard) { it.downRight() }
     }
 
     private fun getKingPseudoLegalMoves(game: Game): List<Move> {
@@ -286,31 +282,18 @@ data class Position(val square: Square, val piece: Piece) {
         chessboard: Chessboard,
         direction: (from: Square) -> Square?
     ): List<Move> {
-        return direction.invoke(currentSquare).let { newSquare ->
-            if (newSquare != null) {
-                val newPosition = chessboard.getPositionAt(newSquare)
-                if (newPosition == null) {
-                    getLegalMovesFollowingDirection(fromPosition, newSquare, chessboard, direction) +
-                            Move(
-                                piece = fromPosition.piece,
-                                from = fromPosition.square,
-                                destination = newSquare,
-                            )
-                } else if (newPosition.hasNotSameColorPiece(fromPosition)) {
+        return direction.invoke(currentSquare)?.let { newSquare ->
+            chessboard.getPositionAt(newSquare)?.let { newPosition ->
+                if (newPosition.piece.color != fromPosition.piece.color) {
                     listOf(
-                        Move(
-                            piece = fromPosition.piece,
-                            from = fromPosition.square,
-                            destination = newSquare,
-                            capturedPiece = newPosition.piece,
-                        )
+                        Move(piece = fromPosition.piece, from = fromPosition.square, destination = newSquare, capturedPiece = newPosition.piece)
                     )
-                } else {
+                } else
                     emptyList()
-                }
-            } else {
-                emptyList()
-            }
+            } ?: (
+                    getLegalMovesFollowingDirection(fromPosition, newSquare, chessboard, direction).plus(
+                        Move(piece = fromPosition.piece, from = fromPosition.square, destination = newSquare)
+                    ))
+            } ?: emptyList()
         }
-    }
 }
