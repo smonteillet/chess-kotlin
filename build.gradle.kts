@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.7.21"
+	kotlin("jvm") version "1.9.10"
 }
 
 allprojects {
@@ -21,7 +21,7 @@ allprojects {
 	}
 
 	dependencies {
-		val junitVersion = "5.9.0"
+		val junitVersion = "5.10.0"
 		val striktVersion = "0.34.1"
 		implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
