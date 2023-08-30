@@ -462,6 +462,22 @@ class PositionTest {
                 }
             }
 
+            @Test
+            fun `should promote on capture`() {
+                // Given
+                val game = givenAChessGame("k1qr3r/p1P1b1pp/Qp1p1p2/8/3N1B2/8/PP3PPP/2R3K1 w - - 1 21")
+                // When
+                val legalMoves = Position(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
+
+                // Then
+                expectThat(legalMoves).containsExactlyInAnyOrder(
+                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_QUEEN),
+                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_KNIGHT),
+                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_ROOK),
+                    Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_BISHOP),
+                )
+            }
+
         }
 
         @Nested
@@ -701,7 +717,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/PB6/RN6",
                 )
                 // when
-                val legalMoves = Position(A1, WHITE_QUEEN).getAllPseudoLegalMoves(game)
+                val legalMoves = Position(A1, WHITE_ROOK).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves).isEmpty()
             }

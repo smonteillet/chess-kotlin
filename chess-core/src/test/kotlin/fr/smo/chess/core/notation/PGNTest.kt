@@ -3,13 +3,17 @@ package fr.smo.chess.core.notation
 import fr.smo.chess.core.*
 import fr.smo.chess.core.Square.*
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isNull
 import strikt.assertions.isTrue
+import java.io.File
+
 
 class PGNTest {
 
@@ -216,37 +220,90 @@ class PGNTest {
             expectThat(importedGame.history.moves.last().promotedTo) isEqualTo Piece.WHITE_QUEEN
             expectThat(importedGame.chessboard.piecesOnBoard.count { it.piece == Piece.WHITE_PAWN }) isEqualTo 7
             expectThat(importedGame.chessboard.piecesOnBoard.count { it.piece == Piece.WHITE_QUEEN }) isEqualTo 2
-
         }
 
         @Test
-        fun `should import famous game pgn Fisher Vs Spassky 1992 Belgrade`() {
-            // Given
+        fun `should import pgn with two white rooks that can go to the same square but one is pinned at move 20`() {
+            val importedGame = PGN.import(
+                """
+                        1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.O-O Nf6 5.b4 Bxb4 6.c3 Bd6 7.d4 Qe7 8.Bg5 O-O
+                        9.Re1 a6 10.Qc2 h6 11.Bxf6 Qxf6 12.Nbd2 g5 13.dxe5 Bxe5 14.Rac1 g4 15.Nxe5 Nxe5
+                        16.Bb3 h5 17.Re3 h4 18.Rf1 Kg7 19.f4 Qb6 20.Re1
+                    """
+            )
+            expectThat(importedGame.chessboard.getPositionAt(E1)!!.piece) isEqualTo Piece.WHITE_ROOK
+            expectThat(importedGame.chessboard.getPositionAt(E3)!!.piece) isEqualTo Piece.WHITE_ROOK
+        }
+
+        @Test
+        fun `should import pgn with a castle move that checks`() {
             val importedGame = PGN.import("""
-                [Event "F/S Return Match"]
-                [Site "Belgrade, Serbia JUG"]
-                [Date "1992.11.04"]
-                [Round "29"]
-                [White "Fischer, Robert J."]
-                [Black "Spassky, Boris V."]
-                [Result "1/2-1/2"]
-                
-                1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 {This opening is called the Ruy Lopez.}
-                4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7
-                11. c4 c6 12. cxb5 axb5 13. Nc3 Bb7 14. Bg5 b4 15. Nb1 h6 16. Bh4 c5 17. dxe5
-                Nxe4 18. Bxe7 Qxe7 19. exd6 Qf6 20. Nbd2 Nxd6 21. Nc4 Nxc4 22. Bxc4 Nb6
-                23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7 27. Qe3 Qg5 28. Qxg5
-                hxg5 29. b3 Ke6 30. a3 Kd6 31. axb4 cxb4 32. Ra5 Nd5 33. f3 Bc8 34. Kf2 Bf5
-                35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5 40. Rd6 Kc5 41. Ra6
-                Nf2 42. g4 Bd3 43. Re6 1/2-1/2
-            """)
+                    1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6 6.Bc4 Nc6 7.Nxc6 bxc6 8.e5 d5
+                    9.exf6 dxc4 10.Qxd8+ Kxd8 11.fxe7+ Bxe7 12.Be3 Be6 13.O-O-O+ Kc8 14.Na4 Rb8
+                    15.Bc5 Bg5+ 16.Kb1 Rb5 17.Bd4 Be7 18.Rhe1 Rd8 19.g3 g5 20.Nb6+ Kb7 21.Nxc4 Rbd5
+                    22.c3 c5 23.Ne3 cxd4 24.Nxd5 Rxd5 25.Rxd4 Rf5 26.Rxe6 fxe6 27.Rd7+ Kc6 28.Rxe7 Kd5
+                    29.Rd7+ Ke4 30.Rd2 Kf3 31.b4 e5 32.c4 e4 33.c5 Rf6 34.Rc2 Rf8 35.c6 h5 36.c7 Rc8
+                    37.a4 h4 38.gxh4 gxh4 39.b5 h3 40.b6 Kg2 41.b7 Rxc7 42.Rxc7 Kxh2 43.b8=Q Kg2
+                    44.Rg7+ Kh1 45.Qg3 h2 46.Qg2+  1-0  
+                """.trimIndent())
+        }
 
+        @Test
+        fun `should import pgn with an unknown result`() {
+            val importedGame = PGN.import("""
+                    1.c4 Nf6 2.g3 g6 3.Bg2 Bg7 4.Nc3 c5 5.e4 Nc6 6.Nge2 O-O 7.O-O Ne8 8.h3 Nc7
+                    9.d3 Ne6 10.g4 Ned4 11.Ng3 e6 12.Be3 a6 13.Qd2 b5 14.f4 bxc4 15.dxc4 Rb8
+                    16.b3 Bb7 17.Rac1 Ne7 18.g5 f5 19.gxf6 Bxf6 20.e5 Bh4 21.Nge4 Nef5 22.Bf2 Be7
+                    23.Ne2 Bxe4 24.Bxe4 d5 25.cxd5 exd5 26.Bg2 Nxe2+ 27.Qxe2 d4 28.Qxa6 Kg7 29.Qd3 Rc8
+                    30.Be4 Bh4 31.Bxf5 Rxf5 32.Qe4 Bxf2+ 33.Rxf2 Qh4 34.Qb7+ Kh6 35.Rcf1 Rd8
+                    36.e6 d3 37.e7 Re8 38.Qd7 Qg3+ 39.Rg2 Qe3+ 40.Kh2 Rxe7 41.Qd8 Rxf4 42.Rg3 Rf2+
+                    43.Rg2 Qf4+  *
+                """.trimIndent())
+            expectThat(importedGame.status) isEqualTo Game.Status.UNKNOWN_RESULT
             expectThat(importedGame.gameIsOver).isTrue()
-            expectThat(importedGame.status) isEqualTo Game.Status.DRAW
-            expectThat(importedGame.history.moves.size) isEqualTo 85
+        }
 
+        @Nested
+        inner class ImportFamousGame {
+
+
+
+            @TestFactory
+            fun testPgnImportOfMorphyGames(): Collection<DynamicTest> {
+               val morphyPgn = File("src/test/resources/morphy.pgn").readText(Charsets.UTF_8)
+               return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).map { pgnGame ->
+                    DynamicTest.dynamicTest("Imported Morphy game") {
+                        println(pgnGame)
+                        PGN.import(pgnGame)
+                    }
+                }
+            }
+
+            @TestFactory
+            @Disabled("too long for now (about 20 second to execute). I keep it since it could be nice to execute only when I need it")
+            fun testPgnImportOfPolgarGames(): Collection<DynamicTest> {
+                val morphyPgn = File("src/test/resources/polgar.pgn").readText(Charsets.UTF_8)
+                return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).map { pgnGame ->
+                    DynamicTest.dynamicTest("Imported Polgar game") {
+                        println(pgnGame)
+                        PGN.import(pgnGame)
+                    }
+                }
+            }
+
+            @TestFactory
+            @Disabled("too long for now (about 45 second to execute). I keep it since it could be nice to execute only when I need it")
+            fun testPgnImportOfCarlsenGames(): Collection<DynamicTest> {
+                val morphyPgn = File("src/test/resources/carlsen.pgn").readText(Charsets.UTF_8)
+                return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).map { pgnGame ->
+                    DynamicTest.dynamicTest("Imported Carlsen game") {
+                        println(pgnGame)
+                        PGN.import(pgnGame)
+                    }
+                }
+            }
 
         }
-    }
 
+    }
 }

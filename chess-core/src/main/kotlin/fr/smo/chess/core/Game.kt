@@ -15,7 +15,7 @@ data class Game(
     val status: Status = Status.NOT_STARTED_YET,
 ) {
     val gameIsOver: Boolean = when (status) {
-        Status.BLACK_WIN, Status.WHITE_WIN, Status.DRAW  -> true
+        Status.BLACK_WIN, Status.WHITE_WIN, Status.DRAW, Status.UNKNOWN_RESULT  -> true
         else -> false
     }
 
@@ -25,6 +25,7 @@ data class Game(
         BLACK_WIN,
         WHITE_WIN,
         DRAW,
+        UNKNOWN_RESULT,
     }
 
     fun applyMove(moveRequest: MoveRequest, afterMoveCallback: (Game) -> Unit = {}): Game =

@@ -8,10 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import strikt.api.expectThat
-import strikt.assertions.isEqualTo
-import strikt.assertions.isNotNull
-import strikt.assertions.isNull
-import strikt.assertions.isTrue
+import strikt.assertions.*
 import kotlin.random.Random
 
 class GamePropertyBaseTest {
@@ -22,7 +19,7 @@ class GamePropertyBaseTest {
         fun randomSeeds() = (0..10).toList().map { Arguments.of(Random.nextInt()) }
 
         @JvmStatic
-        fun specificSeeds()  = listOf(
+        fun specificSeeds() = listOf(
             Arguments.of(1980302746L)
         )
     }
@@ -52,7 +49,20 @@ class GamePropertyBaseTest {
         assertThatLastMovingPieceIsOnItsDestinationSquare(game)
         assertThatLastMovingHasLeftABlankSquareAfterMoving(game)
         assertVariousThingsAboutCastling(game)
+        assertPawnShouldNotBeUnpromotedOnLastRank(game)
     }
+
+    private fun assertPawnShouldNotBeUnpromotedOnLastRank(game: Game) {
+        expectThat(
+            game.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN && it.square.rank == Rank.RANK_1 }
+        ).describedAs("We should not have black pawn on rank 1, it should have been promoted.")
+            .isEqualTo(0)
+        expectThat(
+            game.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN && it.square.rank == Rank.RANK_8 }
+        ).describedAs("We should not have white pawn on rank 8, it should have been promoted.")
+            .isEqualTo(0)
+    }
+
 
     private fun assertThatLastMovingPieceIsOnItsDestinationSquare(game: Game) {
         val lastMove = game.history.moves.last()

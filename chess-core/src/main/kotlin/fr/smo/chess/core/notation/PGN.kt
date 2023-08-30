@@ -2,6 +2,7 @@ package fr.smo.chess.core.notation
 
 import fr.smo.chess.core.*
 import fr.smo.chess.core.PieceType.*
+import java.lang.Exception
 
 object PGN {
 
@@ -10,8 +11,14 @@ object PGN {
     private const val BLACK_WIN_PGN = "0-1"
     private const val WHITE_WIN_PGN = "1-0"
     private const val DRAWN_PGN = "1/2-1/2"
+    private const val UNKNOWN_RESULT_PGN = "*"
 
     private val PGN_MOVE_REGEX = "(?<fromPiece>[NBQRK])?(?<fromFileAdditionalInfo>[a-h])?(?<fromRankAdditionalInfo>[1-8])?x?(?<destinationSquare>[a-h][1-8])(=(?<promotion>[NBQR]))?((?<check>\\+)|(?<checkmate>#))?".toRegex()
+    private val PGN_MOVE_NUMBER_REGEX = "(([0-9]*)\\.( )?)".toRegex()
+    private val PGN_COMMENT_BRACKET_REGEX = "\\[.*]".toRegex()
+    private val PGN_COMMENT_CURLY_BRACKET_REGEX = "\\{.*}".toRegex()
+
+
 
     fun exportPGN(game: Game): String {
         val pgnHistory = game.history.moves.mapIndexed { index, move ->
@@ -29,14 +36,12 @@ object PGN {
 
     fun import(pgn: String): Game {
         return pgn.trim()
-            .replace("\\[.*]".toRegex(), "")
-            .replace("\\{.*}".toRegex(), "")
-            .split("\n")
-            .joinToString(separator = "")
+            .replace(PGN_COMMENT_BRACKET_REGEX, "")
+            .replace(PGN_COMMENT_CURLY_BRACKET_REGEX, "")
+            .replace("\n", " ")
             .split(" ")
-            .map { it.trim() }
+            .map { it.trim().replace(PGN_MOVE_NUMBER_REGEX, "") }
             .filter { it.isNotBlank() }
-            .filterNot { "([0-9].*)\\.".toRegex().matches(it) }
             .fold(GameFactory.createStandardGame()) { currentGame, pgnMove -> applyPGNMove(currentGame, pgnMove) }
 
     }
@@ -57,21 +62,44 @@ object PGN {
         )
     }
 
-    private fun extractFromSquare(game: Game, pgnMove: PgnMove, ) =
-        game.chessboard
+    private fun extractFromSquare(game: Game, pgnMove: PgnMove) : Square {
+        val candidateMoves = game.chessboard
             .getAllPseudoLegalMovesForColor(pgnMove.color, game)
-            .firstOrNull {
+            .filter {
                 it.piece == pgnMove.piece &&
                         it.destination == pgnMove.destination &&
                         (pgnMove.fromFileAdditionalInfo == null || it.from.file == pgnMove.fromFileAdditionalInfo) &&
                         (pgnMove.fromRankAdditionalInfo == null || it.from.rank == pgnMove.fromRankAdditionalInfo)
+            }
+        return if (candidateMoves.isEmpty()) {
+            throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
+        } else if (candidateMoves.size == 1){
+            candidateMoves[0].from
+        } else {
+            candidateMoves.firstOrNull {
+                var isGoodMove = true
+                try {
+                    game.applyMove(
+                        MoveRequest(
+                            from = it.from,
+                            destination = it.destination,
+                            promotedPiece = it.promotedTo?.type,
+                        )
+                    )
+                } catch (e: Exception) {
+                    isGoodMove = false
+                }
+                isGoodMove
             }?.from ?: throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
+        }
+    }
 
     private fun importGameEndIfNecessary(game: Game, pgnMove: String): Game? =
         when (pgnMove) {
             DRAWN_PGN -> game.copy(status = Game.Status.DRAW)
             BLACK_WIN_PGN -> game.copy(status = Game.Status.BLACK_WIN)
             WHITE_WIN_PGN -> game.copy(status = Game.Status.WHITE_WIN)
+            UNKNOWN_RESULT_PGN -> game.copy(status = Game.Status.UNKNOWN_RESULT)
             else -> null
         }
 
@@ -88,7 +116,7 @@ object PGN {
         expectedCastlePgn: String,
         castleMoveChecker : (Move) -> Boolean
     ) : Game? {
-        if (pgnMove == expectedCastlePgn) {
+        if (pgnMove.replace("+", "") == expectedCastlePgn) {
             val castleMove = game.chessboard.getAllPseudoLegalMovesForColor(game.sideToMove, game)
                 .firstOrNull { castleMoveChecker(it) }
                 ?: throw IllegalArgumentException("cannot find perform castle move $pgnMove for ${game.sideToMove}")

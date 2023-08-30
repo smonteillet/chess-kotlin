@@ -184,20 +184,32 @@ data class Position(val square: Square, val piece: Piece) {
     private fun getPawnDiagonalMoves(
         chessboard: Chessboard,
         diagonalFunction: (Square) -> Square?
-    ): Move? {
+    ): List<Move> {
         val diagonalSquare = diagonalFunction.invoke(square)
         if (diagonalSquare != null) {
             val pieceAtDiagonal = chessboard.getPositionAt(diagonalSquare)
             if (pieceAtDiagonal != null && pieceAtDiagonal.piece.color == piece.color.opposite()) {
-                return Move(
-                    piece = piece,
-                    from = square,
-                    destination = diagonalSquare,
-                    capturedPiece = pieceAtDiagonal.piece,
-                )
+                return getPromotedPieces(diagonalSquare).map {
+                    Move(
+                        piece = piece,
+                        from = square,
+                        destination = diagonalSquare,
+                        promotedTo = it,
+                        capturedPiece = pieceAtDiagonal.piece,
+                    )
+                }.ifEmpty {
+                    listOf(
+                        Move(
+                            piece = piece,
+                            from = square,
+                            destination = diagonalSquare,
+                            capturedPiece = pieceAtDiagonal.piece,
+                        )
+                    )
+                }
             }
         }
-        return null
+        return emptyList()
     }
 
     private fun getQueenPseudoLegalMoves(chessboard: Chessboard): List<Move> =
