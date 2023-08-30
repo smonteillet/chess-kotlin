@@ -9,10 +9,7 @@ import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
-import strikt.assertions.containsExactlyInAnyOrder
-import strikt.assertions.isEmpty
-import strikt.assertions.isEqualTo
-import strikt.assertions.isTrue
+import strikt.assertions.*
 
 class PositionTest {
 
@@ -95,16 +92,14 @@ class PositionTest {
 
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, C4)
-                    expectThat(
-                        legalMoves.contains(
-                            Move(
-                                piece = WHITE_PAWN,
-                                from = B3,
-                                destination = C4,
-                                capturedPiece = BLACK_PAWN,
-                            )
+                    expectThat(legalMoves) contains listOf(
+                        Move(
+                            piece = WHITE_PAWN,
+                            from = B3,
+                            destination = C4,
+                            capturedPiece = BLACK_PAWN,
                         )
-                    ).isTrue()
+                    )
                 }
 
 
