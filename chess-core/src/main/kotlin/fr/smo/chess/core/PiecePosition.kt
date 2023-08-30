@@ -36,7 +36,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
             .map {
                 Move(
                     piece = piece,
-                    from = square,
+                    origin = square,
                     destination = it,
                     capturedPiece = chessboard.getPositionAt(it)?.piece,
                 )
@@ -70,14 +70,14 @@ data class PiecePosition(val square: Square, val piece: Piece) {
                 return Move(
                     piece = piece,
                     capturedPiece = Piece.BLACK_PAWN,
-                    from = square,
+                    origin = square,
                     destination = game.enPassantTargetSquare,
                 )
             } else if (piece.color == BLACK && (enPassantTargetSquare == square.down()?.right() || enPassantTargetSquare == square.down()?.left())) {
                 return Move(
                     piece = piece,
                     capturedPiece = Piece.WHITE_PAWN,
-                    from = square,
+                    origin = square,
                     destination = enPassantTargetSquare,
                 )
             } else null
@@ -113,7 +113,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
             pawnFrontMoveFunction.invoke(pawnFrontMoveFunction.invoke(pawnPiecePosition.square)!!)
                 ?.takeIf { chessboard.getPositionAt(it) == null }
                 ?.let { squareTwoSquareAway ->
-                    Move(piece = pawnPiecePosition.piece, from = pawnPiecePosition.square, destination = squareTwoSquareAway)
+                    Move(piece = pawnPiecePosition.piece, origin = pawnPiecePosition.square, destination = squareTwoSquareAway)
                 }
         }
     }
@@ -126,7 +126,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
         getPromotedPieces(destinationSquare).map {
             Move(
                 piece = piece,
-                from = square,
+                origin = square,
                 destination = destinationSquare,
                 promotedTo = it,
                 capturedPiece = pieceOnDestinationSquare,
@@ -135,7 +135,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
             listOf(
                 Move(
                     piece = piece,
-                    from = square,
+                    origin = square,
                     destination = destinationSquare,
                     capturedPiece = pieceOnDestinationSquare,
                 )
@@ -170,17 +170,17 @@ data class PiecePosition(val square: Square, val piece: Piece) {
         getBishopPseudoLegalMoves(chessboard) + getRookPseudoLegalMoves(chessboard)
 
     private fun getRookPseudoLegalMoves(chessboard: Chessboard): List<Move> {
-        return getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.up() } +
-                getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.down() } +
-                getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.left() } +
-                getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.right() }
+        return getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.up() } +
+                getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.down() } +
+                getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.left() } +
+                getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.right() }
     }
 
     private fun getBishopPseudoLegalMoves(chessboard: Chessboard): List<Move> {
-        return getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.upLeft() } +
-                getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.upRight() } +
-                getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.downLeft() } +
-                getLegalMovesFollowingDirection(fromPiecePosition = this, chessboard = chessboard) { it.downRight() }
+        return getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.upLeft() } +
+                getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.upRight() } +
+                getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.downLeft() } +
+                getLegalMovesFollowingDirection(piecePosition = this, chessboard = chessboard) { it.downRight() }
     }
 
     private fun getKingPseudoLegalMoves(game: Game): List<Move> {
@@ -198,7 +198,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
             .map {
                 Move(
                     piece = piece,
-                    from = square,
+                    origin = square,
                     destination = it,
                     capturedPiece = game.chessboard.getPositionAt(it)?.piece
                 )
@@ -234,7 +234,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
             if (isKingCastlePossible && !isTherePiecesOnKingCastlingPath && !hasKingCastleSquaresUnderAttack) {
                 Move(
                     piece = piece,
-                    from = square,
+                    origin = square,
                     destination = kingDestinationKingCastle,
                     isKingCastle = true,
                 )
@@ -242,7 +242,7 @@ data class PiecePosition(val square: Square, val piece: Piece) {
             if (isQueenCastlePossible && !isTherePiecesOnQueenCastlingPath && !hasQueenCastleSquaresUnderAttack) {
                 Move(
                     piece = piece,
-                    from = square,
+                    origin = square,
                     destination = kingDestinationQueenCastle,
                     isQueenCastle = true,
                 )
@@ -277,22 +277,22 @@ data class PiecePosition(val square: Square, val piece: Piece) {
     }
 
     private fun getLegalMovesFollowingDirection(
-        fromPiecePosition: PiecePosition,
-        currentSquare: Square = fromPiecePosition.square,
+        piecePosition: PiecePosition,
+        currentSquare: Square = piecePosition.square,
         chessboard: Chessboard,
-        direction: (from: Square) -> Square?
+        direction: (origin: Square) -> Square?
     ): List<Move> {
         return direction.invoke(currentSquare)?.let { newSquare ->
             chessboard.getPositionAt(newSquare)?.let { newPosition ->
-                if (newPosition.piece.color != fromPiecePosition.piece.color) {
+                if (newPosition.piece.color != piecePosition.piece.color) {
                     listOf(
-                        Move(piece = fromPiecePosition.piece, from = fromPiecePosition.square, destination = newSquare, capturedPiece = newPosition.piece)
+                        Move(piece = piecePosition.piece, origin = piecePosition.square, destination = newSquare, capturedPiece = newPosition.piece)
                     )
                 } else
                     emptyList()
             } ?: (
-                    getLegalMovesFollowingDirection(fromPiecePosition, newSquare, chessboard, direction).plus(
-                        Move(piece = fromPiecePosition.piece, from = fromPiecePosition.square, destination = newSquare)
+                    getLegalMovesFollowingDirection(piecePosition, newSquare, chessboard, direction).plus(
+                        Move(piece = piecePosition.piece, origin = piecePosition.square, destination = newSquare)
                     ))
             } ?: emptyList()
         }

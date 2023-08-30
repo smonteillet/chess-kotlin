@@ -135,7 +135,7 @@ class GamePropertyBaseTest {
     private fun assertThatLastMovingHasLeftABlankSquareAfterMoving(game: Game) {
         expectThat(
             game.history.moves.last().let {
-                game.chessboard.getPositionAt(it.from)
+                game.chessboard.getPositionAt(it.origin)
             }
         ).isNull()
     }

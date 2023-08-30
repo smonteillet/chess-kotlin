@@ -95,7 +95,7 @@ class PiecePositionTest {
                     expectThat(legalMoves) contains listOf(
                         Move(
                             piece = WHITE_PAWN,
-                            from = B3,
+                            origin = B3,
                             destination = C4,
                             capturedPiece = BLACK_PAWN,
                         )
@@ -117,7 +117,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = WHITE_PAWN,
-                                from = B3,
+                                origin = B3,
                                 destination = A4,
                                 capturedPiece = BLACK_PAWN,
                             )
@@ -139,7 +139,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = WHITE_PAWN,
-                                from = B3,
+                                origin = B3,
                                 destination = A4,
                                 capturedPiece = BLACK_PAWN,
                             )
@@ -149,7 +149,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = WHITE_PAWN,
-                                from = B3,
+                                origin = B3,
                                 destination = C4,
                                 capturedPiece = BLACK_PAWN,
                             )
@@ -302,7 +302,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = BLACK_PAWN,
-                                from = B6,
+                                origin = B6,
                                 destination = C5,
                                 capturedPiece = WHITE_PAWN,
                             )
@@ -325,7 +325,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = BLACK_PAWN,
-                                from = B6,
+                                origin = B6,
                                 destination = A5,
                                 capturedPiece = WHITE_PAWN,
                             )
@@ -347,7 +347,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = BLACK_PAWN,
-                                from = B6,
+                                origin = B6,
                                 destination = A5,
                                 capturedPiece = WHITE_PAWN,
                             )
@@ -357,7 +357,7 @@ class PiecePositionTest {
                         legalMoves.contains(
                             Move(
                                 piece = BLACK_PAWN,
-                                from = B6,
+                                origin = B6,
                                 destination = C5,
                                 capturedPiece = WHITE_PAWN,
                             )
@@ -401,7 +401,7 @@ class PiecePositionTest {
                             legalMoves.contains(
                                 Move(
                                     piece = BLACK_PAWN,
-                                    from = E4,
+                                    origin = E4,
                                     destination = D3,
                                     capturedPiece = WHITE_PAWN,
                                 )
@@ -423,7 +423,7 @@ class PiecePositionTest {
                             legalMoves.contains(
                                 Move(
                                     piece = BLACK_PAWN,
-                                    from = C4,
+                                    origin = C4,
                                     destination = D3,
                                     capturedPiece = WHITE_PAWN,
                                 )
@@ -464,10 +464,10 @@ class PiecePositionTest {
 
                         // Then
                         expectThat(legalMoves).containsExactlyInAnyOrder(
-                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_QUEEN),
-                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_KNIGHT),
-                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_ROOK),
-                            Move(piece = WHITE_PAWN, from = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_BISHOP),
+                            Move(piece = WHITE_PAWN, origin = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_QUEEN),
+                            Move(piece = WHITE_PAWN, origin = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_KNIGHT),
+                            Move(piece = WHITE_PAWN, origin = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_ROOK),
+                            Move(piece = WHITE_PAWN, origin = C7, destination = D8, capturedPiece = BLACK_ROOK, promotedTo = WHITE_BISHOP),
                         )
                     }
 
@@ -480,14 +480,14 @@ class PiecePositionTest {
 
                         // Then
                         expectThat(legalMoves).containsExactlyInAnyOrder(
-                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_QUEEN),
-                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_KNIGHT),
-                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_ROOK),
-                            Move(piece = BLACK_PAWN, from = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_BISHOP),
-                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_QUEEN),
-                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_KNIGHT),
-                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_ROOK),
-                            Move(piece = BLACK_PAWN, from = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_BISHOP),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_QUEEN),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_KNIGHT),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_ROOK),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = E1, capturedPiece = WHITE_ROOK, promotedTo = BLACK_BISHOP),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_QUEEN),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_KNIGHT),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_ROOK),
+                            Move(piece = BLACK_PAWN, origin = D2, destination = D1, capturedPiece = null, promotedTo = BLACK_BISHOP),
                         )
                     }
                 }
@@ -557,7 +557,7 @@ class PiecePositionTest {
                     legalMoves.contains(
                         Move(
                             piece = WHITE_KNIGHT,
-                            from = E4,
+                            origin = E4,
                             destination = G5,
                             capturedPiece = BLACK_BISHOP,
                         )
@@ -621,7 +621,7 @@ class PiecePositionTest {
                     legalMoves.contains(
                         Move(
                             piece = WHITE_QUEEN,
-                            from = B2,
+                            origin = B2,
                             destination = B7,
                             capturedPiece = BLACK_PAWN,
                         )
@@ -648,7 +648,7 @@ class PiecePositionTest {
                     legalMoves.contains(
                         Move(
                             piece = WHITE_QUEEN,
-                            from = B2,
+                            origin = B2,
                             destination = F6,
                             capturedPiece = BLACK_PAWN,
                         )
@@ -719,7 +719,7 @@ class PiecePositionTest {
                     legalMoves.contains(
                         Move(
                             piece = WHITE_ROOK,
-                            from = B2,
+                            origin = B2,
                             destination = B7,
                             capturedPiece = BLACK_PAWN,
                         )
@@ -788,7 +788,7 @@ class PiecePositionTest {
                     legalMoves.contains(
                         Move(
                             piece = WHITE_BISHOP,
-                            from = B2,
+                            origin = B2,
                             destination = C3,
                             capturedPiece = BLACK_PAWN,
                         )
@@ -830,7 +830,7 @@ class PiecePositionTest {
                             legalMoves.contains(
                                 Move(
                                     piece = WHITE_KING,
-                                    from = E1,
+                                    origin = E1,
                                     destination = G1,
                                     isQueenCastle = false,
                                     isKingCastle = true,
@@ -852,7 +852,7 @@ class PiecePositionTest {
                             legalMoves.contains(
                                 Move(
                                     piece = WHITE_KING,
-                                    from = E1,
+                                    origin = E1,
                                     destination = C1,
                                     isQueenCastle = true,
                                     isKingCastle = false,
@@ -926,7 +926,7 @@ class PiecePositionTest {
                             legalMoves.contains(
                                 Move(
                                     piece = WHITE_KING,
-                                    from = E8,
+                                    origin = E8,
                                     destination = G8,
                                     isKingCastle = true,
                                     isQueenCastle = false,
@@ -948,7 +948,7 @@ class PiecePositionTest {
                             legalMoves.contains(
                                 Move(
                                     piece = WHITE_KING,
-                                    from = E8,
+                                    origin = E8,
                                     destination = C8,
                                     isKingCastle = true,
                                     isQueenCastle = false,
@@ -1094,7 +1094,7 @@ class PiecePositionTest {
                     legalMoves.contains(
                         Move(
                             piece = WHITE_KING,
-                            from = D4,
+                            origin = D4,
                             destination = E5,
                             capturedPiece = BLACK_PAWN,
                         )

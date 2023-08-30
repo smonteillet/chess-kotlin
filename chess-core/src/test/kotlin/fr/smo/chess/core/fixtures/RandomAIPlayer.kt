@@ -29,7 +29,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
             }
         }
         return MoveRequest(
-            from = selectedMove.from,
+            origin = selectedMove.origin,
             destination = selectedMove.destination,
             promotedPiece = selectedMove.promotedTo?.type,
         )
@@ -39,7 +39,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
         try {
             game.applyMove(
                 MoveRequest(
-                    from = move.from,
+                    origin = move.origin,
                     destination = move.destination,
                     promotedPiece = move.promotedTo?.type,
                 )

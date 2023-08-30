@@ -18,7 +18,7 @@ data class Chessboard(
 
     fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard = Chessboard(
         piecesOnBoard = piecesOnBoard
-            .filter { it.square != move.from }
+            .filter { it.square != move.origin }
             .filter { it.square != move.destination }
             .filter { it.square != getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare) }
             .plus(PiecePosition(move.destination, move.piece))

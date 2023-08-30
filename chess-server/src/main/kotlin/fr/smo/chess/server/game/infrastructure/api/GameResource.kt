@@ -39,7 +39,7 @@ class GameResource(
         return gameInstanceService.applyMove(
             gameId = GameId(gameId),
             moveRequest = MoveRequest(
-                from = Square.Companion.at(request.moveFrom),
+                origin = Square.Companion.at(request.moveFrom),
                 destination = Square.Companion.at(request.moveDestination),
             )
         )

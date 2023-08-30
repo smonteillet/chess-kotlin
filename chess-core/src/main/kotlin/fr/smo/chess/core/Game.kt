@@ -29,10 +29,10 @@ data class Game(
         UNKNOWN_RESULT,
     }
 
-    fun applyMove(moveRequest: MoveRequest, afterMoveCallback: (Game) -> Unit = {}): Game =
+    fun applyMove(moveRequest: MoveRequest): Game =
         buildNewGameState(moveRequest).let{ updatedGame ->
             updatedGame.checkIfCurrentColorKingIsCheckedAfterCurrentColorMove(moveRequest)
-            return updatedGame.updateGameOutcome().also { afterMoveCallback.invoke(it) }
+            return updatedGame.updateGameOutcome()
         }
 
     fun applyMoves(vararg moveRequests: MoveRequest): Game {
@@ -53,7 +53,7 @@ data class Game(
     }
 
     private fun buildNewGameState(moveRequest: MoveRequest): Game {
-        val move: Move = buildMove(getFromPosition(moveRequest), moveRequest)
+        val move: Move = buildMove(getOriginPiecePosition(moveRequest), moveRequest)
         val newChessboard = chessboard
             .applyMoveOnBoard(move, enPassantTargetSquare)
             .applyPromotions(move)
@@ -74,7 +74,7 @@ data class Game(
 
     private fun isStaleMate(colorThatMayHaveNoMove: Color): Boolean {
         return chessboard.getAllPseudoLegalMovesForColor(colorThatMayHaveNoMove, this)
-            .map { MoveRequest(it.from, it.destination, it.promotedTo?.type) }
+            .map { MoveRequest(it.origin, it.destination, it.promotedTo?.type) }
             .map { buildNewGameState(it) }
             .all { it.isChecked(colorThatMayHaveNoMove) }
     }
@@ -82,7 +82,7 @@ data class Game(
     private fun isCheckMate(kingColorThatMayBeCheckMate: Color): Boolean {
         if (isChecked(kingColorThatMayBeCheckMate)) {
             return chessboard.getAllPseudoLegalMovesForColor(kingColorThatMayBeCheckMate, this)
-                .map { MoveRequest(it.from, it.destination, it.promotedTo?.type) }
+                .map { MoveRequest(it.origin, it.destination, it.promotedTo?.type) }
                 .map { buildNewGameState(it) }
                 .all { it.isChecked(kingColorThatMayBeCheckMate) }
         }
@@ -90,10 +90,10 @@ data class Game(
     }
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
-        return if (move.piece == WHITE_PAWN && move.from.rank == RANK_2 && move.destination.rank == RANK_4) {
-            move.from.withRank(RANK_3)
-        } else if (move.piece == BLACK_PAWN && move.from.rank == RANK_7 && move.destination.rank == RANK_5) {
-            move.from.withRank(RANK_6)
+        return if (move.piece == WHITE_PAWN && move.origin.rank == RANK_2 && move.destination.rank == RANK_4) {
+            move.origin.withRank(RANK_3)
+        } else if (move.piece == BLACK_PAWN && move.origin.rank == RANK_7 && move.destination.rank == RANK_5) {
+            move.origin.withRank(RANK_6)
         } else
             null
     }
@@ -117,16 +117,16 @@ data class Game(
     }
 
     private fun buildMove(
-        fromPiecePosition: PiecePosition,
+        originPiecePosition: PiecePosition,
         moveRequest: MoveRequest
     ): Move {
-        return fromPiecePosition.getAllPseudoLegalMoves(this)
+        return originPiecePosition.getAllPseudoLegalMoves(this)
             .firstOrNull { it.destination == moveRequest.destination && it.promotedTo?.type == moveRequest.promotedPiece }
             ?: throw IllegalStateException("Invalid move $moveRequest")
     }
 
-    private fun getFromPosition(moveRequest: MoveRequest): PiecePosition {
-        return chessboard.getPositionAt(moveRequest.from)
-            ?: throw IllegalStateException("There is no piece at ${moveRequest.from}")
+    private fun getOriginPiecePosition(moveRequest: MoveRequest): PiecePosition {
+        return chessboard.getPositionAt(moveRequest.origin)
+            ?: throw IllegalStateException("There is no piece at ${moveRequest.origin}")
     }
 }

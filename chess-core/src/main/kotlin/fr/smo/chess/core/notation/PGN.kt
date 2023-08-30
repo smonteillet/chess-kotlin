@@ -13,7 +13,7 @@ object PGN {
     private const val DRAWN_PGN = "1/2-1/2"
     private const val UNKNOWN_RESULT_PGN = "*"
 
-    private val PGN_MOVE_REGEX = "(?<fromPiece>[NBQRK])?(?<fromFileAdditionalInfo>[a-h])?(?<fromRankAdditionalInfo>[1-8])?x?(?<destinationSquare>[a-h][1-8])(=(?<promotion>[NBQR]))?((?<check>\\+)|(?<checkmate>#))?".toRegex()
+    private val PGN_MOVE_REGEX = "(?<originPiece>[NBQRK])?(?<originFileAdditionalInfo>[a-h])?(?<originRankAdditionalInfo>[1-8])?x?(?<destinationSquare>[a-h][1-8])(=(?<promotion>[NBQR]))?((?<check>\\+)|(?<checkmate>#))?".toRegex()
     private val PGN_MOVE_NUMBER_REGEX = "(([0-9]*)\\.( )?)".toRegex()
     private val PGN_COMMENT_BRACKET_REGEX = "\\[.*]".toRegex()
     private val PGN_COMMENT_CURLY_BRACKET_REGEX = "\\{.*}".toRegex()
@@ -52,36 +52,36 @@ object PGN {
         importQueenSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
         importGameEndIfNecessary(game, pgnMoveStr)?.let { return it }
         val pgnMove = PgnMove.parse(pgnMoveStr, color)
-        val fromSquare = extractFromSquare(game, pgnMove)
+        val originSquare = extractOriginSquare(game, pgnMove)
         return game.applyMove(
             moveRequest = MoveRequest(
-                from = fromSquare,
+                origin = originSquare,
                 destination = pgnMove.destination,
                 promotedPiece = pgnMove.promotedPiece,
             )
         )
     }
 
-    private fun extractFromSquare(game: Game, pgnMove: PgnMove) : Square {
+    private fun extractOriginSquare(game: Game, pgnMove: PgnMove) : Square {
         val candidateMoves = game.chessboard
             .getAllPseudoLegalMovesForColor(pgnMove.color, game)
             .filter {
                 it.piece == pgnMove.piece &&
                         it.destination == pgnMove.destination &&
-                        (pgnMove.fromFileAdditionalInfo == null || it.from.file == pgnMove.fromFileAdditionalInfo) &&
-                        (pgnMove.fromRankAdditionalInfo == null || it.from.rank == pgnMove.fromRankAdditionalInfo)
+                        (pgnMove.originFileAdditionalInfo == null || it.origin.file == pgnMove.originFileAdditionalInfo) &&
+                        (pgnMove.originRankAdditionalInfo == null || it.origin.rank == pgnMove.originRankAdditionalInfo)
             }
         return if (candidateMoves.isEmpty()) {
             throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
         } else if (candidateMoves.size == 1){
-            candidateMoves[0].from
+            candidateMoves[0].origin
         } else {
             candidateMoves.firstOrNull {
                 var isGoodMove = true
                 try {
                     game.applyMove(
                         MoveRequest(
-                            from = it.from,
+                            origin = it.origin,
                             destination = it.destination,
                             promotedPiece = it.promotedTo?.type,
                         )
@@ -90,7 +90,7 @@ object PGN {
                     isGoodMove = false
                 }
                 isGoodMove
-            }?.from ?: throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
+            }?.origin ?: throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
         }
     }
 
@@ -122,7 +122,7 @@ object PGN {
                 ?: throw IllegalArgumentException("cannot find perform castle move $pgnMove for ${game.sideToMove}")
             return game.applyMove(
                 moveRequest = MoveRequest(
-                    from = castleMove.from,
+                    origin = castleMove.origin,
                     destination = castleMove.destination,
                     promotedPiece = null,
                 )
@@ -140,9 +140,9 @@ object PGN {
             QUEEN_SIDE_CASTLE_NOTATION
         } else {
             val piece = move.piece.type.pgnNotation + when (move.piece.type) {
-                PAWN -> move.from
-                KNIGHT -> move.from
-                ROOK -> move.from
+                PAWN -> move.origin
+                KNIGHT -> move.origin
+                ROOK -> move.origin
                 else -> ""
             }
             val captured = if (move.capturedPiece != null) "x" else ""
@@ -165,8 +165,8 @@ object PGN {
     data class PgnMove(
         val piece: Piece,
         val destination: Square,
-        val fromRankAdditionalInfo: Rank? = null,
-        val fromFileAdditionalInfo: File? = null,
+        val originRankAdditionalInfo: Rank? = null,
+        val originFileAdditionalInfo: File? = null,
         val promotedPiece: PieceType? = null,
         val color: Color,
         val pgnNotation: String,
@@ -174,10 +174,10 @@ object PGN {
         companion object {
             fun parse(pgnMove: String, color : Color): PgnMove {
                 val matchResult = PGN_MOVE_REGEX.find(pgnMove)!!
-                val pieceType = matchResult.groups["fromPiece"]?.value.let{ PieceType.fromPGNNotation(it ?: "") }
+                val pieceType = matchResult.groups["originPiece"]?.value.let{ PieceType.fromPGNNotation(it ?: "") }
                 val piece = Piece.entries.first { it.color == color && it.type == pieceType }
-                val fromFileAdditionalInfo = matchResult.groups["fromFileAdditionalInfo"]?.value?.let { File.at(it) }
-                val fromRankAdditionalInfo = matchResult.groups["fromRankAdditionalInfo"]?.value?.let { Rank.at(it.toInt()) }
+                val fromFileAdditionalInfo = matchResult.groups["originFileAdditionalInfo"]?.value?.let { File.at(it) }
+                val fromRankAdditionalInfo = matchResult.groups["originRankAdditionalInfo"]?.value?.let { Rank.at(it.toInt()) }
                 val destinationSquare = matchResult.groups["destinationSquare"]?.value!!.let { Square.at(it) }
                 val promotedPiece = matchResult.groups["promotion"]?.value?.let{ PieceType.fromPGNNotation(it) }
                 val isCheck = matchResult.groups["check"] != null
@@ -186,8 +186,8 @@ object PGN {
                     piece = piece,
                     destination = destinationSquare,
                     promotedPiece = promotedPiece,
-                    fromFileAdditionalInfo = fromFileAdditionalInfo,
-                    fromRankAdditionalInfo = fromRankAdditionalInfo,
+                    originFileAdditionalInfo = fromFileAdditionalInfo,
+                    originRankAdditionalInfo = fromRankAdditionalInfo,
                     color = color,
                     pgnNotation = pgnMove,
                 )

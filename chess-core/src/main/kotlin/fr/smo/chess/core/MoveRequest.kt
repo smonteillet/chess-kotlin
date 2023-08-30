@@ -1,7 +1,7 @@
 package fr.smo.chess.core
 
 data class MoveRequest(
-    val from: Square,
+    val origin: Square,
     val destination: Square,
     val promotedPiece: PieceType? = null,
 ) {

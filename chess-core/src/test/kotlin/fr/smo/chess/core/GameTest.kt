@@ -415,13 +415,12 @@ class GameTest {
 
         @Test
         fun `should change en passant target square in game and set it back to null when necessary`() {
-            givenAChessGame().applyMove(MoveRequest(E2, E4)) {
-                expectThat(it.enPassantTargetSquare) isEqualTo E3
-            }.applyMove(MoveRequest(E7, E5)) {
-                expectThat(it.enPassantTargetSquare) isEqualTo E6
-            }.applyMove(MoveRequest(D2, D3)) {
-                expectThat(it.enPassantTargetSquare).isNull()
-            }
+            var game = givenAChessGame().applyMove(MoveRequest(E2, E4))
+            expectThat(game.enPassantTargetSquare) isEqualTo E3
+            game = game.applyMove(MoveRequest(E7, E5))
+            expectThat(game.enPassantTargetSquare) isEqualTo E6
+            game = game.applyMove(MoveRequest(D2, D3))
+            expectThat(game.enPassantTargetSquare).isNull()
         }
 
         @Test
