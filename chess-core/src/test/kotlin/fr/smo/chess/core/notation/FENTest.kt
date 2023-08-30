@@ -4,7 +4,7 @@ import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.Piece.*
-import fr.smo.chess.core.Position
+import fr.smo.chess.core.PiecePosition
 import fr.smo.chess.core.Square.*
 import fr.smo.chess.core.notation.FEN.exportFEN
 import fr.smo.chess.core.notation.FEN.importFEN
@@ -66,9 +66,9 @@ class FENTest {
                 val game = importFEN(fen)
                 // Then
                 expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(A8, BLACK_ROOK),
-                    Position(E8, BLACK_ROOK),
-                    Position(H8, WHITE_QUEEN)
+                    PiecePosition(A8, BLACK_ROOK),
+                    PiecePosition(E8, BLACK_ROOK),
+                    PiecePosition(H8, WHITE_QUEEN)
                 )
             }
 
@@ -80,8 +80,8 @@ class FENTest {
                 val game = importFEN(fen)
                 // Then
                 expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(A1, WHITE_KING),
-                    Position(A2, WHITE_PAWN),
+                    PiecePosition(A1, WHITE_KING),
+                    PiecePosition(A2, WHITE_PAWN),
                 )
             }
 
@@ -93,7 +93,7 @@ class FENTest {
                 val game = importFEN(fen)
                 // Then
                 expectThat(game.chessboard.piecesOnBoard).containsExactlyInAnyOrder(
-                    Position(B8, WHITE_QUEEN)
+                    PiecePosition(B8, WHITE_QUEEN)
                 )
             }
         }

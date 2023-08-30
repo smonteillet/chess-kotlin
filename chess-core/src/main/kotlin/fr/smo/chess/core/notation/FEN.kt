@@ -120,7 +120,7 @@ object FEN {
     }
 
     fun getChessboardFromFenPiecePlacement(fenPiecePlacement: String): Chessboard {
-        val board: MutableList<Position> = mutableListOf()
+        val board: MutableList<PiecePosition> = mutableListOf()
         val lines = fenPiecePlacement.split("/")
         var currentSquare = Square.A8
         for (lineIndex in 8 downTo 1) {
@@ -128,7 +128,7 @@ object FEN {
             currentLine.forEach { currentChar ->
                 var currentIndex = currentChar.toString().toIntOrNull()
                 if (currentIndex == null) {
-                    board.add(Position(currentSquare, getPiece(currentChar.toString())))
+                    board.add(PiecePosition(currentSquare, getPiece(currentChar.toString())))
                     if (currentSquare.file != File.FILE_H) {
                         currentSquare = currentSquare.right()!!
                     }

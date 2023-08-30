@@ -13,13 +13,13 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
     }
 
     override fun nextPlay(game: Game): MoveRequest {
-        var randomPosition : Position?
+        var randomPiecePosition : PiecePosition?
         var selectedMove : Move? = null
         var allRemainingColorPositions = game.chessboard.piecesOnBoard.filter { it.piece.color == color }
         while(selectedMove == null) {
-            randomPosition = allRemainingColorPositions.random(random)
-            allRemainingColorPositions = allRemainingColorPositions.minus(randomPosition)
-            var pieceLegalMoves = randomPosition.getAllPseudoLegalMoves(game)
+            randomPiecePosition = allRemainingColorPositions.random(random)
+            allRemainingColorPositions = allRemainingColorPositions.minus(randomPiecePosition)
+            var pieceLegalMoves = randomPiecePosition.getAllPseudoLegalMoves(game)
             while (pieceLegalMoves.isNotEmpty() && selectedMove == null) {
                 selectedMove = pieceLegalMoves.random(random)
                 pieceLegalMoves = pieceLegalMoves.minus(selectedMove)

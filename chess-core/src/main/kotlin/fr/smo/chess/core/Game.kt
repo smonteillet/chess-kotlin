@@ -117,15 +117,15 @@ data class Game(
     }
 
     private fun buildMove(
-        fromPosition: Position,
+        fromPiecePosition: PiecePosition,
         moveRequest: MoveRequest
     ): Move {
-        return fromPosition.getAllPseudoLegalMoves(this)
+        return fromPiecePosition.getAllPseudoLegalMoves(this)
             .firstOrNull { it.destination == moveRequest.destination && it.promotedTo?.type == moveRequest.promotedPiece }
             ?: throw IllegalStateException("Invalid move $moveRequest")
     }
 
-    private fun getFromPosition(moveRequest: MoveRequest): Position {
+    private fun getFromPosition(moveRequest: MoveRequest): PiecePosition {
         return chessboard.getPositionAt(moveRequest.from)
             ?: throw IllegalStateException("There is no piece at ${moveRequest.from}")
     }

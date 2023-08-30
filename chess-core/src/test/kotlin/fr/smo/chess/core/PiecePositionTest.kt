@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
 
-class PositionTest {
+class PiecePositionTest {
 
     @Nested
     inner class GetAllPseudoLegalMoves {
@@ -28,7 +28,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/1P6/8/1P6/8",
                     )
                     // when
-                    val legalMoves = Position(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B3)
                 }
@@ -40,7 +40,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/1P6/1P6/8",
                     )
                     // when
-                    val legalMoves = Position(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves).isEmpty()
                 }
@@ -52,7 +52,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/1p6/1P6/8",
                     )
                     // when
-                    val legalMoves = Position(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves).isEmpty()
                 }
@@ -64,7 +64,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/8/1P6/8",
                     )
                     // when
-                    val legalMoves = Position(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B2, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B3, B4)
                 }
@@ -76,7 +76,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/1P6/8/8",
                     )
                     // when
-                    val legalMoves = Position(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4)
                 }
@@ -88,7 +88,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/2p5/1P6/8/8",
                     )
                     // when
-                    val legalMoves = Position(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
 
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, C4)
@@ -110,7 +110,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/p7/1P6/8/8",
                     )
                     // when
-                    val legalMoves = Position(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, A4)
                     expectThat(
@@ -132,7 +132,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/p1p5/1P6/8/8",
                     )
                     // when
-                    val legalMoves = Position(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B3, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B4, A4, C4)
                     expectThat(
@@ -164,7 +164,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/2P5/8/8/8/8/8/8",
                     )
                     // when
-                    val legalMoves = Position(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.map { it.promotedTo!!.type }).containsExactlyInAnyOrder(
                         QUEEN,
@@ -187,7 +187,7 @@ class PositionTest {
                             enPassantTargetSquare = C6
                         )
                         // when
-                        val legalMoves = Position(D5, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(D5, WHITE_PAWN).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves).containsExactlyInAnyOrder(
                             Move(WHITE_PAWN, D5, D6),
@@ -203,7 +203,7 @@ class PositionTest {
                             enPassantTargetSquare = E6
                         )
                         // when
-                        val legalMoves = Position(D5, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(D5, WHITE_PAWN).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves).containsExactlyInAnyOrder(
                             Move(WHITE_PAWN, D5, D6),
@@ -218,7 +218,7 @@ class PositionTest {
                             fenPiecePlacementOnly = "8/8/8/2bP4/8/8/8/8"
                         )
                         // when
-                        val legalMoves = Position(D5, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(D5, WHITE_PAWN).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D6)
                     }
@@ -235,7 +235,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/1p6/8/1p6/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B6)
                 }
@@ -247,7 +247,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/1p6/1p6/8/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves).isEmpty()
                 }
@@ -259,7 +259,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/1p6/1P6/8/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves).isEmpty()
                 }
@@ -271,7 +271,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/1p6/8/8/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B7, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B6, B5)
                 }
@@ -283,7 +283,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/1p6/8/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5)
                 }
@@ -295,7 +295,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/1p6/2P5/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5, C5)
                     expectThat(
@@ -318,7 +318,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/1p6/P7/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5, A5)
                     expectThat(
@@ -340,7 +340,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/1p6/P1P5/8/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B6, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // then
                     expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(B5, A5, C5)
                     expectThat(
@@ -372,7 +372,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "8/8/8/8/8/8/1p6/8"
                     )
                     // when
-                    val legalMoves = Position(B2, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(B2, BLACK_PAWN).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.map { it.promotedTo!!.type }).containsExactlyInAnyOrder(
                         QUEEN,
@@ -395,7 +395,7 @@ class PositionTest {
                             enPassantTargetSquare = D3,
                         )
                         // when
-                        val legalMoves = Position(E4, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E4, BLACK_PAWN).getAllPseudoLegalMoves(game)
                         expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3, E3)
                         expectThat(
                             legalMoves.contains(
@@ -417,7 +417,7 @@ class PositionTest {
                             enPassantTargetSquare = D3,
                         )
                         // when
-                        val legalMoves = Position(C4, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(C4, BLACK_PAWN).getAllPseudoLegalMoves(game)
                         expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3, C3)
                         expectThat(
                             legalMoves.contains(
@@ -439,7 +439,7 @@ class PositionTest {
                             enPassantTargetSquare = null,
                         )
                         // when
-                        val legalMoves = Position(D4, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(D4, BLACK_PAWN).getAllPseudoLegalMoves(game)
                         expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3)
                     }
 
@@ -451,7 +451,7 @@ class PositionTest {
                             enPassantTargetSquare = null,
                         )
                         // when
-                        val legalMoves = Position(D4, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(D4, BLACK_PAWN).getAllPseudoLegalMoves(game)
                         expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(D3)
                     }
 
@@ -460,7 +460,7 @@ class PositionTest {
                         // Given
                         val game = givenAChessGame("k1qr3r/p1P1b1pp/Qp1p1p2/8/3N1B2/8/PP3PPP/2R3K1 w - - 1 21")
                         // When
-                        val legalMoves = Position(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(C7, WHITE_PAWN).getAllPseudoLegalMoves(game)
 
                         // Then
                         expectThat(legalMoves).containsExactlyInAnyOrder(
@@ -476,7 +476,7 @@ class PositionTest {
                         // Given
                         val game = givenAChessGame("7k/8/8/8/8/8/K2p4/4R3 w - - 0 1")
                         // When
-                        val legalMoves = Position(D2, BLACK_PAWN).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(D2, BLACK_PAWN).getAllPseudoLegalMoves(game)
 
                         // Then
                         expectThat(legalMoves).containsExactlyInAnyOrder(
@@ -506,7 +506,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/4N3/8/8/8",
                 )
                 // when
-                val legalMoves = Position(E4, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(E4, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     G5, G3, C5, C3, F6, F2, D6, D2
@@ -520,7 +520,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/8/N7",
                 )
                 // when
-                val legalMoves = Position(A1, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(A1, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     C2, B3
@@ -534,7 +534,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/6B1/4N3/8/8/8",
                 )
                 // when
-                val legalMoves = Position(E4, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(E4, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
                 // Then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     G3, C5, C3, F6, F2, D6, D2
@@ -548,7 +548,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/6b1/4N3/8/8/8",
                 )
                 // when
-                val legalMoves = Position(E4, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(E4, WHITE_KNIGHT).getAllPseudoLegalMoves(game)
                 // Then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     G5, G3, C5, C3, F6, F2, D6, D2
@@ -575,7 +575,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/1Q6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -592,7 +592,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/1P6/8/8/8/8/1Q6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -609,7 +609,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/1p6/8/8/8/8/1Q6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -636,7 +636,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/5p2/8/8/8/1Q6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_QUEEN).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -663,7 +663,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/PB6/QN6",
                 )
                 // when
-                val legalMoves = Position(A1, WHITE_QUEEN).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(A1, WHITE_QUEEN).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves).isEmpty()
             }
@@ -679,7 +679,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/1R6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_ROOK).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_ROOK).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -694,7 +694,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/1P6/8/8/8/8/1R6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_ROOK).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_ROOK).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -709,7 +709,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/1p6/8/8/8/8/1R6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_ROOK).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_ROOK).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A2, C2, D2, E2, F2, G2, H2,
@@ -734,7 +734,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/PB6/RN6",
                 )
                 // when
-                val legalMoves = Position(A1, WHITE_ROOK).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(A1, WHITE_ROOK).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves).isEmpty()
             }
@@ -750,7 +750,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/1B6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_BISHOP).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_BISHOP).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A1, C3, D4, E5, F6, G7, H8,
@@ -765,7 +765,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/2P5/1B6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_BISHOP).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_BISHOP).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A1, A3, C1
@@ -779,7 +779,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/2p5/1B6/8",
                 )
                 // when
-                val legalMoves = Position(B2, WHITE_BISHOP).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(B2, WHITE_BISHOP).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     A1, C3, A3, C1
@@ -803,7 +803,7 @@ class PositionTest {
                     fenPiecePlacementOnly = "8/8/8/8/8/8/1P6/B7",
                 )
                 // when
-                val legalMoves = Position(A1, WHITE_BISHOP).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(A1, WHITE_BISHOP).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves).isEmpty()
             }
@@ -824,7 +824,7 @@ class PositionTest {
                             fenPiecePlacementOnly = "8/8/8/8/8/8/8/R3K2R",
                         )
                         // when
-                        val legalMoves = Position(E1, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E1, WHITE_KING).getAllPseudoLegalMoves(game)
                         // then
                         expectThat(
                             legalMoves.contains(
@@ -846,7 +846,7 @@ class PositionTest {
                             fenPiecePlacementOnly = "8/8/8/8/8/8/8/R3K2R",
                         )
                         // when
-                        val legalMoves = Position(E1, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E1, WHITE_KING).getAllPseudoLegalMoves(game)
                         // then
                         expectThat(
                             legalMoves.contains(
@@ -866,7 +866,7 @@ class PositionTest {
                         // Given
                         val game = givenAChessGame()
                         // When
-                        val legalMoves = Position(E1, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E1, WHITE_KING).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                     }
@@ -876,7 +876,7 @@ class PositionTest {
                         // Given
                         val game = givenAChessGame()
                         // When
-                        val legalMoves = Position(E1, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E1, WHITE_KING).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.none { it.isQueenCastle }).isTrue()
                     }
@@ -890,7 +890,7 @@ class PositionTest {
                             isWhiteQueenCastlePossible = true,
                         )
                         // when
-                        val legalMoves = Position(E1, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E1, WHITE_KING).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                     }
@@ -904,7 +904,7 @@ class PositionTest {
                             isWhiteQueenCastlePossible = false,
                         )
                         // when
-                        val legalMoves = Position(E1, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E1, WHITE_KING).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.none { it.isQueenCastle }).isTrue()
                     }
@@ -920,7 +920,7 @@ class PositionTest {
                             fenPiecePlacementOnly = "r3k2r/8/8/8/8/8/8/8",
                         )
                         // when
-                        val legalMoves = Position(E8, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E8, WHITE_KING).getAllPseudoLegalMoves(game)
                         // then
                         expectThat(
                             legalMoves.contains(
@@ -942,7 +942,7 @@ class PositionTest {
                             fenPiecePlacementOnly = "r3k2r/8/8/8/8/8/8/8",
                         )
                         // when
-                        val legalMoves = Position(E8, WHITE_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E8, WHITE_KING).getAllPseudoLegalMoves(game)
                         // then
                         expectThat(
                             legalMoves.contains(
@@ -962,7 +962,7 @@ class PositionTest {
                         // given
                         val game = givenAChessGame()
                         // when
-                        val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                     }
@@ -972,7 +972,7 @@ class PositionTest {
                         // given
                         val game = givenAChessGame()
                         // when
-                        val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                        val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                         // Then
                         expectThat(legalMoves.none { it.isQueenCastle }).isTrue()
                     }
@@ -986,7 +986,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "r3k2r/8/8/8/4R3/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.none { it.isQueenCastle || it.isKingCastle }).isTrue()
                 }
@@ -998,7 +998,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "r3k2r/8/8/8/5R2/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                 }
@@ -1010,7 +1010,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "r3k2r/8/8/8/6R1/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                 }
@@ -1022,7 +1022,7 @@ class PositionTest {
                         fenPiecePlacementOnly = "r3k2r/8/8/8/6R1/8/8/8"
                     )
                     // when
-                    val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                 }
@@ -1036,7 +1036,7 @@ class PositionTest {
                         isBlackQueenCastlePossible = true,
                     )
                     // when
-                    val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.none { it.isKingCastle }).isTrue()
                 }
@@ -1050,7 +1050,7 @@ class PositionTest {
                         isBlackQueenCastlePossible = false,
                     )
                     // when
-                    val legalMoves = Position(E8, BLACK_KING).getAllPseudoLegalMoves(game)
+                    val legalMoves = PiecePosition(E8, BLACK_KING).getAllPseudoLegalMoves(game)
                     // Then
                     expectThat(legalMoves.none { it.isQueenCastle }).isTrue()
                 }
@@ -1067,7 +1067,7 @@ class PositionTest {
                     isWhiteKingCastlePossible = false,
                 )
                 // when
-                val legalMoves = Position(D4, WHITE_KING).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(D4, WHITE_KING).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     C5, D5, E5, C4, E4, C3, D3, E3
@@ -1085,7 +1085,7 @@ class PositionTest {
                     isWhiteKingCastlePossible = false,
                 )
                 // when
-                val legalMoves = Position(D4, WHITE_KING).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(D4, WHITE_KING).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     C5, D5, E5, C4, E4, C3, D3, E3
@@ -1113,7 +1113,7 @@ class PositionTest {
                     isWhiteKingCastlePossible = false,
                 )
                 // when
-                val legalMoves = Position(A1, WHITE_KING).getAllPseudoLegalMoves(game)
+                val legalMoves = PiecePosition(A1, WHITE_KING).getAllPseudoLegalMoves(game)
                 // then
                 expectThat(legalMoves.map { it.destination }).containsExactlyInAnyOrder(
                     B1, B2

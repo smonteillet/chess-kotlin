@@ -11,7 +11,7 @@ internal class ChessboardTest {
 
     private val board = Chessboard(
         piecesOnBoard = listOf(
-            Position(A1, WHITE_ROOK)
+            PiecePosition(A1, WHITE_ROOK)
         )
     )
 
@@ -19,7 +19,7 @@ internal class ChessboardTest {
     @Test
     fun `get existing Position at corresponding square returns piece`() {
         val foundPosition = board.getPositionAt(A1)
-        assertEquals(foundPosition, Position(A1, WHITE_ROOK))
+        assertEquals(foundPosition, PiecePosition(A1, WHITE_ROOK))
     }
 
     @Test
