@@ -9,4 +9,5 @@ data class Move(
     val promotedTo : Piece? = null,
     val isKingCastle : Boolean = false,
     val isQueenCastle : Boolean = false,
+    val isCheck : Boolean = false,
 )

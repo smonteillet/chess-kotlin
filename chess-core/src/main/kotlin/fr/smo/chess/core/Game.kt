@@ -5,6 +5,7 @@ import fr.smo.chess.core.Piece.BLACK_PAWN
 import fr.smo.chess.core.Piece.WHITE_PAWN
 import fr.smo.chess.core.PieceType.KING
 import fr.smo.chess.core.Rank.*
+import fr.smo.chess.core.utils.ifTrue
 
 data class Game(
     val chessboard: Chessboard,
@@ -34,21 +35,25 @@ data class Game(
     }
 
     private fun buildNewGameState(moveCommand: MoveCommand): Game {
-        val move: Move = buildMove(getOriginPiecePosition(moveCommand), moveCommand)
+        val move: Move = buildMove(moveCommand)
         val newChessboard = chessboard
             .applyMoveOnBoard(move, enPassantTargetSquare)
             .applyPromotions(move)
             .applyRookMovesForCastling(move)
+
+        val checkedOrNotMove = isChecked(sideToMove.opposite(), newChessboard)
+            .ifTrue { move.copy(isCheck = true) } ?: move
+
         return Game(
             chessboard = newChessboard,
-            history = history.addMove(move),
+            history = history.addMove(checkedOrNotMove),
             sideToMove = sideToMove.opposite(),
             castling = castling.updateCastlingAfterMove(move),
             enPassantTargetSquare = getEnPassantTargetSquare(move),
         )
     }
 
-    private fun isChecked(kingColorThatMayBeChecked: Color): Boolean {
+    private fun isChecked(kingColorThatMayBeChecked: Color, chessboard: Chessboard = this.chessboard): Boolean {
         return chessboard.getAllPseudoLegalMovesForColor(kingColorThatMayBeChecked.opposite(), this)
             .count { it.capturedPiece?.type == KING } > 0
     }
@@ -97,14 +102,10 @@ data class Game(
             copy(status = Status.STARTED)
     }
 
-    private fun buildMove(
-        originPiecePosition: PiecePosition,
-        moveCommand: MoveCommand
-    ): Move {
-        return originPiecePosition.getAllPseudoLegalMoves(this)
+    private fun buildMove(moveCommand: MoveCommand): Move =
+        getOriginPiecePosition(moveCommand).getAllPseudoLegalMoves(this)
             .firstOrNull { it.destination == moveCommand.destination && it.promotedTo?.type == moveCommand.promotedPiece }
             ?: throw IllegalStateException("Invalid move $moveCommand")
-    }
 
     private fun getOriginPiecePosition(moveCommand: MoveCommand): PiecePosition {
         return chessboard.getPositionAt(moveCommand.origin)

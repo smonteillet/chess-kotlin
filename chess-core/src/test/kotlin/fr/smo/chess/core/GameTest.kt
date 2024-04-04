@@ -800,5 +800,38 @@ class GameTest {
 
 
     }
+
+    @Nested
+    inner class Check {
+        @Test
+        fun `should mark move as check when checking king`() {
+            // Given When
+            val game = givenAChessGame(
+                fenPiecePlacementOnly = "2k5/8/8/8/8/8/3Q4/2K5",
+                sideToMove = WHITE
+            ).applyMove(MoveCommand(origin = D2, destination = C2))
+            // Then
+            expectThat(game.history.moves.last().isCheck).isTrue()
+        }
+
+        @Test
+        fun `should mark move as check on promotion when checking king`() {
+            // Given When
+            val game = givenAChessGame(
+                fenPiecePlacementOnly = "8/6P1/8/8/2k5/8/8/2K5",
+                sideToMove = WHITE
+            ).applyMove(MoveCommand(origin = G7, destination = G8, promotedPiece = BISHOP))
+            // Then
+            expectThat(game.history.moves.last().isCheck).isTrue()
+        }
+
+        @Test
+        fun `should not mark move as check on normal move`() {
+            // Given When
+            val game = givenAChessGame().applyMove(MoveCommand(origin = E2, destination = E4))
+            // Then
+            expectThat(game.history.moves.last().isCheck).isFalse()
+        }
+    }
 }
 

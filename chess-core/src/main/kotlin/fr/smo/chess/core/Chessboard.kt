@@ -11,7 +11,7 @@ data class Chessboard(
     }
 
     fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
-        return game.chessboard.piecesOnBoard
+        return piecesOnBoard
             .filter { it.piece.color == color }
             .flatMap { it.getAllPseudoLegalMoves(game) }
     }
