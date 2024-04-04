@@ -3,6 +3,7 @@ package fr.smo.chess.core
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
+import fr.smo.chess.core.utils.ifTrue
 
 data class PiecePosition(val square: Square, val piece: Piece) {
 
@@ -116,10 +117,6 @@ data class PiecePosition(val square: Square, val piece: Piece) {
                     Move(piece = pawnPiecePosition.piece, origin = pawnPiecePosition.square, destination = squareTwoSquareAway)
                 }
         }
-    }
-
-    private fun <T> Boolean.ifTrue(lambda : (Unit) -> T?): T? {
-        return if (this) lambda.invoke(Unit) else null
     }
 
     private fun getOneSquarePawnMoves(destinationSquare: Square, pieceOnDestinationSquare : Piece? = null): List<Move> =
