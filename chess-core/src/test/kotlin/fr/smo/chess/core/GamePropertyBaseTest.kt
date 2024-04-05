@@ -55,22 +55,22 @@ class GamePropertyBaseTest {
 
     private fun assertOneBishopPerSquareColor(game: Game) {
         if (game.history.moves.none { it.promotedTo == WHITE_BISHOP }) {
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_BISHOP && it.square.isLightSquare() }) isLessThanOrEqualTo 1
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_BISHOP && !it.square.isLightSquare() }) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.piece == WHITE_BISHOP && it.square.isLightSquare() }) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.piece == WHITE_BISHOP && !it.square.isLightSquare() }) isLessThanOrEqualTo 1
         }
         if (game.history.moves.none { it.promotedTo == BLACK_BISHOP }) {
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_BISHOP && it.square.isLightSquare()}) isLessThanOrEqualTo 1
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_BISHOP && !it.square.isLightSquare()}) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.piece == BLACK_BISHOP && it.square.isLightSquare()}) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.piece == BLACK_BISHOP && !it.square.isLightSquare()}) isLessThanOrEqualTo 1
         }
     }
 
     private fun assertPawnShouldNotBeUnpromotedOnLastRank(game: Game) {
         expectThat(
-            game.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN && it.square.rank == Rank.RANK_1 }
+            game.chessboard.count { it.piece == BLACK_PAWN && it.square.rank == Rank.RANK_1 }
         ).describedAs("We should not have black pawn on rank 1, it should have been promoted.")
             .isEqualTo(0)
         expectThat(
-            game.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN && it.square.rank == Rank.RANK_8 }
+            game.chessboard.count { it.piece == WHITE_PAWN && it.square.rank == Rank.RANK_8 }
         ).describedAs("We should not have white pawn on rank 8, it should have been promoted.")
             .isEqualTo(0)
     }
@@ -143,13 +143,13 @@ class GamePropertyBaseTest {
     private fun assertThatSumOfCaptureAndRemainingPieceIs32(game: Game) {
 
         val wholePieceCount = game.history.moves.count { it.capturedPiece != null } +
-                game.chessboard.piecesOnBoard.size
+                game.chessboard.numberOfRemainingPieces()
         if (wholePieceCount != 32) {
             throw IllegalStateException()
         }
         expectThat(
             game.history.moves.count { it.capturedPiece != null } +
-                    game.chessboard.piecesOnBoard.size
-        ).isEqualTo(GameFactory.createStandardGame().chessboard.piecesOnBoard.size)
+                    game.chessboard.numberOfRemainingPieces()
+        ).isEqualTo(GameFactory.createStandardGame().chessboard.numberOfRemainingPieces())
     }
 }

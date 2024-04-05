@@ -1,7 +1,7 @@
 package fr.smo.chess.core
 
 data class Chessboard(
-    val piecesOnBoard: List<PiecePosition> = listOf(),
+    private val piecesOnBoard: List<PiecePosition> = listOf(),
 ) {
 
     fun isPiecePresentAtAndHasColor(square: Square, color: Color): Boolean = getPositionAt(square)?.piece?.color == color
@@ -10,10 +10,18 @@ data class Chessboard(
         return this.piecesOnBoard.firstOrNull { it.square == square }
     }
 
+    fun getPieces() = piecesOnBoard
+
+    fun getPieces(color: Color) = piecesOnBoard.filter { it.piece.color == color }
+
+    fun count(predicate: (PiecePosition) -> Boolean): Int = piecesOnBoard.count(predicate)
+
+    fun numberOfRemainingPieces() = piecesOnBoard.size
+
+    fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPositionAt(it) != null }
+
     fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
-        return piecesOnBoard
-            .filter { it.piece.color == color }
-            .flatMap { it.getAllPseudoLegalMoves(game) }
+        return getPieces(color).flatMap { it.getAllPseudoLegalMoves(game) }
     }
 
     fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard = Chessboard(

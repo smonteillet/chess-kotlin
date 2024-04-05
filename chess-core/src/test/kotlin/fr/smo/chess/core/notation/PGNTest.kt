@@ -216,8 +216,8 @@ class PGNTest {
         fun `should import a pgn with a promotion`() {
             val importedGame = PGN.import("1. e4 e5 2. h3 g5 3. g4 h5 4. gxh5 Rh6 5. Bc4 Re6 6. h6 Rd6 7. h7 Re6 8. h8=Qe7")
             expectThat(importedGame.history.moves.last().promotedTo) isEqualTo Piece.WHITE_QUEEN
-            expectThat(importedGame.chessboard.piecesOnBoard.count { it.piece == Piece.WHITE_PAWN }) isEqualTo 7
-            expectThat(importedGame.chessboard.piecesOnBoard.count { it.piece == Piece.WHITE_QUEEN }) isEqualTo 2
+            expectThat(importedGame.chessboard.count { it.piece == Piece.WHITE_PAWN }) isEqualTo 7
+            expectThat(importedGame.chessboard.count { it.piece == Piece.WHITE_QUEEN }) isEqualTo 2
         }
 
         @Test

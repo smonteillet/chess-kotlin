@@ -113,7 +113,7 @@ class GameTest {
             ).orThrow()
             // Then
             expectThat(game.history.moves.none { it.capturedPiece != null })
-            expectThat(game.chessboard.piecesOnBoard.size) isEqualTo 32
+            expectThat(game.chessboard.numberOfRemainingPieces()) isEqualTo 32
         }
     }
 
@@ -150,7 +150,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, QUEEN)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_QUEEN
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -159,7 +159,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, KNIGHT)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_KNIGHT
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -168,7 +168,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, BISHOP)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_BISHOP
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -177,7 +177,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, ROOK)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_ROOK
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
         }
 
 
@@ -187,7 +187,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, QUEEN)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_QUEEN
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -196,7 +196,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, KNIGHT)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_KNIGHT
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -205,7 +205,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, BISHOP)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_BISHOP
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -214,7 +214,7 @@ class GameTest {
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, ROOK)).orThrow()
             // Then
             expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_ROOK
-            expectThat(game.chessboard.piecesOnBoard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
         }
     }
 
@@ -227,13 +227,13 @@ class GameTest {
             val game = givenAChessGame(
                 fenPiecePlacementOnly = "rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR", sideToMove = WHITE
             )
-            val initialAmountOfPieces = game.chessboard.piecesOnBoard.size
+            val initialAmountOfPieces = game.chessboard.numberOfRemainingPieces()
             // When
             val updatedGame = game.applyMove(MoveCommand(D4, E5)).orThrow()
             // Then
             expectThat(updatedGame.chessboard.getPositionAt(D4)).isNull()
             expectThat(updatedGame.chessboard.getPositionAt(E5)?.piece) isEqualTo WHITE_PAWN
-            expectThat(updatedGame.chessboard.piecesOnBoard.size) isEqualTo initialAmountOfPieces - 1
+            expectThat(updatedGame.chessboard.numberOfRemainingPieces()) isEqualTo initialAmountOfPieces - 1
         }
 
     }

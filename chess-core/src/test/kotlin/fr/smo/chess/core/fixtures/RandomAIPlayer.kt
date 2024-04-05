@@ -17,7 +17,7 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
     override fun nextPlay(game: Game): MoveCommand {
         var randomPiecePosition : PiecePosition?
         var selectedMove : Move? = null
-        var allRemainingColorPositions = game.chessboard.piecesOnBoard.filter { it.piece.color == color }
+        var allRemainingColorPositions = game.chessboard.getPieces(color!!)
         while(selectedMove == null) {
             randomPiecePosition = allRemainingColorPositions.random(random)
             allRemainingColorPositions = allRemainingColorPositions.minus(randomPiecePosition)

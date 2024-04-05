@@ -211,8 +211,8 @@ data class PiecePosition(val square: Square, val piece: Piece) {
         kingCastlingPathSquares: List<Square>,
         queenCastlingPathSquares: List<Square>,
     ): List<Move> {
-        val isTherePiecesOnQueenCastlingPath = game.chessboard.piecesOnBoard.any { queenCastlingPathSquares.minus(square).contains(it.square) }
-        val isTherePiecesOnKingCastlingPath = game.chessboard.piecesOnBoard.any { kingCastlingPathSquares.minus(square).contains(it.square) }
+        val isTherePiecesOnQueenCastlingPath = game.chessboard.hasAtLeastOnePieceAt(queenCastlingPathSquares.minus(square))
+        val isTherePiecesOnKingCastlingPath = game.chessboard.hasAtLeastOnePieceAt( kingCastlingPathSquares.minus(square))
         // We don't need to check if opponent can castle from this position, we just want to check if one of its legal moves can threaten one of king
         // castling path squares. Furthermore, considering castle here would create an infinite loop / stack overflow.
         val gameWithoutCastling = game.copy(
