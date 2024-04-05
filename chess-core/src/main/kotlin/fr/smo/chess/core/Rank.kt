@@ -19,6 +19,25 @@ enum class Rank(val value: Int) {
             ?: throw IllegalArgumentException("Rank index shall be between 1 and 8")
     }
 
-    fun top(): Rank? = if (value + 1 <= RANK_8.value) at(value + 1) else null
-    fun bottom(): Rank? = if (value - 1 >= RANK_1.value) at(value - 1) else null
+    fun top(): Rank? = when (this) {
+        RANK_1 -> RANK_2
+        RANK_2 -> RANK_3
+        RANK_3 -> RANK_4
+        RANK_4 -> RANK_5
+        RANK_5 -> RANK_6
+        RANK_6 -> RANK_7
+        RANK_7 -> RANK_8
+        else -> null
+    }
+
+    fun bottom(): Rank? = when (this) {
+        RANK_8 -> RANK_7
+        RANK_7 -> RANK_6
+        RANK_6 -> RANK_5
+        RANK_5 -> RANK_4
+        RANK_4 -> RANK_3
+        RANK_3 -> RANK_2
+        RANK_2 -> RANK_1
+        else -> null
+    }
 }

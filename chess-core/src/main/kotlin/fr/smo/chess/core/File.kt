@@ -19,7 +19,27 @@ enum class File(val value : Int, val label : String) {
             ?: throw IllegalArgumentException("File index shall be between a and h. Found: $label")
     }
 
-    fun right(): File? = if (value + 1 <= FILE_H.value) at(value + 1) else null
-    fun left():  File? = if (value - 1 >= FILE_A.value) at(value - 1) else null
+    fun right() : File? = when(this) {
+       FILE_A -> FILE_B
+       FILE_B -> FILE_C
+       FILE_C -> FILE_D
+       FILE_D -> FILE_E
+       FILE_E -> FILE_F
+       FILE_F -> FILE_G
+       FILE_G -> FILE_H
+       FILE_H -> null
+    }
+
+
+    fun left():  File? = when(this) {
+        FILE_A -> null
+        FILE_B -> FILE_A
+        FILE_C -> FILE_B
+        FILE_D -> FILE_C
+        FILE_E -> FILE_D
+        FILE_F -> FILE_E
+        FILE_G -> FILE_F
+        FILE_H -> FILE_G
+    }
 
 }
