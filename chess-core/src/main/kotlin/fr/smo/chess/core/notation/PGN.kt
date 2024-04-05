@@ -2,7 +2,8 @@ package fr.smo.chess.core.notation
 
 import fr.smo.chess.core.*
 import fr.smo.chess.core.PieceType.*
-import java.lang.Exception
+import fr.smo.chess.core.utils.Failure
+import fr.smo.chess.core.utils.Success
 
 object PGN {
 
@@ -46,7 +47,7 @@ object PGN {
 
     }
 
-    fun applyPGNMove(game: Game, pgnMoveStr: String): Game {
+    private fun applyPGNMove(game: Game, pgnMoveStr: String): Game {
         val color = game.sideToMove
         importKingSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
         importQueenSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
@@ -59,7 +60,7 @@ object PGN {
                 destination = pgnMove.destination,
                 promotedPiece = pgnMove.promotedPiece,
             )
-        )
+        ).orThrow()
     }
 
     private fun extractOriginSquare(game: Game, pgnMove: PgnMove) : Square {
@@ -73,24 +74,23 @@ object PGN {
             }
         return if (candidateMoves.isEmpty()) {
             throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
-        } else if (candidateMoves.size == 1){
+        } else if (candidateMoves.size == 1) {
             candidateMoves[0].origin
         } else {
-            candidateMoves.firstOrNull {
-                var isGoodMove = true
-                try {
-                    game.applyMove(
+            candidateMoves.firstNotNullOf { move ->
+                game.applyMove(
                         MoveCommand(
-                            origin = it.origin,
-                            destination = it.destination,
-                            promotedPiece = it.promotedTo?.type,
+                                origin = move.origin,
+                                destination = move.destination,
+                                promotedPiece = move.promotedTo?.type,
                         )
-                    )
-                } catch (e: Exception) {
-                    isGoodMove = false
+                ).let { outcome ->
+                    when (outcome) {
+                        is Success -> move
+                        is Failure -> null
+                    }
                 }
-                isGoodMove
-            }?.origin ?: throw IllegalArgumentException("cannot find from square for ${pgnMove.pgnNotation}")
+            }.origin
         }
     }
 
@@ -126,7 +126,7 @@ object PGN {
                     destination = castleMove.destination,
                     promotedPiece = null,
                 )
-            )
+            ).orThrow()
         }
         return null
     }

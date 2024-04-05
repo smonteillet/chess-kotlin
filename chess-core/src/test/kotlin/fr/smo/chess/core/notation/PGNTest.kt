@@ -39,7 +39,7 @@ class PGNTest {
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(E7, E5),
-            )
+            ).orThrow()
         }
 
 
@@ -49,7 +49,7 @@ class PGNTest {
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(E7, E5),
-            )
+            ).orThrow()
         }
 
         @Test
@@ -60,7 +60,7 @@ class PGNTest {
                 MoveCommand(E7, E5),
                 MoveCommand(A2, A3),
                 MoveCommand(A7, A6),
-            )
+            ).orThrow()
 
         }
 
@@ -70,7 +70,7 @@ class PGNTest {
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(B1, C3),
                 MoveCommand(G8, F6),
-            )
+            ).orThrow()
         }
 
         @Test
@@ -89,7 +89,7 @@ class PGNTest {
                 MoveCommand(E8, D7),
                 MoveCommand(A1, B1),
                 MoveCommand(H8, G8),
-            )
+            ).orThrow()
         }
 
         @Test
@@ -99,7 +99,7 @@ class PGNTest {
                 MoveCommand(E2, E4),
                 MoveCommand(D7, D5),
                 MoveCommand(E4, D5)
-            )
+            ).orThrow()
             expectThat(importedGame) isEqualTo expectedGame
             val lastMove = importedGame.history.moves.last()
             expectThat(lastMove.capturedPiece) isEqualTo Piece.BLACK_PAWN
@@ -113,7 +113,7 @@ class PGNTest {
                 MoveCommand(B1, C3),
                 MoveCommand(D7, D5),
                 MoveCommand(C3, D5)
-            )
+            ).orThrow()
             expectThat(importedGame) isEqualTo expectedGame
             val lastMove = importedGame.history.moves.last()
             expectThat(lastMove.capturedPiece) isEqualTo Piece.BLACK_PAWN
@@ -132,8 +132,7 @@ class PGNTest {
                 MoveCommand(G8, F6),
                 MoveCommand(E1, G1),
                 MoveCommand(E8, G8),
-
-                )
+            ).orThrow()
             expectThat(importedGame) isEqualTo expectedGame
             expectThat(importedGame.history.moves.any { it.isKingCastle && it.piece.color == Color.BLACK }).isTrue()
             expectThat(importedGame.history.moves.any { it.isKingCastle && it.piece.color == Color.WHITE }).isTrue()
@@ -157,8 +156,7 @@ class PGNTest {
                 MoveCommand(D8, D6),
                 MoveCommand(E1, C1),
                 MoveCommand(E8, C8),
-
-                )
+            ).orThrow()
             expectThat(importedGame) isEqualTo expectedGame
             expectThat(importedGame.history.moves.any { it.isQueenCastle && it.piece.color == Color.BLACK }).isTrue()
             expectThat(importedGame.history.moves.any { it.isQueenCastle && it.piece.color == Color.WHITE }).isTrue()

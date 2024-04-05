@@ -63,12 +63,6 @@ private fun isStaleMate(game: Game): Boolean {
 private fun hasNoLegalMove(color: Color, game: Game) : Boolean {
     return game.chessboard.getAllPseudoLegalMovesForColor(color, game)
             .map { MoveCommand(it.origin, it.destination, it.promotedTo?.type) }
-            .mapNotNull {
-                try {
-                    game.applyMove(it, false)
-                } catch (e: RuntimeException) {
-                    null
-                }
-            }
+            .mapNotNull { game.applyMove(it, false).orNull() }
             .all { isChecked(color, it) }
 }

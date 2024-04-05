@@ -20,7 +20,7 @@ class GamePropertyBaseTest {
 
         @JvmStatic
         fun specificSeeds() = listOf(
-            Arguments.of(1980302746L)
+            Arguments.of(887813262L)
         )
     }
 
@@ -141,9 +141,15 @@ class GamePropertyBaseTest {
     }
 
     private fun assertThatSumOfCaptureAndRemainingPieceIs32(game: Game) {
+
+        val wholePieceCount = game.history.moves.count { it.capturedPiece != null } +
+                game.chessboard.piecesOnBoard.size
+        if (wholePieceCount != 32) {
+            throw IllegalStateException()
+        }
         expectThat(
             game.history.moves.count { it.capturedPiece != null } +
                     game.chessboard.piecesOnBoard.size
-        ) isEqualTo GameFactory.createStandardGame().chessboard.piecesOnBoard.size
+        ).isEqualTo(GameFactory.createStandardGame().chessboard.piecesOnBoard.size)
     }
 }

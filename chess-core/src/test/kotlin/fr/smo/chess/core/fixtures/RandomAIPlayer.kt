@@ -1,6 +1,8 @@
 package fr.smo.chess.core.fixtures
 
 import fr.smo.chess.core.*
+import fr.smo.chess.core.utils.Failure
+import fr.smo.chess.core.utils.Success
 import kotlin.random.Random
 
 class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
@@ -36,18 +38,18 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
     }
 
     private fun isMoveLegal(move: Move, game: Game): Boolean {
-        try {
-            game.applyMove(
-                MoveCommand(
-                    origin = move.origin,
-                    destination = move.destination,
-                    promotedPiece = move.promotedTo?.type,
-                )
+        return game.applyMove(
+            MoveCommand(
+                origin = move.origin,
+                destination = move.destination,
+                promotedPiece = move.promotedTo?.type,
             )
-        } catch (e: Exception) {
-            return false
+        ).let { outcome ->
+            when (outcome) {
+                is Success -> true
+                is Failure -> false
+            }
         }
-        return true
     }
 
     override fun registerColor(colorForTheGame: Color) {

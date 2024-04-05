@@ -20,7 +20,7 @@ class GameLoop(
         player2.registerColor(BLACK)
         while (!game.status.gameIsOver) {
             val moveRequest = players[game.sideToMove]!!.nextPlay(game)
-            game = game.applyMove(moveRequest)
+            game = game.applyMove(moveRequest).orThrow()
             afterMoveCallback.invoke(game)
         }
         logGameState(game)
