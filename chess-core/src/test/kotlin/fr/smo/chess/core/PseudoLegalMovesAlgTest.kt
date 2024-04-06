@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.*
 
-class PiecePositionTest {
+class PseudoLegalMovesAlgTest {
 
     @Nested
     inner class GetAllPseudoLegalMoves {

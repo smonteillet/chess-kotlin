@@ -1,5 +1,7 @@
 package fr.smo.chess.core
 
+import fr.smo.chess.core.utils.Failure
+import fr.smo.chess.core.utils.Success
 import fr.smo.chess.core.utils.ifTrue
 
 // TODO this could be integrated back into the Game class
@@ -30,8 +32,9 @@ private fun isCheckMate(game : Game): Boolean {
 }
 
 fun isChecked(kingColorThatMayBeChecked: Color, game: Game): Boolean {
-    return game.chessboard.getAllPseudoLegalMovesForColor(kingColorThatMayBeChecked.opposite(), game)
-            .any { it.capturedPiece?.type == PieceType.KING }
+    return game.chessboard.hasAPseudoLegalMovesSatisfying(kingColorThatMayBeChecked.opposite(), game) { move ->
+        move.capturedPiece?.type == PieceType.KING
+    }
 }
 
 private fun isDraw(game: Game) : Boolean {
@@ -61,8 +64,13 @@ private fun isStaleMate(game: Game): Boolean {
 }
 
 private fun hasNoLegalMove(color: Color, game: Game) : Boolean {
-    return game.chessboard.getAllPseudoLegalMovesForColor(color, game)
-            .map { MoveCommand(it.origin, it.destination, it.promotedTo?.type) }
-            .mapNotNull { game.applyMove(it, false).orNull() }
-            .all { isChecked(color, it) }
+    return (
+        game.chessboard.hasAPseudoLegalMovesSatisfying(color, game) { move ->
+            val moveCommand = MoveCommand(move.origin, move.destination, move.promotedTo?.type)
+            when (game.applyMove(moveCommand, false)) {
+                is Success -> true
+                is Failure -> false
+            }
+        }.not()
+    )
 }

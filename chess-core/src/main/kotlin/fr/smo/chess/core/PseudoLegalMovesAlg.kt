@@ -220,9 +220,17 @@ private fun getCastleMoves(
                     isBlackKingCastlePossible = false
             ),
     )
-    val allPseudoLegalMovesForPlayer = game.chessboard.getAllPseudoLegalMovesForColor(kingPosition.color.opposite(), gameWithoutCastling)
-    val hasKingCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { kingCastlingPathSquares.contains(it.destination) }
-    val hasQueenCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { queenCastlingPathSquares.contains(it.destination) }
+//    val allPseudoLegalMovesForPlayer = game.chessboard.getAllPseudoLegalMovesForColor(kingPosition.color.opposite(), gameWithoutCastling)
+//    val hasKingCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { kingCastlingPathSquares.contains(it.destination) }
+//    val hasQueenCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { queenCastlingPathSquares.contains(it.destination) }
+
+    val hasKingCastleSquaresUnderAttack = gameWithoutCastling.chessboard.hasAPseudoLegalMovesSatisfying(
+            kingPosition.color.opposite(),  gameWithoutCastling
+    ) { kingCastlingPathSquares.contains(it.destination) }
+
+    val hasQueenCastleSquaresUnderAttack = gameWithoutCastling.chessboard.hasAPseudoLegalMovesSatisfying(
+            kingPosition.color.opposite(),  gameWithoutCastling
+    ) { queenCastlingPathSquares.contains(it.destination) }
 
     return listOfNotNull(
             if (isKingCastlePossible && !isTherePiecesOnKingCastlingPath && !hasKingCastleSquaresUnderAttack) {

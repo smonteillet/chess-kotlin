@@ -20,10 +20,23 @@ data class Chessboard(
 
     fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPieceAt(it) != null }
 
+    // TODO this should not be here
     fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
         return piecesOnBoard.filter { it.value.color == color }. flatMap {
             getPseudoLegalMoves(game, PiecePosition(square = it.key, piece = it.value))
         }
+    }
+
+    // TODO this should not be here
+    fun hasAPseudoLegalMovesSatisfying(color: Color, game: Game, predicate: (Move) -> Boolean): Boolean {
+       piecesOnBoard.filter { it.value.color == color }.forEach {
+            getPseudoLegalMoves(game, PiecePosition(square = it.key, piece = it.value)).forEach { move ->
+                if (predicate.invoke(move)) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard {
