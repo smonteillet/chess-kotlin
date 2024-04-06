@@ -149,8 +149,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, QUEEN)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_QUEEN
-            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_QUEEN
+            expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -158,8 +158,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, KNIGHT)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_KNIGHT
-            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_KNIGHT
+            expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -167,8 +167,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, BISHOP)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_BISHOP
-            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_BISHOP
+            expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -176,8 +176,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, ROOK)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(B1)?.piece) isEqualTo BLACK_ROOK
-            expectThat(game.chessboard.count { it.piece == BLACK_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_ROOK
+            expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
         }
 
 
@@ -186,8 +186,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, QUEEN)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_QUEEN
-            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_QUEEN
+            expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -195,8 +195,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, KNIGHT)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_KNIGHT
-            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_KNIGHT
+            expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -204,8 +204,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, BISHOP)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_BISHOP
-            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_BISHOP
+            expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
         }
 
         @Test
@@ -213,8 +213,8 @@ class GameTest {
             // Given When
             val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, ROOK)).orThrow()
             // Then
-            expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo WHITE_ROOK
-            expectThat(game.chessboard.count { it.piece == WHITE_PAWN }) isEqualTo 0
+            expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_ROOK
+            expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
         }
     }
 
@@ -231,8 +231,8 @@ class GameTest {
             // When
             val updatedGame = game.applyMove(MoveCommand(D4, E5)).orThrow()
             // Then
-            expectThat(updatedGame.chessboard.getPositionAt(D4)).isNull()
-            expectThat(updatedGame.chessboard.getPositionAt(E5)?.piece) isEqualTo WHITE_PAWN
+            expectThat(updatedGame.chessboard.getPieceAt(D4)).isNull()
+            expectThat(updatedGame.chessboard.getPieceAt(E5)) isEqualTo WHITE_PAWN
             expectThat(updatedGame.chessboard.numberOfRemainingPieces()) isEqualTo initialAmountOfPieces - 1
         }
 
@@ -437,10 +437,10 @@ class GameTest {
             ).applyMove(MoveCommand(E5, F6)).orThrow()
             // Then
             expectThat(game.enPassantTargetSquare).isNull()
-            expectThat(game.chessboard.getPositionAt(F6)?.piece) isEqualTo WHITE_PAWN
-            expectThat(game.chessboard.getPositionAt(F5)).isNull()
-            expectThat(game.chessboard.getPositionAt(E5)).isNull()
-            expectThat(game.chessboard.getPositionAt(E6)).isNull()
+            expectThat(game.chessboard.getPieceAt(F6)) isEqualTo WHITE_PAWN
+            expectThat(game.chessboard.getPieceAt(F5)).isNull()
+            expectThat(game.chessboard.getPieceAt(E5)).isNull()
+            expectThat(game.chessboard.getPieceAt(E6)).isNull()
         }
 
         @Test
@@ -451,10 +451,10 @@ class GameTest {
             ).applyMove(MoveCommand(H5, G6)).orThrow()
             // Then
             expectThat(game.enPassantTargetSquare).isNull()
-            expectThat(game.chessboard.getPositionAt(G6)?.piece) isEqualTo WHITE_PAWN
-            expectThat(game.chessboard.getPositionAt(G5)).isNull()
-            expectThat(game.chessboard.getPositionAt(H5)).isNull()
-            expectThat(game.chessboard.getPositionAt(H6)).isNull()
+            expectThat(game.chessboard.getPieceAt(G6)) isEqualTo WHITE_PAWN
+            expectThat(game.chessboard.getPieceAt(G5)).isNull()
+            expectThat(game.chessboard.getPieceAt(H5)).isNull()
+            expectThat(game.chessboard.getPieceAt(H6)).isNull()
         }
 
         @Test
@@ -465,10 +465,10 @@ class GameTest {
             ).applyMove(MoveCommand(C4, D3)).orThrow()
             // Then
             expectThat(game.enPassantTargetSquare).isNull()
-            expectThat(game.chessboard.getPositionAt(D3)?.piece) isEqualTo BLACK_PAWN
-            expectThat(game.chessboard.getPositionAt(D4)).isNull()
-            expectThat(game.chessboard.getPositionAt(C4)).isNull()
-            expectThat(game.chessboard.getPositionAt(C3)).isNull()
+            expectThat(game.chessboard.getPieceAt(D3)) isEqualTo BLACK_PAWN
+            expectThat(game.chessboard.getPieceAt(D4)).isNull()
+            expectThat(game.chessboard.getPieceAt(C4)).isNull()
+            expectThat(game.chessboard.getPieceAt(C3)).isNull()
         }
 
         @Test
@@ -479,10 +479,10 @@ class GameTest {
             ).applyMove(MoveCommand(F4, E3)).orThrow()
             // Then
             expectThat(game.enPassantTargetSquare).isNull()
-            expectThat(game.chessboard.getPositionAt(E3)?.piece) isEqualTo BLACK_PAWN
-            expectThat(game.chessboard.getPositionAt(F3)).isNull()
-            expectThat(game.chessboard.getPositionAt(F4)).isNull()
-            expectThat(game.chessboard.getPositionAt(E4)).isNull()
+            expectThat(game.chessboard.getPieceAt(E3)) isEqualTo BLACK_PAWN
+            expectThat(game.chessboard.getPieceAt(F3)).isNull()
+            expectThat(game.chessboard.getPieceAt(F4)).isNull()
+            expectThat(game.chessboard.getPieceAt(E4)).isNull()
         }
 
     }
@@ -686,10 +686,10 @@ class GameTest {
             expectThat(game.castling.isBlackKingCastlePossible).isTrue()
             expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
             expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
-            expectThat(game.chessboard.getPositionAt(H1)).isNull()
-            expectThat(game.chessboard.getPositionAt(E1)).isNull()
-            expectThat(game.chessboard.getPositionAt(G1)?.piece) isEqualTo WHITE_KING
-            expectThat(game.chessboard.getPositionAt(F1)?.piece) isEqualTo WHITE_ROOK
+            expectThat(game.chessboard.getPieceAt(H1)).isNull()
+            expectThat(game.chessboard.getPieceAt(E1)).isNull()
+            expectThat(game.chessboard.getPieceAt(G1)) isEqualTo WHITE_KING
+            expectThat(game.chessboard.getPieceAt(F1)) isEqualTo WHITE_ROOK
         }
 
         @Test
@@ -708,10 +708,10 @@ class GameTest {
             expectThat(game.castling.isBlackKingCastlePossible).isTrue()
             expectThat(game.castling.isWhiteKingCastlePossible).isFalse()
             expectThat(game.castling.isWhiteQueenCastlePossible).isFalse()
-            expectThat(game.chessboard.getPositionAt(A1)).isNull()
-            expectThat(game.chessboard.getPositionAt(E1)).isNull()
-            expectThat(game.chessboard.getPositionAt(C1)?.piece) isEqualTo WHITE_KING
-            expectThat(game.chessboard.getPositionAt(D1)?.piece) isEqualTo WHITE_ROOK
+            expectThat(game.chessboard.getPieceAt(A1)).isNull()
+            expectThat(game.chessboard.getPieceAt(E1)).isNull()
+            expectThat(game.chessboard.getPieceAt(C1)) isEqualTo WHITE_KING
+            expectThat(game.chessboard.getPieceAt(D1)) isEqualTo WHITE_ROOK
         }
 
         @Test
@@ -730,10 +730,10 @@ class GameTest {
             expectThat(game.castling.isBlackKingCastlePossible).isFalse()
             expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
             expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
-            expectThat(game.chessboard.getPositionAt(H8)).isNull()
-            expectThat(game.chessboard.getPositionAt(E8)).isNull()
-            expectThat(game.chessboard.getPositionAt(G8)?.piece) isEqualTo BLACK_KING
-            expectThat(game.chessboard.getPositionAt(F8)?.piece) isEqualTo BLACK_ROOK
+            expectThat(game.chessboard.getPieceAt(H8)).isNull()
+            expectThat(game.chessboard.getPieceAt(E8)).isNull()
+            expectThat(game.chessboard.getPieceAt(G8)) isEqualTo BLACK_KING
+            expectThat(game.chessboard.getPieceAt(F8)) isEqualTo BLACK_ROOK
         }
 
         @Test
@@ -752,10 +752,10 @@ class GameTest {
             expectThat(game.castling.isBlackKingCastlePossible).isFalse()
             expectThat(game.castling.isWhiteKingCastlePossible).isTrue()
             expectThat(game.castling.isWhiteQueenCastlePossible).isTrue()
-            expectThat(game.chessboard.getPositionAt(A8)).isNull()
-            expectThat(game.chessboard.getPositionAt(E8)).isNull()
-            expectThat(game.chessboard.getPositionAt(C8)?.piece) isEqualTo BLACK_KING
-            expectThat(game.chessboard.getPositionAt(D8)?.piece) isEqualTo BLACK_ROOK
+            expectThat(game.chessboard.getPieceAt(A8)).isNull()
+            expectThat(game.chessboard.getPieceAt(E8)).isNull()
+            expectThat(game.chessboard.getPieceAt(C8)) isEqualTo BLACK_KING
+            expectThat(game.chessboard.getPieceAt(D8)) isEqualTo BLACK_ROOK
         }
 
         @Test

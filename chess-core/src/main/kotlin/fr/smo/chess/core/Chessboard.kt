@@ -1,36 +1,39 @@
 package fr.smo.chess.core
 
 data class Chessboard(
-    private val piecesOnBoard: List<PiecePosition> = listOf(),
+    private val piecesOnBoard: Map<Square, Piece>,
 ) {
 
-    fun isPiecePresentAtAndHasColor(square: Square, color: Color): Boolean = getPositionAt(square)?.piece?.color == color
+    fun isPiecePresentAtAndHasColor(square: Square, color: Color): Boolean = getPieceAt(square)?.color == color
 
-    fun getPositionAt(square: Square): PiecePosition? {
-        return this.piecesOnBoard.firstOrNull { it.square == square }
-    }
+    fun getPieceAt(square: Square): Piece? = piecesOnBoard[square]
 
     fun getPieces() = piecesOnBoard
 
-    fun getPieces(color: Color) = piecesOnBoard.filter { it.piece.color == color }
+    fun getPiecePositions(color: Color) = getPiecePositions().filter { it.color == color }
 
-    fun count(predicate: (PiecePosition) -> Boolean): Int = piecesOnBoard.count(predicate)
+    fun getPiecePositions() = piecesOnBoard.map { PiecePosition(square = it.key, piece = it.value) }
+
+    fun count(predicate: (Map.Entry<Square, Piece>) -> Boolean): Int = piecesOnBoard.count(predicate)
 
     fun numberOfRemainingPieces() = piecesOnBoard.size
 
-    fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPositionAt(it) != null }
+    fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPieceAt(it) != null }
 
     fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
-        return getPieces(color).flatMap { it.getAllPseudoLegalMoves(game) }
+        return piecesOnBoard.filter { it.value.color == color }. flatMap {
+            getPseudoLegalMoves(game, PiecePosition(square = it.key, piece = it.value))
+        }
     }
 
-    fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard = Chessboard(
-        piecesOnBoard = piecesOnBoard
-            .filter { it.square != move.origin }
-            .filter { it.square != move.destination }
-            .filter { it.square != getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare) }
-            .plus(PiecePosition(move.destination, move.piece))
-    )
+    fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard {
+        val opponentPawnThatHasBeenEnPassant = getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare)
+        val newBoard = piecesOnBoard - move.origin - move.destination + (move.destination to move.piece)
+        return if (opponentPawnThatHasBeenEnPassant != null )
+            Chessboard(piecesOnBoard = newBoard - opponentPawnThatHasBeenEnPassant)
+        else
+            Chessboard(piecesOnBoard = newBoard)
+    }
 
     private fun getOpponentPawnThatHasBeenEnPassant(move: Move, enPassantTargetSquare: Square?) =
         if (move.destination == enPassantTargetSquare && move.piece.type == PieceType.PAWN) {
@@ -46,9 +49,7 @@ data class Chessboard(
     fun applyPromotions(move: Move): Chessboard {
         if (move.piece.type == PieceType.PAWN && move.promotedTo != null) {
             return Chessboard(
-                piecesOnBoard = piecesOnBoard
-                    .filter { it.square != move.destination }
-                    .plus(PiecePosition(move.destination, move.promotedTo))
+                piecesOnBoard = piecesOnBoard - move.destination + (move.destination to move.promotedTo)
             )
         }
         return this
@@ -56,21 +57,13 @@ data class Chessboard(
 
     fun applyRookMovesForCastling(move: Move): Chessboard {
         val newPiecesOnBoard = if (move.isKingCastle && move.piece.color == Color.WHITE) {
-            piecesOnBoard
-                .filter { it.square != Square.H1 }
-                .plus(PiecePosition(Square.F1, Piece.WHITE_ROOK))
+            piecesOnBoard - Square.H1 + (Square.F1 to Piece.WHITE_ROOK)
         } else if (move.isQueenCastle && move.piece.color == Color.WHITE) {
-            piecesOnBoard
-                .filter { it.square != Square.A1 }
-                .plus(PiecePosition(Square.D1, Piece.WHITE_ROOK))
+            piecesOnBoard - Square.A1 + (Square.D1 to Piece.WHITE_ROOK)
         } else if (move.isKingCastle && move.piece.color == Color.BLACK) {
-            piecesOnBoard
-                .filter { it.square != Square.H8 }
-                .plus(PiecePosition(Square.F8, Piece.BLACK_ROOK))
+            piecesOnBoard - Square.H8 + (Square.F8 to Piece.BLACK_ROOK)
         } else if (move.isQueenCastle && move.piece.color == Color.BLACK) {
-            piecesOnBoard
-                .filter { it.square != Square.A8 }
-                .plus(PiecePosition(Square.D8, Piece.BLACK_ROOK))
+            piecesOnBoard - Square.A8 + (Square.D8 to Piece.BLACK_ROOK)
         } else {
             piecesOnBoard
         }

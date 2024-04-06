@@ -10,21 +10,21 @@ import org.junit.jupiter.api.Test
 internal class ChessboardTest {
 
     private val board = Chessboard(
-        piecesOnBoard = listOf(
-            PiecePosition(A1, WHITE_ROOK)
+        piecesOnBoard = mapOf(
+                A1 to  WHITE_ROOK
         )
     )
 
 
     @Test
     fun `get existing Position at corresponding square returns piece`() {
-        val foundPosition = board.getPositionAt(A1)
-        assertEquals(foundPosition, PiecePosition(A1, WHITE_ROOK))
+        val foundPosition = board.getPieceAt(A1)
+        assertEquals(foundPosition, WHITE_ROOK)
     }
 
     @Test
     fun `get non existing Position at an empty square returns null`() {
-        val foundPosition = board.getPositionAt(E5)
+        val foundPosition = board.getPieceAt(E5)
         assertNull(foundPosition)
     }
 }

@@ -73,12 +73,12 @@ object FEN {
             var lineFinished = false
             var currentGap = 0
             while (!lineFinished) {
-                val position = game.chessboard.getPositionAt(currentSquare)
-                if (position != null) {
+                val piece = game.chessboard.getPieceAt(currentSquare)
+                if (piece != null) {
                     if (currentGap != 0) {
                         fen += currentGap
                     }
-                    fen += getLetter(position.piece)
+                    fen += getLetter(piece)
                     currentGap = 0
                 } else {
                     currentGap++
@@ -120,7 +120,7 @@ object FEN {
     }
 
     fun getChessboardFromFenPiecePlacement(fenPiecePlacement: String): Chessboard {
-        val board: MutableList<PiecePosition> = mutableListOf()
+        val board: MutableMap<Square,Piece> = mutableMapOf()
         val lines = fenPiecePlacement.split("/")
         var currentSquare = Square.A8
         for (lineIndex in 8 downTo 1) {
@@ -128,7 +128,7 @@ object FEN {
             currentLine.forEach { currentChar ->
                 var currentIndex = currentChar.toString().toIntOrNull()
                 if (currentIndex == null) {
-                    board.add(PiecePosition(currentSquare, getPiece(currentChar.toString())))
+                    board[currentSquare] = getPiece(currentChar.toString())
                     if (currentSquare.file != File.FILE_H) {
                         currentSquare = currentSquare.right()!!
                     }

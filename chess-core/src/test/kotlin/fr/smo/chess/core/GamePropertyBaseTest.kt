@@ -55,22 +55,22 @@ class GamePropertyBaseTest {
 
     private fun assertOneBishopPerSquareColor(game: Game) {
         if (game.history.moves.none { it.promotedTo == WHITE_BISHOP }) {
-            expectThat(game.chessboard.count { it.piece == WHITE_BISHOP && it.square.isLightSquare() }) isLessThanOrEqualTo 1
-            expectThat(game.chessboard.count { it.piece == WHITE_BISHOP && !it.square.isLightSquare() }) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.value == WHITE_BISHOP && it.key.isLightSquare() }) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.value == WHITE_BISHOP && !it.key.isLightSquare() }) isLessThanOrEqualTo 1
         }
         if (game.history.moves.none { it.promotedTo == BLACK_BISHOP }) {
-            expectThat(game.chessboard.count { it.piece == BLACK_BISHOP && it.square.isLightSquare()}) isLessThanOrEqualTo 1
-            expectThat(game.chessboard.count { it.piece == BLACK_BISHOP && !it.square.isLightSquare()}) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.value == BLACK_BISHOP && it.key.isLightSquare()}) isLessThanOrEqualTo 1
+            expectThat(game.chessboard.count { it.value == BLACK_BISHOP && !it.key.isLightSquare()}) isLessThanOrEqualTo 1
         }
     }
 
     private fun assertPawnShouldNotBeUnpromotedOnLastRank(game: Game) {
         expectThat(
-            game.chessboard.count { it.piece == BLACK_PAWN && it.square.rank == Rank.RANK_1 }
+            game.chessboard.count { it.value == BLACK_PAWN && it.key.rank == Rank.RANK_1 }
         ).describedAs("We should not have black pawn on rank 1, it should have been promoted.")
             .isEqualTo(0)
         expectThat(
-            game.chessboard.count { it.piece == WHITE_PAWN && it.square.rank == Rank.RANK_8 }
+            game.chessboard.count { it.value == WHITE_PAWN && it.key.rank == Rank.RANK_8 }
         ).describedAs("We should not have white pawn on rank 8, it should have been promoted.")
             .isEqualTo(0)
     }
@@ -81,23 +81,23 @@ class GamePropertyBaseTest {
         if (lastMove.promotedTo == null) {
             expectThat(
                 lastMove.let {
-                    game.chessboard.getPositionAt(it.destination)?.piece == it.piece
+                    game.chessboard.getPieceAt(it.destination) == it.piece
                 }
             ).describedAs(
                 "At turn ${game.history.fullMoveCounter}, last move $lastMove should lead to a filled " +
                         "square at ${lastMove.destination} with a ${lastMove.piece} but was " +
-                        game.chessboard.getPositionAt(lastMove.destination)
+                        game.chessboard.getPieceAt(lastMove.destination)
             )
                 .isTrue()
         } else {
             expectThat(
                 lastMove.let {
-                    game.chessboard.getPositionAt(it.destination)?.piece == it.promotedTo
+                    game.chessboard.getPieceAt(it.destination) == it.promotedTo
                 }
             ).describedAs(
                 "At turn ${game.history.fullMoveCounter}, last move $lastMove should lead to a filled " +
                         "square at ${lastMove.destination} with a ${lastMove.promotedTo} because of promotion but was " +
-                        game.chessboard.getPositionAt(lastMove.destination)
+                        game.chessboard.getPieceAt(lastMove.destination)
             )
                 .isTrue()
         }
@@ -105,37 +105,37 @@ class GamePropertyBaseTest {
 
     private fun assertVariousThingsAboutCastling(game: Game) {
         if (game.castling.isBlackQueenCastlePossible) {
-            expectThat(game.chessboard.getPositionAt(A8)).isNotNull()
-            expectThat(game.chessboard.getPositionAt(A8)?.piece) isEqualTo BLACK_ROOK
+            expectThat(game.chessboard.getPieceAt(A8)).isNotNull()
+            expectThat(game.chessboard.getPieceAt(A8)) isEqualTo BLACK_ROOK
         }
         if (game.castling.isBlackKingCastlePossible) {
-            expectThat(game.chessboard.getPositionAt(H8)).isNotNull()
-            expectThat(game.chessboard.getPositionAt(H8)?.piece) isEqualTo BLACK_ROOK
+            expectThat(game.chessboard.getPieceAt(H8)).isNotNull()
+            expectThat(game.chessboard.getPieceAt(H8)) isEqualTo BLACK_ROOK
         }
         if (game.castling.isWhiteQueenCastlePossible) {
-            expectThat(game.chessboard.getPositionAt(A1)).isNotNull()
-            expectThat(game.chessboard.getPositionAt(A1)?.piece) isEqualTo WHITE_ROOK
+            expectThat(game.chessboard.getPieceAt(A1)).isNotNull()
+            expectThat(game.chessboard.getPieceAt(A1)) isEqualTo WHITE_ROOK
         }
         if (game.castling.isWhiteKingCastlePossible) {
-            expectThat(game.chessboard.getPositionAt(H1)).isNotNull()
-            expectThat(game.chessboard.getPositionAt(H1)?.piece) isEqualTo WHITE_ROOK
+            expectThat(game.chessboard.getPieceAt(H1)).isNotNull()
+            expectThat(game.chessboard.getPieceAt(H1)) isEqualTo WHITE_ROOK
         }
 
         if (game.castling.isWhiteKingCastlePossible || game.castling.isWhiteQueenCastlePossible) {
-            expectThat(game.chessboard.getPositionAt(E1)).isNotNull()
-            expectThat(game.chessboard.getPositionAt(E1)?.piece) isEqualTo WHITE_KING
+            expectThat(game.chessboard.getPieceAt(E1)).isNotNull()
+            expectThat(game.chessboard.getPieceAt(E1)) isEqualTo WHITE_KING
         }
 
         if (game.castling.isBlackQueenCastlePossible || game.castling.isBlackKingCastlePossible) {
-            expectThat(game.chessboard.getPositionAt(E8)).isNotNull()
-            expectThat(game.chessboard.getPositionAt(E8)?.piece) isEqualTo BLACK_KING
+            expectThat(game.chessboard.getPieceAt(E8)).isNotNull()
+            expectThat(game.chessboard.getPieceAt(E8)) isEqualTo BLACK_KING
         }
     }
 
     private fun assertThatLastMovingHasLeftABlankSquareAfterMoving(game: Game) {
         expectThat(
             game.history.moves.last().let {
-                game.chessboard.getPositionAt(it.origin)
+                game.chessboard.getPieceAt(it.origin)
             }
         ).isNull()
     }

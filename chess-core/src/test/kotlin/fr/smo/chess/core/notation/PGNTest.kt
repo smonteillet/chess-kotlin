@@ -172,43 +172,43 @@ class PGNTest {
             @Test
             fun `should import a pgn with two knights of same color that can capture piece and Knight 1 captures`() {
                 val importedGame = PGN.import("1. Nc3 d5 2. Nh3 a6 3. Nf4 h6 4. Ncxd5 ")
-                expectThat(importedGame.chessboard.getPositionAt(C3)).isNull()
-                expectThat(importedGame.chessboard.getPositionAt(D5)!!.piece) isEqualTo Piece.WHITE_KNIGHT
-                expectThat(importedGame.chessboard.getPositionAt(F4)!!.piece) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(C3)).isNull()
+                expectThat(importedGame.chessboard.getPieceAt(D5)!!) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(F4)!!) isEqualTo Piece.WHITE_KNIGHT
             }
 
             @Test
             fun `should import a pgn with two knights of same color that can capture piece and Knight 2 captures`() {
                 val importedGame = PGN.import("1. Nc3 d5 2. Nh3 a6 3. Nf4 h6 4. Nfxd5 ")
-                expectThat(importedGame.chessboard.getPositionAt(F4)).isNull()
-                expectThat(importedGame.chessboard.getPositionAt(D5)!!.piece) isEqualTo Piece.WHITE_KNIGHT
-                expectThat(importedGame.chessboard.getPositionAt(C3)!!.piece) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(F4)).isNull()
+                expectThat(importedGame.chessboard.getPieceAt(D5)!!) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(C3)!!) isEqualTo Piece.WHITE_KNIGHT
             }
 
             @Test
             fun `should import a pgn with two rooks where either one or the other can move to the same given square`() {
                 // Given
                 val importedGame = PGN.import("1. a4 a6 2. h4 h6 3. Rh3 b6 4. Rha3 c6 5. R3a2 ")
-                expectThat(importedGame.chessboard.getPositionAt(A1)!!.piece) isEqualTo Piece.WHITE_ROOK
-                expectThat(importedGame.chessboard.getPositionAt(A2)!!.piece) isEqualTo Piece.WHITE_ROOK
+                expectThat(importedGame.chessboard.getPieceAt(A1)!!) isEqualTo Piece.WHITE_ROOK
+                expectThat(importedGame.chessboard.getPieceAt(A2)!!) isEqualTo Piece.WHITE_ROOK
             }
 
             @Test
             fun `should import a pgn with two knights where either one or the other can move to the same given square and Knight 1 moves`() {
                 // Given
                 val importedGame = PGN.import("1. Nc3 a6 2. Nf3 a5 3. Nd4 a4 4. Nb3 a3 5. Nc5 b6 6. N5e4 ")
-                expectThat(importedGame.chessboard.getPositionAt(E4)!!.piece) isEqualTo Piece.WHITE_KNIGHT
-                expectThat(importedGame.chessboard.getPositionAt(C3)!!.piece) isEqualTo Piece.WHITE_KNIGHT
-                expectThat(importedGame.chessboard.getPositionAt(C5)).isNull()
+                expectThat(importedGame.chessboard.getPieceAt(E4)!!) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(C3)!!) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(C5)).isNull()
             }
 
             @Test
             fun `should import a pgn with two knights where either one or the other can move to the same given square and Knight 2 moves`() {
                 // Given
                 val importedGame = PGN.import("1. Nc3 a6 2. Nf3 a5 3. Nd4 a4 4. Nb3 a3 5. Nc5 b6 6. N3e4 ")
-                expectThat(importedGame.chessboard.getPositionAt(E4)!!.piece) isEqualTo Piece.WHITE_KNIGHT
-                expectThat(importedGame.chessboard.getPositionAt(C5)!!.piece) isEqualTo Piece.WHITE_KNIGHT
-                expectThat(importedGame.chessboard.getPositionAt(C3)).isNull()
+                expectThat(importedGame.chessboard.getPieceAt(E4)!!) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(C5)!!) isEqualTo Piece.WHITE_KNIGHT
+                expectThat(importedGame.chessboard.getPieceAt(C3)).isNull()
             }
         }
 
@@ -216,8 +216,8 @@ class PGNTest {
         fun `should import a pgn with a promotion`() {
             val importedGame = PGN.import("1. e4 e5 2. h3 g5 3. g4 h5 4. gxh5 Rh6 5. Bc4 Re6 6. h6 Rd6 7. h7 Re6 8. h8=Qe7")
             expectThat(importedGame.history.moves.last().promotedTo) isEqualTo Piece.WHITE_QUEEN
-            expectThat(importedGame.chessboard.count { it.piece == Piece.WHITE_PAWN }) isEqualTo 7
-            expectThat(importedGame.chessboard.count { it.piece == Piece.WHITE_QUEEN }) isEqualTo 2
+            expectThat(importedGame.chessboard.count { it.value == Piece.WHITE_PAWN }) isEqualTo 7
+            expectThat(importedGame.chessboard.count { it.value == Piece.WHITE_QUEEN }) isEqualTo 2
         }
 
         @Test
@@ -229,8 +229,8 @@ class PGNTest {
                         16.Bb3 h5 17.Re3 h4 18.Rf1 Kg7 19.f4 Qb6 20.Re1
                     """
             )
-            expectThat(importedGame.chessboard.getPositionAt(E1)!!.piece) isEqualTo Piece.WHITE_ROOK
-            expectThat(importedGame.chessboard.getPositionAt(E3)!!.piece) isEqualTo Piece.WHITE_ROOK
+            expectThat(importedGame.chessboard.getPieceAt(E1)!!) isEqualTo Piece.WHITE_ROOK
+            expectThat(importedGame.chessboard.getPieceAt(E3)!!) isEqualTo Piece.WHITE_ROOK
         }
 
         @Test
@@ -269,8 +269,8 @@ class PGNTest {
             @TestFactory
             fun testPgnImportOfMorphyGames(): Collection<DynamicTest> {
                val morphyPgn = File("src/test/resources/morphy.pgn").readText(Charsets.UTF_8)
-               return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).map { pgnGame ->
-                    DynamicTest.dynamicTest("Imported Morphy game") {
+               return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).mapIndexed { index, pgnGame ->
+                    DynamicTest.dynamicTest("Imported Morphy game $index") {
                         println(pgnGame)
                         PGN.import(pgnGame)
                     }

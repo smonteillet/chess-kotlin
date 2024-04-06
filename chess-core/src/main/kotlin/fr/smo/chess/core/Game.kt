@@ -58,14 +58,14 @@ data class Game(
 
     private fun buildMove(moveCommand: MoveCommand): Outcome<Move, MoveCommandError> =
             getOriginPiecePosition(moveCommand).flatMap { piecePosition ->
-                piecePosition.getAllPseudoLegalMoves(this)
+                getPseudoLegalMoves(this, piecePosition)
                         .firstOrNull { it.destination == moveCommand.destination && it.promotedTo?.type == moveCommand.promotedPiece }
                         ?.let { Success(it) }
                         ?: Failure(MoveCommandError("There is no move at ${moveCommand.origin} to ${moveCommand.destination}"))
             }
 
     private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<PiecePosition, MoveCommandError> {
-        return chessboard.getPositionAt(moveCommand.origin)?.let { Success(it) }
+        return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
                 ?: Failure(MoveCommandError("There is no piece at ${moveCommand.origin}"))
 
     }

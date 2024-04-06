@@ -45,7 +45,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.chessboard.getPieces()).containsExactlyInAnyOrder(GameFactory.createStandardGame().chessboard.getPieces())
+                expectThat(game.chessboard.getPiecePositions()).containsExactlyInAnyOrder(GameFactory.createStandardGame().chessboard.getPiecePositions())
             }
 
             @Test
@@ -55,7 +55,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.chessboard.getPieces()).isEmpty()
+                expectThat(game.chessboard.getPiecePositions()).isEmpty()
             }
 
             @Test
@@ -65,7 +65,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.chessboard.getPieces()).containsExactlyInAnyOrder(
+                expectThat(game.chessboard.getPiecePositions()).containsExactlyInAnyOrder(
                     PiecePosition(A8, BLACK_ROOK),
                     PiecePosition(E8, BLACK_ROOK),
                     PiecePosition(H8, WHITE_QUEEN)
@@ -79,7 +79,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.chessboard.getPieces()).containsExactlyInAnyOrder(
+                expectThat(game.chessboard.getPiecePositions()).containsExactlyInAnyOrder(
                     PiecePosition(A1, WHITE_KING),
                     PiecePosition(A2, WHITE_PAWN),
                 )
@@ -92,7 +92,7 @@ class FENTest {
                 // When
                 val game = importFEN(fen)
                 // Then
-                expectThat(game.chessboard.getPieces()).containsExactlyInAnyOrder(
+                expectThat(game.chessboard.getPiecePositions()).containsExactlyInAnyOrder(
                     PiecePosition(B8, WHITE_QUEEN)
                 )
             }
