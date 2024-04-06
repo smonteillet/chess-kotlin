@@ -4,6 +4,7 @@ import fr.smo.chess.core.*
 import fr.smo.chess.core.PieceType.*
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
+import fr.smo.chess.core.utils.ifTrue
 
 object PGN {
 
@@ -24,7 +25,7 @@ object PGN {
     fun exportPGN(game: Game): String {
         val pgnHistory = game.history.moves.mapIndexed { index, move ->
             val indexStr = if (index % 2 == 0) "${index / 2 + 1}. " else ""
-            return@mapIndexed indexStr + moveToPgn(move)
+            return@mapIndexed indexStr + moveToPgn(move, game.history.moves.size == index + 1)
         }.joinToString(" ")
         val pgnOutcome = when (game.status) {
             Status.BLACK_WIN -> BLACK_WIN_PGN
@@ -32,7 +33,7 @@ object PGN {
             Status.DRAW -> DRAWN_PGN
             else -> ""
         }
-        return pgnHistory + pgnOutcome
+        return "$pgnHistory $pgnOutcome"
     }
 
     fun import(pgn: String): Game {
@@ -133,7 +134,7 @@ object PGN {
 
 
 
-    private fun moveToPgn(move: Move): String {
+    private fun moveToPgn(move: Move, isLastMove: Boolean): String {
         return if (move.isKingCastle) {
             KING_SIDE_CASTLE_NOTATION
         } else if (move.isQueenCastle) {
@@ -145,6 +146,7 @@ object PGN {
                 ROOK -> move.origin
                 else -> ""
             }
+            val checkOrCheckmateNotation = move.isCheck.ifTrue { if (isLastMove) "#" else "+" } ?: ""
             val captured = if (move.capturedPiece != null) "x" else ""
             val destination = move.destination
             val promotedTo = if (move.promotedTo != null) {
@@ -158,7 +160,7 @@ object PGN {
             } else {
                 ""
             }
-            return piece + captured + destination + promotedTo
+            return piece + captured + destination + promotedTo + checkOrCheckmateNotation
         }
     }
 
