@@ -8,8 +8,6 @@ data class Chessboard(
 
     fun getPieceAt(square: Square): Piece? = piecesOnBoard[square]
 
-    fun getPieces() = piecesOnBoard
-
     fun getPiecePositions(color: Color) = getPiecePositions().filter { it.color == color }
 
     fun getPiecePositions() = piecesOnBoard.map { PiecePosition(square = it.key, piece = it.value) }
@@ -19,25 +17,6 @@ data class Chessboard(
     fun numberOfRemainingPieces() = piecesOnBoard.size
 
     fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPieceAt(it) != null }
-
-    // TODO this should not be here
-    fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
-        return piecesOnBoard.filter { it.value.color == color }. flatMap {
-            getPseudoLegalMoves(game, PiecePosition(square = it.key, piece = it.value))
-        }
-    }
-
-    // TODO this should not be here
-    fun hasAPseudoLegalMovesSatisfying(color: Color, game: Game, predicate: (Move) -> Boolean): Boolean {
-       piecesOnBoard.filter { it.value.color == color }.forEach {
-            getPseudoLegalMoves(game, PiecePosition(square = it.key, piece = it.value)).forEach { move ->
-                if (predicate.invoke(move)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
 
     fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard {
         val opponentPawnThatHasBeenEnPassant = getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare)

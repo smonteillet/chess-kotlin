@@ -32,7 +32,7 @@ private fun isCheckMate(game : Game): Boolean {
 }
 
 fun isChecked(kingColorThatMayBeChecked: Color, game: Game): Boolean {
-    return game.chessboard.hasAPseudoLegalMovesSatisfying(kingColorThatMayBeChecked.opposite(), game) { move ->
+    return hasAPseudoLegalMovesSatisfying(kingColorThatMayBeChecked.opposite(), game) { move ->
         move.capturedPiece?.type == PieceType.KING
     }
 }
@@ -65,7 +65,7 @@ private fun isStaleMate(game: Game): Boolean {
 
 private fun hasNoLegalMove(color: Color, game: Game) : Boolean {
     return (
-        game.chessboard.hasAPseudoLegalMovesSatisfying(color, game) { move ->
+        hasAPseudoLegalMovesSatisfying(color, game) { move ->
             val moveCommand = MoveCommand(move.origin, move.destination, move.promotedTo?.type)
             when (game.applyMove(moveCommand, false)) {
                 is Success -> true

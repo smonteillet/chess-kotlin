@@ -18,6 +18,23 @@ fun getPseudoLegalMoves(game: Game, piecePosition: PiecePosition): List<Move> {
     }
 }
 
+fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
+    return game.chessboard.getPiecePositions(color). flatMap {
+        getPseudoLegalMoves(game, it)
+    }
+}
+
+fun hasAPseudoLegalMovesSatisfying(color: Color, game: Game, predicate: (Move) -> Boolean): Boolean {
+    game.chessboard.getPiecePositions(color).forEach {
+        getPseudoLegalMoves(game, it).forEach { move ->
+            if (predicate.invoke(move)) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
 
 private fun getKnightPseudoLegalMoves(chessboard: Chessboard, knightPosition: PiecePosition): List<Move> {
     return listOfNotNull(
@@ -220,15 +237,12 @@ private fun getCastleMoves(
                     isBlackKingCastlePossible = false
             ),
     )
-//    val allPseudoLegalMovesForPlayer = game.chessboard.getAllPseudoLegalMovesForColor(kingPosition.color.opposite(), gameWithoutCastling)
-//    val hasKingCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { kingCastlingPathSquares.contains(it.destination) }
-//    val hasQueenCastleSquaresUnderAttack: Boolean = allPseudoLegalMovesForPlayer.any { queenCastlingPathSquares.contains(it.destination) }
 
-    val hasKingCastleSquaresUnderAttack = gameWithoutCastling.chessboard.hasAPseudoLegalMovesSatisfying(
+    val hasKingCastleSquaresUnderAttack = hasAPseudoLegalMovesSatisfying(
             kingPosition.color.opposite(),  gameWithoutCastling
     ) { kingCastlingPathSquares.contains(it.destination) }
 
-    val hasQueenCastleSquaresUnderAttack = gameWithoutCastling.chessboard.hasAPseudoLegalMovesSatisfying(
+    val hasQueenCastleSquaresUnderAttack = hasAPseudoLegalMovesSatisfying(
             kingPosition.color.opposite(),  gameWithoutCastling
     ) { queenCastlingPathSquares.contains(it.destination) }
 

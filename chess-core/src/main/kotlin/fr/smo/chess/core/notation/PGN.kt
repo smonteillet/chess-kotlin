@@ -65,8 +65,7 @@ object PGN {
     }
 
     private fun extractOriginSquare(game: Game, pgnMove: PgnMove) : Square {
-        val candidateMoves = game.chessboard
-            .getAllPseudoLegalMovesForColor(pgnMove.color, game)
+        val candidateMoves = getAllPseudoLegalMovesForColor(pgnMove.color, game)
             .filter {
                 it.piece == pgnMove.piece &&
                         it.destination == pgnMove.destination &&
@@ -118,7 +117,7 @@ object PGN {
         castleMoveChecker : (Move) -> Boolean
     ) : Game? {
         if (pgnMove.replace("+", "") == expectedCastlePgn) {
-            val castleMove = game.chessboard.getAllPseudoLegalMovesForColor(game.sideToMove, game)
+            val castleMove = getAllPseudoLegalMovesForColor(game.sideToMove, game)
                 .firstOrNull { castleMoveChecker(it) }
                 ?: throw IllegalArgumentException("cannot find perform castle move $pgnMove for ${game.sideToMove}")
             return game.applyMove(
