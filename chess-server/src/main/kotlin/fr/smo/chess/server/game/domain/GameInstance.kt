@@ -25,7 +25,7 @@ data class GameInstance(
 
     fun applyMove(moveCommand: MoveCommand): GameInstance {
         return this.copy(
-            game = game.applyMove(moveCommand)
+            game = game.applyMove(moveCommand).orThrow()
         ).also { callbackAfterMove.invoke(it.game) }
     }
 
