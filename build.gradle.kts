@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.9.21"
+	kotlin("jvm") version "2.0.0-Beta5"
 }
 
 allprojects {
@@ -10,18 +10,16 @@ allprojects {
 	group = "fr.smo"
 	version = "0.0.1-SNAPSHOT"
 
-	tasks.withType<KotlinCompile> {
-		kotlinOptions {
-			jvmTarget = "17"
-		}
+	kotlin {
+		jvmToolchain(17)
 	}
 
-	tasks.withType<Test> {
+	tasks.test {
 		useJUnitPlatform()
 	}
 
 	dependencies {
-		val junitVersion = "5.10.0"
+		val junitVersion = "5.10.2"
 		val striktVersion = "0.34.1"
 		implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

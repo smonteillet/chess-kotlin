@@ -1,6 +1,6 @@
 plugins {
-    id("org.springframework.boot") version "3.0.0"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.2.4"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 dependencies {
@@ -8,10 +8,10 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.webjars:webjars-locator-core")
-    implementation("org.webjars:sockjs-client:1.0.2")
-    implementation("org.webjars:stomp-websocket:2.3.3")
-    implementation("org.webjars:bootstrap:3.3.7")
-    implementation("org.webjars:jquery:3.1.1-1")
+    implementation("org.webjars:sockjs-client:1.5.1")
+    implementation("org.webjars:stomp-websocket:2.3.4")
+    implementation("org.webjars:bootstrap:5.3.3")
+    implementation("org.webjars:jquery:3.7.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
