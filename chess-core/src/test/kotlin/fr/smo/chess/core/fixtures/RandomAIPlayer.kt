@@ -3,11 +3,12 @@ package fr.smo.chess.core.fixtures
 import fr.smo.chess.core.*
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
+import fr.smo.chess.core.utils.ifTrue
 import kotlin.random.Random
 
-class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
+class RandomAIPlayer(seed: Long = System.currentTimeMillis()) : Player {
 
-    private var color : Color? = null
+    private var color: Color? = null
     private val random = Random(seed)
 
     init {
@@ -15,35 +16,24 @@ class RandomAIPlayer(seed : Long = System.currentTimeMillis()) : Player {
     }
 
     override fun nextPlay(game: Game): MoveCommand {
-        var randomPiecePosition : PiecePosition?
-        var selectedMove : Move? = null
-        var allRemainingColorPositions = game.chessboard.getPiecePositions(color!!)
-        while(selectedMove == null) {
-            randomPiecePosition = allRemainingColorPositions.random(random)
-            allRemainingColorPositions = allRemainingColorPositions.minus(randomPiecePosition)
-            var pieceLegalMoves = getPseudoLegalMoves(game, randomPiecePosition)
-            while (pieceLegalMoves.isNotEmpty() && selectedMove == null) {
-                selectedMove = pieceLegalMoves.random(random)
-                pieceLegalMoves = pieceLegalMoves.minus(selectedMove)
-                if (!isMoveLegal(selectedMove, game)) {
-                    selectedMove = null
-                }
-            }
+        var move: Move? = null
+        getFirstPseudoLegalMoveSatisfying(color!!, game, random) { candidateMove ->
+            val legalMove = isMoveLegal(candidateMove, game)
+            legalMove.ifTrue {  move = candidateMove }
+            legalMove && random.nextBoolean()
         }
-        return MoveCommand(
-            origin = selectedMove.origin,
-            destination = selectedMove.destination,
-            promotedPiece = selectedMove.promotedTo?.type,
-        )
+        return move?.let {
+            MoveCommand(origin = it.origin, destination = it.destination, promotedPiece = it.promotedTo?.type)
+        } ?: throw IllegalStateException("This should not happen because game instance shall have stated that it is a stalemate on previous move")
     }
 
     private fun isMoveLegal(move: Move, game: Game): Boolean {
         return game.applyMove(
-            MoveCommand(
-                origin = move.origin,
-                destination = move.destination,
-                promotedPiece = move.promotedTo?.type,
-            )
+                MoveCommand(
+                        origin = move.origin,
+                        destination = move.destination,
+                        promotedPiece = move.promotedTo?.type,
+                )
         ).let { outcome ->
             when (outcome) {
                 is Success -> true

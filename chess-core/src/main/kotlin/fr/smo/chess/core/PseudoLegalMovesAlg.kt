@@ -1,6 +1,7 @@
 package fr.smo.chess.core
 
 import fr.smo.chess.core.utils.ifTrue
+import kotlin.random.Random
 
 /**
  * In Pseudo-legal move generation pieces obey their normal rules of movement, but they're not checked beforehand to see
@@ -25,14 +26,20 @@ fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
 }
 
 fun hasAPseudoLegalMovesSatisfying(color: Color, game: Game, predicate: (Move) -> Boolean): Boolean {
-    game.chessboard.getPiecePositions(color).forEach {
-        getPseudoLegalMoves(game, it).forEach { move ->
-            if (predicate.invoke(move)) {
-                return true
+    return getFirstPseudoLegalMoveSatisfying(color, game,null,  predicate) != null
+}
+
+fun getFirstPseudoLegalMoveSatisfying(color: Color, game: Game, random : Random? = null, predicate: (Move) -> Boolean): Move? {
+    game.chessboard.getPiecePositions(color)
+            .let { if (random != null) it.shuffled(random) else it }
+            .forEach {
+                getPseudoLegalMoves(game, it).forEach { move ->
+                    if (predicate.invoke(move)) {
+                        return move
+                    }
+                }
             }
-        }
-    }
-    return false
+    return null
 }
 
 
