@@ -140,7 +140,7 @@ object PGN {
             QUEEN_SIDE_CASTLE_NOTATION
         } else {
             val piece = move.piece.type.pgnNotation + when (move.piece.type) {
-                PAWN -> move.origin
+                PAWN -> if (move.capturedPiece != null) move.origin else ""
                 KNIGHT -> move.origin
                 ROOK -> move.origin
                 else -> ""
