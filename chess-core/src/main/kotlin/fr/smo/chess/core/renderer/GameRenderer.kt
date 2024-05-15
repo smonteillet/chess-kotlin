@@ -31,6 +31,31 @@ object GameRenderer {
             } + "| " + rank.label
         } + "\n|A B C D E F G H"
 
+    fun consoleRenderV2(game: Game): String {
+        val line = "+---+---+---+---+---+---+---+---+"
+        return line + "\n" +
+                Rank.entries.reversed().joinToString("\n" + line + "\n") { rank ->
+                    "|" + File.entries.joinToString("|") { file ->
+                        when (game.chessboard.getPieceAt(Square.at(file, rank)!!)) {
+                            null -> "   "
+                            WHITE_KING -> " K "
+                            WHITE_QUEEN -> " Q "
+                            WHITE_ROOK -> " R "
+                            WHITE_BISHOP -> " B "
+                            WHITE_KNIGHT -> " N "
+                            WHITE_PAWN -> " P "
+                            BLACK_KING -> " k "
+                            BLACK_QUEEN -> " q "
+                            BLACK_ROOK -> " r "
+                            BLACK_BISHOP -> " b "
+                            BLACK_KNIGHT -> " n "
+                            BLACK_PAWN -> " p "
+                        }
+                    } + "| " + rank.label
+                } + "\n" + line +
+                "\n  A   B   C   D   E   F   G   H"
+    }
+
     fun lichessUrlRenderer(game: Game): String {
         val exportedFEN = exportFEN(game)
         return "https://lichess.org/editor/${exportedFEN.replace(" ", "_")}?color=" +

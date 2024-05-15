@@ -41,7 +41,7 @@ object GameStateFixtures {
 
     private fun render(game: Game) {
         println(GameRenderer.lichessUrlRenderer(game))
-        println(GameRenderer.consoleRender(game))
+        println(GameRenderer.consoleRenderV2(game))
     }
 
 
