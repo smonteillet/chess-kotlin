@@ -6,9 +6,6 @@ data class Castling(
     val isBlackKingCastlePossible: Boolean = true,
     val isBlackQueenCastlePossible: Boolean = true,
 ) {
-    val isCastlingPossibleForWhite: Boolean = isWhiteKingCastlePossible || isWhiteQueenCastlePossible
-    val isCastlingPossibleForBlack: Boolean = isBlackKingCastlePossible || isBlackQueenCastlePossible
-
     fun updateCastlingAfterMove(move: Move): Castling {
         return Castling(
             isBlackKingCastlePossible = isBlackKingSideCastlingStillPossible(move),

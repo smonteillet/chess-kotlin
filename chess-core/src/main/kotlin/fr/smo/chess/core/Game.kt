@@ -4,7 +4,20 @@ import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
 import fr.smo.chess.core.utils.*
 
-data class MoveCommandError(override val message: String) : OutcomeError
+open class MoveCommandError(override val message: String) : OutcomeError
+
+data class IllegalMoveBecauseOwnKingInCheckError(val history: History) : MoveCommandError(
+        message = "Having its own king checked after performing own move is illegal. " +
+        "At move : ${history.halfMoveClock} ${history.moves.last()}"
+)
+
+data class IllegalMoveBecauseNoPieceAtStart(val square: Square) : MoveCommandError(
+        message = "Illegal Move because there is no piece at $square"
+)
+
+data class IllegalMove(val origin: Square, val destination: Square) : MoveCommandError(
+        message = "There is no legal move from $origin to $destination"
+)
 
 data class Game(
         val chessboard: Chessboard,
@@ -14,8 +27,39 @@ data class Game(
         val enPassantTargetSquare: Square? = null,
         val status: Status = Status.CREATED,
 ) {
-    fun applyMove(moveCommand: MoveCommand, updateGameState: Boolean = true): Outcome<Game, MoveCommandError> {
+    fun applyMove(
+            moveCommand: MoveCommand,
+            updateGameOutcomeState: Boolean = true,
+            markMoveAsCheckedInHistory: Boolean = true,
+    ): Outcome<Game, MoveCommandError> {
         return buildMove(moveCommand).flatMap { move ->
+            isGameStateLegal(computeNewGameAfterMakeMove(move))
+                    .map { newGameState -> markMoveAsCheckedInHistory(newGameState, move, markMoveAsCheckedInHistory) }
+                    .map { updatedGame -> updateGameOutcome(updateGameOutcomeState, updatedGame) }
+        }
+    }
+
+    private fun isGameStateLegal(newGameState: Game): Outcome<Game, MoveCommandError> {
+        return if (isChecked(newGameState.sideToMove.opposite(), newGameState)) {
+            Failure(IllegalMoveBecauseOwnKingInCheckError(newGameState.history))
+        } else {
+            Success(newGameState)
+        }
+    }
+
+    private fun updateGameOutcome(updateGameState: Boolean, updatedGame: Game) = updateGameState.ifTrue {
+        updatedGame.copy(status = getOutcome(updatedGame))
+    } ?: updatedGame
+
+    private fun markMoveAsCheckedInHistory(newGameState: Game, move: Move, markMoveAsCheckedInHistory: Boolean) : Game {
+        return markMoveAsCheckedInHistory.ifTrue {
+            isChecked(newGameState.sideToMove, newGameState).ifTrue {
+                newGameState.copy(history = history.addMove(move.copy(isCheck = true)))
+            } ?: newGameState
+        } ?: newGameState
+    }
+
+    private fun computeNewGameAfterMakeMove(move: Move) =
             Game(
                     chessboard = chessboard.applyMoveOnBoard(move, enPassantTargetSquare)
                             .applyPromotions(move)
@@ -24,22 +68,8 @@ data class Game(
                     sideToMove = sideToMove.opposite(),
                     castling = castling.updateCastlingAfterMove(move),
                     enPassantTargetSquare = getEnPassantTargetSquare(move),
-            ).let { newGameState ->
-                isChecked(newGameState.sideToMove.opposite(), newGameState).ifTrue {
-                    Failure(MoveCommandError("Having its own king checked after performing own move is illegal. " +
-                            "At move : ${newGameState.history.halfMoveClock} $moveCommand $it"))
-                } ?: Success(newGameState)
-            }.map { newGameState ->
-                isChecked(newGameState.sideToMove, newGameState).ifTrue {
-                    newGameState.copy(history = history.addMove(move.copy(isCheck = true)))
-                } ?: newGameState
-            }.map { updatedGame ->
-                updateGameState.ifTrue {
-                    updatedGame.copy(status = getOutcome(updatedGame))
-                } ?: updatedGame
-            }
-        }
-    }
+            )
+
 
     fun applyMoves(vararg moveCommands: MoveCommand): Outcome<Game, MoveCommandError> {
         return moveCommands.fold(Success(this) as Outcome<Game, MoveCommandError>) { result, moveRequest ->
@@ -61,12 +91,11 @@ data class Game(
                 getPseudoLegalMoves(this, piecePosition)
                         .firstOrNull { it.destination == moveCommand.destination && it.promotedTo?.type == moveCommand.promotedPiece }
                         ?.let { Success(it) }
-                        ?: Failure(MoveCommandError("There is no move at ${moveCommand.origin} to ${moveCommand.destination}"))
+                        ?: Failure(IllegalMove(moveCommand.origin,moveCommand.destination))
             }
 
     private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<PiecePosition, MoveCommandError> {
         return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
-                ?: Failure(MoveCommandError("There is no piece at ${moveCommand.origin}"))
-
+                ?: Failure(IllegalMoveBecauseNoPieceAtStart(moveCommand.origin))
     }
 }

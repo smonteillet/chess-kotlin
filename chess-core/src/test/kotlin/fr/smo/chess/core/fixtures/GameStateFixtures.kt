@@ -10,7 +10,7 @@ object GameStateFixtures {
 
 
     fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Game {
-        return importFEN(fullFEN).apply { render(this) }
+        return importFEN(fullFEN).copy(status = Status.STARTED).apply { render(this) }
     }
 
     fun givenAChessGame(

@@ -11,12 +11,25 @@ import fr.smo.chess.core.utils.Failure
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.*
 
 class GameTest {
 
     @Nested
     inner class CheckMate {
+
+
+        @Test
+        fun `should not mark game as over after check but not checkmate`() {
+            // Given When
+            val game = givenAChessGame().applyMoves(
+                    MoveCommand(E2, E3),
+                    MoveCommand(F7, F6),
+                    MoveCommand(D1, H5),
+            ).orThrow()
+            expectThat(game.status.gameIsOver).isFalse()
+        }
 
         @Test
         fun `should not mark game as over when a check can be escaped`() {
@@ -491,6 +504,33 @@ class GameTest {
     inner class Castle {
 
         @Test
+        fun `should be able to castle queen side if there is a piece on the b file`() {
+            // Given
+            val game = givenAChessGame("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/5Q1p/PPPBBPPP/RN2K2R w KQkq - 1 1")
+            // When
+            expectThrows<IllegalStateException> {
+                game.applyMoves(MoveCommand(E1,C1)).orThrow()
+            }
+
+            // Then
+
+        }
+
+        @Test
+        fun `should not be able to castle if a pawn is threatening one of the king path squares`() {
+            // Given
+            val game = givenAChessGame("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 2")
+            // When then
+            expectThrows<IllegalStateException> {
+                game.applyMoves(
+                        MoveCommand(A2, A3),
+                        MoveCommand(A6, E2),
+                        MoveCommand(E1, G1),
+                ).orThrow()
+            }
+        }
+
+        @Test
         fun `should lose ability to black queen castle if a8 rook moves`() {
             // Given When
             val game = givenAChessGame(
@@ -786,6 +826,16 @@ class GameTest {
             )
             // When Then
             expectThat(game.applyMove(MoveCommand(E8, C8))).isA<Failure<MoveCommandError>>()
+            expectThat(game.applyMove(MoveCommand(E8, G8))).isA<Failure<MoveCommandError>>()
+        }
+
+        @Test
+        fun `should not be able to castle while being checked and king castle squares are under attack`() {
+            // Given
+            val game = givenAChessGame("r3k2r/8/8/8/5Q2/8/8/4K3 w kq - 0 1")
+            // When Then
+            expectThat(game.applyMove(MoveCommand(E8, C8))).isA<Failure<MoveCommandError>>()
+            expectThat(game.applyMove(MoveCommand(E8, G8))).isA<Failure<MoveCommandError>>()
         }
 
 

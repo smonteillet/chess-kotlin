@@ -67,7 +67,7 @@ private fun hasNoLegalMove(color: Color, game: Game) : Boolean {
     return (
         hasAPseudoLegalMovesSatisfying(color, game) { move ->
             val moveCommand = MoveCommand(move.origin, move.destination, move.promotedTo?.type)
-            when (game.applyMove(moveCommand, false)) {
+            when (game.applyMove(moveCommand, updateGameOutcomeState = false, markMoveAsCheckedInHistory = false)) {
                 is Success -> true
                 is Failure -> false
             }

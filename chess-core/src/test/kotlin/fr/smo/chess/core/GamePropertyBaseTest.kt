@@ -130,6 +130,29 @@ class GamePropertyBaseTest {
             expectThat(game.chessboard.getPieceAt(E8)).isNotNull()
             expectThat(game.chessboard.getPieceAt(E8)) isEqualTo BLACK_KING
         }
+
+        val historyMoves = game.history.moves
+        val lastMove = game.history.moves.last()
+        val movesWithoutLastMove = historyMoves.subList(0, historyMoves.lastIndex)
+        if (lastMove.isKingCastle && lastMove.piece.color == Color.WHITE) {
+            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING  && it.origin != H1}).isTrue()
+            expectThat(game.chessboard.getPieceAt(H1)).isNull()
+        }
+        if (lastMove.isQueenCastle && lastMove.piece.color == Color.WHITE) {
+            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING  && it.origin != A1}).isTrue()
+            expectThat(game.chessboard.getPieceAt(B1)).isNull()
+            expectThat(game.chessboard.getPieceAt(A1)).isNull()
+        }
+
+        if (lastMove.isKingCastle && lastMove.piece.color == Color.BLACK) {
+            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING  && it.origin != H8}).isTrue()
+            expectThat(game.chessboard.getPieceAt(H8)).isNull()
+        }
+        if (lastMove.isQueenCastle && lastMove.piece.color == Color.BLACK) {
+            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING  && it.origin != A8}).isTrue()
+            expectThat(game.chessboard.getPieceAt(B8)).isNull()
+            expectThat(game.chessboard.getPieceAt(A8)).isNull()
+        }
     }
 
     private fun assertThatLastMovingHasLeftABlankSquareAfterMoving(game: Game) {

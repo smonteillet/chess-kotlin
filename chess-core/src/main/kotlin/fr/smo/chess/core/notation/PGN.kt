@@ -65,7 +65,7 @@ object PGN {
     }
 
     private fun extractOriginSquare(game: Game, pgnMove: PgnMove) : Square {
-        val candidateMoves = getAllPseudoLegalMovesForColor(pgnMove.color, game)
+        val candidateMoves = getPseudoLegalMovesRegardingDestination(game, PiecePosition(square = pgnMove.destination, piece = pgnMove.piece))
             .filter {
                 it.piece == pgnMove.piece &&
                         it.destination == pgnMove.destination &&
