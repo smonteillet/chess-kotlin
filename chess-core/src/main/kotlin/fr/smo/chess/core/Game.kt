@@ -4,21 +4,6 @@ import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
 import fr.smo.chess.core.utils.*
 
-open class MoveCommandError(override val message: String) : OutcomeError
-
-data class IllegalMoveBecauseOwnKingInCheckError(val history: History) : MoveCommandError(
-        message = "Having its own king checked after performing own move is illegal. " +
-        "At move : ${history.halfMoveClock} ${history.moves.last()}"
-)
-
-data class IllegalMoveBecauseNoPieceAtStart(val square: Square) : MoveCommandError(
-        message = "Illegal Move because there is no piece at $square"
-)
-
-data class IllegalMove(val origin: Square, val destination: Square) : MoveCommandError(
-        message = "There is no legal move from $origin to $destination"
-)
-
 data class Game(
         val chessboard: Chessboard,
         val history: History,
@@ -41,7 +26,7 @@ data class Game(
 
     private fun isGameStateLegal(newGameState: Game): Outcome<Game, MoveCommandError> {
         return if (isChecked(newGameState.sideToMove.opposite(), newGameState)) {
-            Failure(IllegalMoveBecauseOwnKingInCheckError(newGameState.history))
+            Failure(CannotLeaveYourOwnKingInCheck(newGameState.history))
         } else {
             Success(newGameState)
         }
@@ -96,6 +81,6 @@ data class Game(
 
     private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<PiecePosition, MoveCommandError> {
         return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
-                ?: Failure(IllegalMoveBecauseNoPieceAtStart(moveCommand.origin))
+                ?: Failure(PieceNotFound(moveCommand.origin))
     }
 }
