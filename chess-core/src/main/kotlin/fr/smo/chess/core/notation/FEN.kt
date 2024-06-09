@@ -9,10 +9,10 @@ import java.util.*
 const val STARTING_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 object FEN {
-    fun importFEN(fen: String): Game {
+    fun importFEN(fen: String): Position {
         val fenSplit = fen.split(" ")
         require(fenSplit.size == 6)
-        return Game(
+        return Position(
             chessboard = getChessboardFromFenPiecePlacement(fenSplit[0]),
             sideToMove = sideToMove(fenSplit[1]),
             castling = Castling(
@@ -29,35 +29,35 @@ object FEN {
         )
     }
 
-    fun exportFEN(game: Game): String {
-        return getFenPiecePlacementFromGameState(game) + " " +
-                getFenSideToMoveFromGameState(game) + " " +
-                getFenCastlingFromGameState(game) + " " +
-                (game.enPassantTargetSquare?.toString() ?: "-") + " " +
-                game.history.halfMoveClock + " " +
-                game.history.fullMoveCounter
+    fun exportFEN(position: Position): String {
+        return getFenPiecePlacementFromGameState(position) + " " +
+                getFenSideToMoveFromGameState(position) + " " +
+                getFenCastlingFromGameState(position) + " " +
+                (position.enPassantTargetSquare?.toString() ?: "-") + " " +
+                position.history.halfMoveClock + " " +
+                position.history.fullMoveCounter
     }
 
-    private fun getFenSideToMoveFromGameState(game: Game): String {
-        return if (game.sideToMove == WHITE) {
+    private fun getFenSideToMoveFromGameState(position: Position): String {
+        return if (position.sideToMove == WHITE) {
             "w"
         } else {
             "b"
         }
     }
 
-    private fun getFenCastlingFromGameState(game: Game): String {
+    private fun getFenCastlingFromGameState(position: Position): String {
         var fenCastle = ""
-        if (game.castling.isWhiteKingCastlePossible) {
+        if (position.castling.isWhiteKingCastlePossible) {
             fenCastle += "K"
         }
-        if (game.castling.isWhiteQueenCastlePossible) {
+        if (position.castling.isWhiteQueenCastlePossible) {
             fenCastle += "Q"
         }
-        if (game.castling.isBlackKingCastlePossible) {
+        if (position.castling.isBlackKingCastlePossible) {
             fenCastle += "k"
         }
-        if (game.castling.isBlackQueenCastlePossible) {
+        if (position.castling.isBlackQueenCastlePossible) {
             fenCastle += "q"
         }
         return fenCastle.ifEmpty {
@@ -65,7 +65,7 @@ object FEN {
         }
     }
 
-    private fun getFenPiecePlacementFromGameState(game: Game): String {
+    private fun getFenPiecePlacementFromGameState(position: Position): String {
         var chessboardFinished = false
         var currentSquare = Square.A8
         var fen = ""
@@ -73,7 +73,7 @@ object FEN {
             var lineFinished = false
             var currentGap = 0
             while (!lineFinished) {
-                val piece = game.chessboard.getPieceAt(currentSquare)
+                val piece = position.chessboard.getPieceAt(currentSquare)
                 if (piece != null) {
                     if (currentGap != 0) {
                         fen += currentGap

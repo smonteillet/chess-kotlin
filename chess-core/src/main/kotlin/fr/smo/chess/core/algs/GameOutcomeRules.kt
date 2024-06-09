@@ -8,44 +8,44 @@ import fr.smo.chess.core.utils.ifTrue
 // TODO this could be integrated back into the Game class
 //see https://www.chess.com/article/view/how-chess-games-can-end-8-ways-explained
 
-fun getOutcome(game: Game) : Status {
-    return if (isDraw(game)) {
+fun getOutcome(position: Position) : Status {
+    return if (isDraw(position)) {
         Status.DRAW
     }
-    else if (isCheckMate(game)) {
-       if (game.history.lastMoveColor() == Color.WHITE) {
+    else if (isCheckMate(position)) {
+       if (position.history.lastMoveColor() == Color.WHITE) {
            Status.WHITE_WIN
         } else {
            Status.BLACK_WIN
         }
     }
-    else if (isStaleMate(game)) {
+    else if (isStaleMate(position)) {
         Status.DRAW
     } else {
         Status.STARTED
     }
 }
 
-private fun isCheckMate(game : Game): Boolean {
-    return game.history.moves.last().isCheck.ifTrue {
-        hasNoLegalMove(game.sideToMove, game)
+private fun isCheckMate(position : Position): Boolean {
+    return position.history.moves.last().isCheck.ifTrue {
+        hasNoLegalMove(position.sideToMove, position)
     } ?: false
 }
 
-fun isChecked(kingColorThatMayBeChecked: Color, game: Game): Boolean {
-    return hasAPseudoLegalMovesSatisfying(kingColorThatMayBeChecked.opposite(), game) { move ->
+fun isChecked(kingColorThatMayBeChecked: Color, position: Position): Boolean {
+    return hasAPseudoLegalMovesSatisfying(kingColorThatMayBeChecked.opposite(), position) { move ->
         move.capturedPiece?.type == PieceType.KING
     }
 }
 
-private fun isDraw(game: Game) : Boolean {
+private fun isDraw(position: Position) : Boolean {
     // TODO need to implement insufficient material
     // https://www.chess.com/article/view/how-chess-games-can-end-8-ways-explained#insufficient-material
-    return isFiftyMovesRule(game) || isThreefoldRepetitions(game)
+    return isFiftyMovesRule(position) || isThreefoldRepetitions(position)
 }
 
-private fun isThreefoldRepetitions(game: Game): Boolean {
-    val moves = game.history.moves
+private fun isThreefoldRepetitions(position: Position): Boolean {
+    val moves = position.history.moves
     val moveCount = moves.size
     return moves.size >= 12 &&
             moves[moveCount - 1] == moves[moveCount - 5] &&
@@ -58,17 +58,17 @@ private fun isThreefoldRepetitions(game: Game): Boolean {
             moves[moveCount - 4] == moves[moveCount - 12]
 }
 
-fun isFiftyMovesRule(game: Game): Boolean = game.history.halfMoveClock == 50
+fun isFiftyMovesRule(position: Position): Boolean = position.history.halfMoveClock == 50
 
-private fun isStaleMate(game: Game): Boolean {
-    return hasNoLegalMove(game.sideToMove, game)
+private fun isStaleMate(position: Position): Boolean {
+    return hasNoLegalMove(position.sideToMove, position)
 }
 
-private fun hasNoLegalMove(color: Color, game: Game) : Boolean {
+private fun hasNoLegalMove(color: Color, position: Position) : Boolean {
     return (
-        hasAPseudoLegalMovesSatisfying(color, game) { move ->
+        hasAPseudoLegalMovesSatisfying(color, position) { move ->
             val moveCommand = MoveCommand(move.origin, move.destination, move.promotedTo?.type)
-            when (game.isLegalMove(moveCommand)) {
+            when (position.isLegalMove(moveCommand)) {
                 is Success -> true
                 is Failure -> false
             }

@@ -24,12 +24,12 @@ object PGN {
 
 
 
-    fun exportPGN(game: Game): String {
-        val pgnHistory = game.history.moves.mapIndexed { index, move ->
+    fun exportPGN(position: Position): String {
+        val pgnHistory = position.history.moves.mapIndexed { index, move ->
             val indexStr = if (index % 2 == 0) "${index / 2 + 1}. " else ""
-            return@mapIndexed indexStr + moveToPgn(move, game.history.moves.size == index + 1)
+            return@mapIndexed indexStr + moveToPgn(move, position.history.moves.size == index + 1)
         }.joinToString(" ")
-        val pgnOutcome = when (game.status) {
+        val pgnOutcome = when (position.status) {
             Status.BLACK_WIN -> BLACK_WIN_PGN
             Status.WHITE_WIN -> WHITE_WIN_PGN
             Status.DRAW -> DRAWN_PGN
@@ -38,7 +38,7 @@ object PGN {
         return "$pgnHistory $pgnOutcome"
     }
 
-    fun import(pgn: String): Game {
+    fun import(pgn: String): Position {
         return pgn.trim()
             .replace(PGN_COMMENT_BRACKET_REGEX, "")
             .replace(PGN_COMMENT_CURLY_BRACKET_REGEX, "")
@@ -50,14 +50,14 @@ object PGN {
 
     }
 
-    private fun applyPGNMove(game: Game, pgnMoveStr: String): Game {
-        val color = game.sideToMove
-        importKingSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
-        importQueenSideCastleMoveIfNecessary(game, pgnMoveStr)?.let { return it }
-        importGameEndIfNecessary(game, pgnMoveStr)?.let { return it }
+    private fun applyPGNMove(position: Position, pgnMoveStr: String): Position {
+        val color = position.sideToMove
+        importKingSideCastleMoveIfNecessary(position, pgnMoveStr)?.let { return it }
+        importQueenSideCastleMoveIfNecessary(position, pgnMoveStr)?.let { return it }
+        importGameEndIfNecessary(position, pgnMoveStr)?.let { return it }
         val pgnMove = PgnMove.parse(pgnMoveStr, color)
-        val originSquare = extractOriginSquare(game, pgnMove)
-        return game.applyMove(
+        val originSquare = extractOriginSquare(position, pgnMove)
+        return position.applyMove(
             moveCommand = MoveCommand(
                 origin = originSquare,
                 destination = pgnMove.destination,
@@ -66,8 +66,8 @@ object PGN {
         ).orThrow()
     }
 
-    private fun extractOriginSquare(game: Game, pgnMove: PgnMove) : Square {
-        val candidateMoves = getPseudoLegalMovesRegardingDestination(game, PiecePosition(square = pgnMove.destination, piece = pgnMove.piece))
+    private fun extractOriginSquare(position: Position, pgnMove: PgnMove) : Square {
+        val candidateMoves = getPseudoLegalMovesRegardingDestination(position, PiecePosition(square = pgnMove.destination, piece = pgnMove.piece))
             .filter {
                 it.piece == pgnMove.piece &&
                         it.destination == pgnMove.destination &&
@@ -80,7 +80,7 @@ object PGN {
             candidateMoves[0].origin
         } else {
             candidateMoves.firstNotNullOf { move ->
-                game.applyMove(
+                position.applyMove(
                         MoveCommand(
                                 origin = move.origin,
                                 destination = move.destination,
@@ -96,33 +96,33 @@ object PGN {
         }
     }
 
-    private fun importGameEndIfNecessary(game: Game, pgnMove: String): Game? =
+    private fun importGameEndIfNecessary(position: Position, pgnMove: String): Position? =
         when (pgnMove) {
-            DRAWN_PGN -> game.copy(status = Status.DRAW)
-            BLACK_WIN_PGN -> game.copy(status = Status.BLACK_WIN)
-            WHITE_WIN_PGN -> game.copy(status = Status.WHITE_WIN)
-            UNKNOWN_RESULT_PGN -> game.copy(status = Status.UNKNOWN_RESULT)
+            DRAWN_PGN -> position.copy(status = Status.DRAW)
+            BLACK_WIN_PGN -> position.copy(status = Status.BLACK_WIN)
+            WHITE_WIN_PGN -> position.copy(status = Status.WHITE_WIN)
+            UNKNOWN_RESULT_PGN -> position.copy(status = Status.UNKNOWN_RESULT)
             else -> null
         }
 
 
-    private fun importKingSideCastleMoveIfNecessary(game: Game,pgnMove: String) =
-        importCastleMoveIfNecessary(game, pgnMove, KING_SIDE_CASTLE_NOTATION) { it.isKingCastle }
+    private fun importKingSideCastleMoveIfNecessary(position: Position, pgnMove: String) =
+        importCastleMoveIfNecessary(position, pgnMove, KING_SIDE_CASTLE_NOTATION) { it.isKingCastle }
 
-    private fun importQueenSideCastleMoveIfNecessary(game: Game,pgnMove: String) =
-        importCastleMoveIfNecessary(game, pgnMove, QUEEN_SIDE_CASTLE_NOTATION) { it.isQueenCastle }
+    private fun importQueenSideCastleMoveIfNecessary(position: Position, pgnMove: String) =
+        importCastleMoveIfNecessary(position, pgnMove, QUEEN_SIDE_CASTLE_NOTATION) { it.isQueenCastle }
 
     private fun importCastleMoveIfNecessary(
-        game: Game,
+        position: Position,
         pgnMove: String,
         expectedCastlePgn: String,
         castleMoveChecker : (Move) -> Boolean
-    ) : Game? {
+    ) : Position? {
         if (pgnMove.replace("+", "") == expectedCastlePgn) {
-            val castleMove = getAllPseudoLegalMovesForColor(game.sideToMove, game)
+            val castleMove = getAllPseudoLegalMovesForColor(position.sideToMove, position)
                 .firstOrNull { castleMoveChecker(it) }
-                ?: throw IllegalArgumentException("cannot find perform castle move $pgnMove for ${game.sideToMove}")
-            return game.applyMove(
+                ?: throw IllegalArgumentException("cannot find perform castle move $pgnMove for ${position.sideToMove}")
+            return position.applyMove(
                 moveCommand = MoveCommand(
                     origin = castleMove.origin,
                     destination = castleMove.destination,

@@ -1,7 +1,7 @@
 package fr.smo.chess.core.renderer
 
 import fr.smo.chess.core.File
-import fr.smo.chess.core.Game
+import fr.smo.chess.core.Position
 import fr.smo.chess.core.Piece.*
 import fr.smo.chess.core.Rank
 import fr.smo.chess.core.Square
@@ -10,10 +10,10 @@ import java.util.*
 
 object GameRenderer {
 
-    fun consoleRender(game: Game): String =
+    fun consoleRender(position: Position): String =
         Rank.entries.reversed().joinToString("\n") { rank ->
             "|" + File.entries.joinToString("|") { file ->
-                when (game.chessboard.getPieceAt(Square.at(file, rank)!!)) {
+                when (position.chessboard.getPieceAt(Square.at(file, rank)!!)) {
                     null -> " "
                     WHITE_KING -> "♔"
                     WHITE_QUEEN -> "♕"
@@ -31,12 +31,12 @@ object GameRenderer {
             } + "| " + rank.label
         } + "\n|A B C D E F G H"
 
-    fun consoleRenderV2(game: Game): String {
+    fun consoleRenderV2(position: Position): String {
         val line = "+---+---+---+---+---+---+---+---+"
         return line + "\n" +
                 Rank.entries.reversed().joinToString("\n" + line + "\n") { rank ->
                     "|" + File.entries.joinToString("|") { file ->
-                        when (game.chessboard.getPieceAt(Square.at(file, rank)!!)) {
+                        when (position.chessboard.getPieceAt(Square.at(file, rank)!!)) {
                             null -> "   "
                             WHITE_KING -> " K "
                             WHITE_QUEEN -> " Q "
@@ -56,10 +56,10 @@ object GameRenderer {
                 "\n  A   B   C   D   E   F   G   H"
     }
 
-    fun lichessUrlRenderer(game: Game): String {
-        val exportedFEN = exportFEN(game)
+    fun lichessUrlRenderer(position: Position): String {
+        val exportedFEN = exportFEN(position)
         return "https://lichess.org/editor/${exportedFEN.replace(" ", "_")}?color=" +
-                game.sideToMove.toString().lowercase(Locale.getDefault())
+                position.sideToMove.toString().lowercase(Locale.getDefault())
     }
 
 }

@@ -7,7 +7,7 @@ import fr.smo.chess.core.algs.getPseudoLegalMoves
 import fr.smo.chess.core.algs.isChecked
 import fr.smo.chess.core.utils.*
 
-data class Game(
+data class Position(
         val chessboard: Chessboard,
         val history: History,
         val sideToMove: Color = WHITE,
@@ -15,39 +15,39 @@ data class Game(
         val enPassantTargetSquare: Square? = null,
         val status: Status = Status.CREATED,
 ) {
-    fun applyMove(moveCommand: MoveCommand): Outcome<Game, MoveCommandError> {
+    fun applyMove(moveCommand: MoveCommand): Outcome<Position, MoveCommandError> {
         return isLegalMove(moveCommand)
                     .map { markMoveAsCheckedInHistory(it) }
                     .map { updatedGame -> updateGameOutcome(updatedGame) }
     }
 
-    fun isLegalMove(moveCommand: MoveCommand): Outcome<Game, MoveCommandError> {
+    fun isLegalMove(moveCommand: MoveCommand): Outcome<Position, MoveCommandError> {
         return buildMove(moveCommand).flatMap { move ->
             isGamePositionLegal(computeNewPositionAfterMakeMove(move))
         }
     }
 
-    private fun isGamePositionLegal(game: Game): Outcome<Game, MoveCommandError> {
-        return if (isChecked(game.sideToMove.opposite(), game)) {
-            Failure(CannotLeaveYourOwnKingInCheck(game.history))
+    private fun isGamePositionLegal(position: Position): Outcome<Position, MoveCommandError> {
+        return if (isChecked(position.sideToMove.opposite(), position)) {
+            Failure(CannotLeaveYourOwnKingInCheck(position.history))
         } else {
-            Success(game)
+            Success(position)
         }
     }
 
-    private fun updateGameOutcome(position: Game) = position.copy(status = getOutcome(position))
+    private fun updateGameOutcome(position: Position) = position.copy(status = getOutcome(position))
 
-    private fun markMoveAsCheckedInHistory(position: Game) : Game {
+    private fun markMoveAsCheckedInHistory(position: Position) : Position {
         return isChecked(position.sideToMove, position).ifTrue {
                 position.copy(history = history.addMove(position.history.lastMove().copy(isCheck = true)))
             } ?: position
     }
 
     private fun computeNewPositionAfterMakeMove(move: Move) =
-            Game(
+            Position(
                     chessboard = chessboard.applyMoveOnBoard(move, enPassantTargetSquare)
-                            .applyPromotions(move)
-                            .applyRookMovesForCastling(move),
+                            .applyPromotionIfNecessary(move)
+                            .applyRookMovesAfterCastleIfNecessary(move),
                     history = history.addMove(move),
                     sideToMove = sideToMove.opposite(),
                     castling = castling.updateCastlingAfterMove(move),
@@ -55,8 +55,8 @@ data class Game(
             )
 
 
-    fun applyMoves(vararg moveCommands: MoveCommand): Outcome<Game, MoveCommandError> {
-        return moveCommands.fold(Success(this) as Outcome<Game, MoveCommandError>) { result, moveRequest ->
+    fun applyMoves(vararg moveCommands: MoveCommand): Outcome<Position, MoveCommandError> {
+        return moveCommands.fold(Success(this) as Outcome<Position, MoveCommandError>) { result, moveRequest ->
             result.flatMap { it.applyMove(moveRequest) }
         }
     }

@@ -262,7 +262,7 @@ class PGNTest {
         }
 
         @Nested
-        inner class ImportFamousGame {
+        inner class ImportFamousPosition {
 
 
 

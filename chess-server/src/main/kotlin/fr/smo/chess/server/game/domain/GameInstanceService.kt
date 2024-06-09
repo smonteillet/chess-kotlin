@@ -1,6 +1,5 @@
 package fr.smo.chess.server.game.domain
 
-import fr.smo.chess.core.Game
 import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.MoveCommand
 import fr.smo.chess.core.Status
@@ -14,7 +13,7 @@ class GameInstanceService(
     fun createStandardChessGame(): GameInstance =
         gameInstanceRepository.save(GameInstance(
             gameId = GameId.create(),
-            game = GameFactory.createStandardGame(),
+            position = GameFactory.createStandardGame(),
             callbackAfterMove = { println(GameRenderer.consoleRender(it)) }
         ))
 
@@ -27,7 +26,7 @@ class GameInstanceService(
     fun startGame(gameId: GameId): GameInstance =
         gameInstanceRepository.findById(gameId).let { gameInstance ->
             gameInstance.copy(
-                game = gameInstance.game.copy(status = Status.STARTED)
+                position = gameInstance.position.copy(status = Status.STARTED)
             ).also {
                 gameInstanceRepository.save(it)
                 updatedGameNotifier.sendUpdatedGameToPlayers(it)
@@ -40,7 +39,7 @@ class GameInstanceService(
             .applyMove(moveCommand)
             .also { updatedGame ->
                 updatedGameNotifier.sendUpdatedGameToPlayers(updatedGame)
-                if (updatedGame.game.status.gameIsOver)
+                if (updatedGame.position.status.gameIsOver)
                     gameInstanceRepository.remove(updatedGame)
                 else
                     gameInstanceRepository.save(updatedGame)

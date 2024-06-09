@@ -9,40 +9,40 @@ import kotlin.random.Random
  * if they'll leave the king in check. It is left up to the move-making function to test the move, or it is even possible
  * to let the king remain in check and only test for the capture of the king on the next move
  */
-fun getPseudoLegalMoves(game: Game, piecePosition: PiecePosition): List<Move> {
+fun getPseudoLegalMoves(position: Position, piecePosition: PiecePosition): List<Move> {
     return when (piecePosition.pieceType) {
-        PieceType.KING -> getKingPseudoLegalMoves(game, piecePosition)
-        PieceType.PAWN -> getPawnPseudoLegalMoves(game, piecePosition)
-        PieceType.BISHOP -> getBishopPseudoLegalMoves(game.chessboard, piecePosition)
-        PieceType.KNIGHT -> getKnightPseudoLegalMoves(game.chessboard, piecePosition)
-        PieceType.QUEEN -> getQueenPseudoLegalMoves(game.chessboard, piecePosition)
-        PieceType.ROOK -> getRookPseudoLegalMoves(game.chessboard, piecePosition)
+        PieceType.KING -> getKingPseudoLegalMoves(position, piecePosition)
+        PieceType.PAWN -> getPawnPseudoLegalMoves(position, piecePosition)
+        PieceType.BISHOP -> getBishopPseudoLegalMoves(position.chessboard, piecePosition)
+        PieceType.KNIGHT -> getKnightPseudoLegalMoves(position.chessboard, piecePosition)
+        PieceType.QUEEN -> getQueenPseudoLegalMoves(position.chessboard, piecePosition)
+        PieceType.ROOK -> getRookPseudoLegalMoves(position.chessboard, piecePosition)
     }
 }
 
-fun getPseudoLegalMovesRegardingDestination(game: Game, destinationPiecePosition: PiecePosition): List<Move> {
-    return game.chessboard.getPiecePositions(color = game.sideToMove)
+fun getPseudoLegalMovesRegardingDestination(position: Position, destinationPiecePosition: PiecePosition): List<Move> {
+    return position.chessboard.getPiecePositions(color = position.sideToMove)
             .filter { it.pieceType == destinationPiecePosition.pieceType }
             .parallelStream()
-            .flatMap { getPseudoLegalMoves(game, it).stream() }
+            .flatMap { getPseudoLegalMoves(position, it).stream() }
             .toList()
 }
 
-fun getAllPseudoLegalMovesForColor(color: Color, game: Game): List<Move> {
-    return game.chessboard.getPiecePositions(color).parallelStream().flatMap {
-        getPseudoLegalMoves(game, it).stream()
+fun getAllPseudoLegalMovesForColor(color: Color, position: Position): List<Move> {
+    return position.chessboard.getPiecePositions(color).parallelStream().flatMap {
+        getPseudoLegalMoves(position, it).stream()
     }.toList()
 }
 
-fun hasAPseudoLegalMovesSatisfying(color: Color, game: Game, predicate: (Move) -> Boolean): Boolean {
-    return getFirstPseudoLegalMoveSatisfying(color, game,null,  predicate) != null
+fun hasAPseudoLegalMovesSatisfying(color: Color, position: Position, predicate: (Move) -> Boolean): Boolean {
+    return getFirstPseudoLegalMoveSatisfying(color, position,null,  predicate) != null
 }
 
-fun getFirstPseudoLegalMoveSatisfying(color: Color, game: Game, random : Random? = null, predicate: (Move) -> Boolean): Move? {
-    game.chessboard.getPiecePositions(color)
+fun getFirstPseudoLegalMoveSatisfying(color: Color, position: Position, random : Random? = null, predicate: (Move) -> Boolean): Move? {
+    position.chessboard.getPiecePositions(color)
             .let { if (random != null) it.shuffled(random) else it }
             .forEach {
-                getPseudoLegalMoves(game, it).forEach { move ->
+                getPseudoLegalMoves(position, it).forEach { move ->
                     if (predicate.invoke(move)) {
                         return move
                     }
@@ -74,34 +74,34 @@ private fun getKnightPseudoLegalMoves(chessboard: Chessboard, knightPosition: Pi
 }
 
 
-private fun getPawnPseudoLegalMoves(game: Game, pawnPosition: PiecePosition): List<Move> =
+private fun getPawnPseudoLegalMoves(position: Position, pawnPosition: PiecePosition): List<Move> =
         (if (pawnPosition.color == Color.WHITE) {
             getPawnOneSquareAndTwoSquaresMoves(
-                    chessboard = game.chessboard,
+                    chessboard = position.chessboard,
                     pawnPiecePosition = pawnPosition,
                     hasPawnNotAlreadyMovedFromInitialPosition = pawnPosition.square.rank == Rank.RANK_2,
                     pawnAdvanceFunction = { it.up() },
-            ).plus(getPawnDiagonalMoves(game.chessboard, pawnPosition) { it.upRight() })
-                    .plus(getPawnDiagonalMoves(game.chessboard, pawnPosition) { it.upLeft() })
+            ).plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.upRight() })
+                    .plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.upLeft() })
         } else {
             getPawnOneSquareAndTwoSquaresMoves(
-                    chessboard = game.chessboard,
+                    chessboard = position.chessboard,
                     pawnPiecePosition = pawnPosition,
                     hasPawnNotAlreadyMovedFromInitialPosition = pawnPosition.square.rank == Rank.RANK_7,
                     pawnAdvanceFunction = { it.down() },
-            ).plus(getPawnDiagonalMoves(game.chessboard, pawnPosition) { it.downRight() }
-            ).plus(getPawnDiagonalMoves(game.chessboard, pawnPosition) { it.downLeft() })
-        }.plus(getPawnEnPassantMove(game, pawnPosition))).filterNotNull()
+            ).plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.downRight() }
+            ).plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.downLeft() })
+        }.plus(getPawnEnPassantMove(position, pawnPosition))).filterNotNull()
 
 
-private fun getPawnEnPassantMove(game: Game, pawnPosition: PiecePosition): Move? {
-    return game.enPassantTargetSquare?.let { enPassantTargetSquare->
+private fun getPawnEnPassantMove(position: Position, pawnPosition: PiecePosition): Move? {
+    return position.enPassantTargetSquare?.let { enPassantTargetSquare->
         if (pawnPosition.color == Color.WHITE && (enPassantTargetSquare == pawnPosition.square.upRight() || enPassantTargetSquare == pawnPosition.square.upLeft())) {
             return Move(
                     piece = pawnPosition.piece,
                     capturedPiece = Piece.BLACK_PAWN,
                     origin = pawnPosition.square,
-                    destination = game.enPassantTargetSquare,
+                    destination = position.enPassantTargetSquare,
             )
         } else if (pawnPosition.color == Color.BLACK && (enPassantTargetSquare == pawnPosition.square.downRight() || enPassantTargetSquare == pawnPosition.square.downLeft())) {
             return Move(
@@ -211,7 +211,7 @@ private fun getBishopPseudoLegalMoves(chessboard: Chessboard, bishopPosition: Pi
             getLegalMovesFollowingDirection(piecePosition = bishopPosition, chessboard = chessboard) { it.downRight() }
 }
 
-private fun getKingPseudoLegalMoves(game: Game, kingPosition: PiecePosition): List<Move> {
+private fun getKingPseudoLegalMoves(position: Position, kingPosition: PiecePosition): List<Move> {
     return listOfNotNull(
             kingPosition.square.up(),
             kingPosition.square.down(),
@@ -222,19 +222,19 @@ private fun getKingPseudoLegalMoves(game: Game, kingPosition: PiecePosition): Li
             kingPosition.square.downRight(),
             kingPosition.square.downLeft()
     )
-            .filterNot { game.chessboard.isPiecePresentAtAndHasColor(it, kingPosition.color) }
+            .filterNot { position.chessboard.isPiecePresentAtAndHasColor(it, kingPosition.color) }
             .map {
                 Move(
                         piece = kingPosition.piece,
                         origin = kingPosition.square,
                         destination = it,
-                        capturedPiece = game.chessboard.getPieceAt(it)
+                        capturedPiece = position.chessboard.getPieceAt(it)
                 )
-            }.plus(getCastleMoveIfPossible(game, kingPosition))
+            }.plus(getCastleMoveIfPossible(position, kingPosition))
 }
 
 private fun getCastleMove(
-    game: Game,
+    position: Position,
     kingPosition: PiecePosition,
     isKingCastle : Boolean,
     isCurrentCastlePossible: Boolean,
@@ -243,8 +243,8 @@ private fun getCastleMove(
     squaresBetweenKingAndRook: List<Square>
 ) : Move? {
     if (!isCurrentCastlePossible) { return null }
-    if (game.chessboard.hasAtLeastOnePieceAt(squaresBetweenKingAndRook)) { return null }
-    val hasPieceAttackingKingPath = hasAPseudoLegalMovesSatisfying(kingPosition.color.opposite(), game.copyWithoutCastling()) {
+    if (position.chessboard.hasAtLeastOnePieceAt(squaresBetweenKingAndRook)) { return null }
+    val hasPieceAttackingKingPath = hasAPseudoLegalMovesSatisfying(kingPosition.color.opposite(), position.copyWithoutCastling()) {
         kingCastlingPathSquares.contains(it.destination)
     }
     return if (!hasPieceAttackingKingPath) {
@@ -258,7 +258,7 @@ private fun getCastleMove(
     } else null
 }
 
-private fun Game.copyWithoutCastling() = copy(
+private fun Position.copyWithoutCastling() = copy(
         castling = Castling(
                 isWhiteKingCastlePossible = false,
                 isWhiteQueenCastlePossible = false,
@@ -267,24 +267,24 @@ private fun Game.copyWithoutCastling() = copy(
         ),
 )
 
-private fun getCastleMoveIfPossible(game: Game, kingPosition: PiecePosition): List<Move> {
+private fun getCastleMoveIfPossible(position: Position, kingPosition: PiecePosition): List<Move> {
 
-    return if (game.sideToMove == Color.WHITE) {
+    return if (position.sideToMove == Color.WHITE) {
         listOfNotNull(
                 getCastleMove(
-                        game = game,
+                        position = position,
                         kingPosition = kingPosition,
                         isKingCastle = true,
-                        isCurrentCastlePossible = game.castling.isWhiteKingCastlePossible,
+                        isCurrentCastlePossible = position.castling.isWhiteKingCastlePossible,
                         kingDestination = Square.G1,
                         kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
                         squaresBetweenKingAndRook = listOf(Square.F1, Square.G1),
                 ),
                 getCastleMove(
-                        game = game,
+                        position = position,
                         kingPosition = kingPosition,
                         isKingCastle = false,
-                        isCurrentCastlePossible = game.castling.isWhiteQueenCastlePossible,
+                        isCurrentCastlePossible = position.castling.isWhiteQueenCastlePossible,
                         kingDestination = Square.C1,
                         kingCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
                         squaresBetweenKingAndRook = listOf(Square.B1, Square.C1, Square.D1),
@@ -293,19 +293,19 @@ private fun getCastleMoveIfPossible(game: Game, kingPosition: PiecePosition): Li
     } else {
         listOfNotNull(
                 getCastleMove(
-                        game = game,
+                        position = position,
                         kingPosition = kingPosition,
                         isKingCastle = true,
-                        isCurrentCastlePossible = game.castling.isBlackKingCastlePossible,
+                        isCurrentCastlePossible = position.castling.isBlackKingCastlePossible,
                         kingDestination = Square.G8,
                         kingCastlingPathSquares = listOf(Square.E8, Square.F8, Square.G8),
                         squaresBetweenKingAndRook = listOf(Square.F8, Square.G8),
                 ),
                 getCastleMove(
-                        game = game,
+                        position = position,
                         kingPosition = kingPosition,
                         isKingCastle = false,
-                        isCurrentCastlePossible = game.castling.isBlackQueenCastlePossible,
+                        isCurrentCastlePossible = position.castling.isBlackQueenCastlePossible,
                         kingDestination = Square.C8,
                         kingCastlingPathSquares = listOf(Square.E8, Square.D8, Square.C8),
                         squaresBetweenKingAndRook = listOf(Square.B8, Square.C8, Square.D8),

@@ -18,8 +18,8 @@ class UpdatedGameWebSocketNotifier(
             "/update/${gameInstance.gameId.value}",
             GameInstanceResponseDTO(
                 gameId = gameInstance.gameId,
-                renderedGame = GameRenderer.consoleRender(gameInstance.game),
-                playerIdToMove = gameInstance.players[gameInstance.game.sideToMove]!!
+                renderedGame = GameRenderer.consoleRender(gameInstance.position),
+                playerIdToMove = gameInstance.players[gameInstance.position.sideToMove]!!
             )
         )
     }

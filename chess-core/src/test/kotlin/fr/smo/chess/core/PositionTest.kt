@@ -14,7 +14,7 @@ import strikt.api.expectThat
 import strikt.api.expectThrows
 import strikt.assertions.*
 
-class GameTest {
+class PositionTest {
 
     @Nested
     inner class CheckMate {

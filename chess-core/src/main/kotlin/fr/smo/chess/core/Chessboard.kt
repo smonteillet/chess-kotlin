@@ -38,7 +38,7 @@ data class Chessboard(
             null
         }
 
-    fun applyPromotions(move: Move): Chessboard {
+    fun applyPromotionIfNecessary(move: Move): Chessboard {
         if (move.piece.type == PieceType.PAWN && move.promotedTo != null) {
             return Chessboard(
                 piecesOnBoard = piecesOnBoard - move.destination + (move.destination to move.promotedTo)
@@ -47,7 +47,7 @@ data class Chessboard(
         return this
     }
 
-    fun applyRookMovesForCastling(move: Move): Chessboard {
+    fun applyRookMovesAfterCastleIfNecessary(move: Move): Chessboard {
         val newPiecesOnBoard = if (move.isKingCastle && move.piece.color == Color.WHITE) {
             piecesOnBoard - Square.H1 + (Square.F1 to Piece.WHITE_ROOK)
         } else if (move.isQueenCastle && move.piece.color == Color.WHITE) {

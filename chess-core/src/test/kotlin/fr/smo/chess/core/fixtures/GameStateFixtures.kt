@@ -9,7 +9,7 @@ import fr.smo.chess.core.renderer.GameRenderer
 object GameStateFixtures {
 
 
-    fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Game {
+    fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Position {
         return importFEN(fullFEN).copy(status = Status.STARTED).apply { render(this) }
     }
 
@@ -23,8 +23,8 @@ object GameStateFixtures {
         enPassantTargetSquare: Square? = null,
         status: Status = Status.STARTED,
         history: History = History(),
-    ): Game {
-        return Game(
+    ): Position {
+        return Position(
             chessboard = getChessboardFromFenPiecePlacement(fenPiecePlacementOnly),
             history = history,
             sideToMove = sideToMove,
@@ -39,9 +39,9 @@ object GameStateFixtures {
         ).apply { render(this) }
     }
 
-    private fun render(game: Game) {
-        println(GameRenderer.lichessUrlRenderer(game))
-        println(GameRenderer.consoleRenderV2(game))
+    private fun render(position: Position) {
+        println(GameRenderer.lichessUrlRenderer(position))
+        println(GameRenderer.consoleRenderV2(position))
     }
 
 

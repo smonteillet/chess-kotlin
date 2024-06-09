@@ -16,10 +16,10 @@ class RandomAIPlayer(seed: Long = System.currentTimeMillis()) : Player {
         println("RandomAIPlayer seed: $seed")
     }
 
-    override fun nextPlay(game: Game): MoveCommand {
+    override fun nextPlay(position: Position): MoveCommand {
         var move: Move? = null
-        getFirstPseudoLegalMoveSatisfying(color!!, game, random) { candidateMove ->
-            val legalMove = isMoveLegal(candidateMove, game)
+        getFirstPseudoLegalMoveSatisfying(color!!, position, random) { candidateMove ->
+            val legalMove = isMoveLegal(candidateMove, position)
             legalMove.ifTrue {  move = candidateMove }
             legalMove && random.nextBoolean()
         }
@@ -28,8 +28,8 @@ class RandomAIPlayer(seed: Long = System.currentTimeMillis()) : Player {
         } ?: throw IllegalStateException("This should not happen because game instance shall have stated that it is a stalemate on previous move")
     }
 
-    private fun isMoveLegal(move: Move, game: Game): Boolean {
-        return game.applyMove(
+    private fun isMoveLegal(move: Move, position: Position): Boolean {
+        return position.applyMove(
                 MoveCommand(
                         origin = move.origin,
                         destination = move.destination,

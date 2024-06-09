@@ -26,14 +26,14 @@ class Perft {
     private val checks = AtomicLong(0)
     private val enPassant = AtomicLong(0)
 
-    fun perft(game: Game, depth: Int): PerftResult {
+    fun perft(position: Position, depth: Int): PerftResult {
         captures.set(0)
         nodesCount.set(0)
         checkMates.set(0)
         castles.set(0)
         checks.set(0)
         enPassant.set(0)
-        perftRec(game, depth)
+        perftRec(position, depth)
         return PerftResult(
                 nodesCount = nodesCount.get(),
                 captures = captures.get(),
@@ -43,34 +43,34 @@ class Perft {
         )
     }
 
-    private fun perftRec(game: Game, depth: Int) {
+    private fun perftRec(position: Position, depth: Int) {
         if (depth == 0) {
-            incrementCounters(game)
+            incrementCounters(position)
             return
         }
-        return getAllPseudoLegalMovesForColor(game.sideToMove, game)
+        return getAllPseudoLegalMovesForColor(position.sideToMove, position)
                 .map { MoveCommand(origin = it.origin, destination = it.destination, promotedPiece = it.promotedTo?.type) }
                 .forEach { moveCommand ->
-                    when (val moveOutcome = game.applyMove(moveCommand)) {
+                    when (val moveOutcome = position.applyMove(moveCommand)) {
                         is Success -> perftRec(moveOutcome.value, depth - 1)
                         is Failure -> {}
                     }
                 }
     }
 
-    private fun incrementCounters(game: Game) {
+    private fun incrementCounters(position: Position) {
         nodesCount.incrementAndGet()
-        if (game.history.moves.last().capturedPiece != null) {
+        if (position.history.moves.last().capturedPiece != null) {
             captures.incrementAndGet()
         }
-        (game.enPassantTargetSquare != null).ifTrue { enPassant.incrementAndGet() }
-        (game.history.moves.last().isCheck).ifTrue {
+        (position.enPassantTargetSquare != null).ifTrue { enPassant.incrementAndGet() }
+        (position.history.moves.last().isCheck).ifTrue {
             checks.incrementAndGet()
         }
-        (game.history.moves.last().isKingCastle || game.history.moves.last().isQueenCastle).ifTrue {
+        (position.history.moves.last().isKingCastle || position.history.moves.last().isQueenCastle).ifTrue {
             castles.incrementAndGet()
         }
-        if (game.status == Status.BLACK_WIN || game.status == Status.WHITE_WIN) {
+        if (position.status == Status.BLACK_WIN || position.status == Status.WHITE_WIN) {
             checkMates.incrementAndGet()
         }
     }

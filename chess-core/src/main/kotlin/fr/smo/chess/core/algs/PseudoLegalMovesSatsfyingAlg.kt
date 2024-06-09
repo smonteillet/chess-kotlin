@@ -7,15 +7,15 @@ import fr.smo.chess.core.utils.ifTrue
 /**
  * Not good enough in terms of performance and has a lot of duplicated code with hasAPseudoLegalMovesSatisfying()
  */
-fun hasAPseudoLegalMovesSatisfying2(color: Color, game: Game, predicate: (Move) -> Boolean): Boolean {
-    return game.chessboard.getPiecePositions(color).any { piece->
+fun hasAPseudoLegalMovesSatisfying2(color: Color, position: Position, predicate: (Move) -> Boolean): Boolean {
+    return position.chessboard.getPiecePositions(color).any { piece->
         when (piece.pieceType) {
-            PieceType.PAWN -> hasPawnPseudoLegalMovesSatisfying(game, piece, predicate)
-            PieceType.BISHOP -> hasBishopPseudoLegalMovesSatisfying(game.chessboard, piece, predicate)
-            PieceType.KNIGHT -> getKnightPseudoLegalMovesSatisfying(game.chessboard, piece, predicate)
-            PieceType.QUEEN -> hasQueenPseudoLegalMovesSatisfying(game.chessboard, piece, predicate)
-            PieceType.KING -> hasKingPseudoLegalMovesSatisfying(game, piece, predicate)
-            PieceType.ROOK -> hasRookPseudoLegalMovesSatisfying(game.chessboard, piece, predicate)
+            PieceType.PAWN -> hasPawnPseudoLegalMovesSatisfying(position, piece, predicate)
+            PieceType.BISHOP -> hasBishopPseudoLegalMovesSatisfying(position.chessboard, piece, predicate)
+            PieceType.KNIGHT -> getKnightPseudoLegalMovesSatisfying(position.chessboard, piece, predicate)
+            PieceType.QUEEN -> hasQueenPseudoLegalMovesSatisfying(position.chessboard, piece, predicate)
+            PieceType.KING -> hasKingPseudoLegalMovesSatisfying(position, piece, predicate)
+            PieceType.ROOK -> hasRookPseudoLegalMovesSatisfying(position.chessboard, piece, predicate)
         }
     }
 }
@@ -42,41 +42,41 @@ private fun getKnightPseudoLegalMovesSatisfying(chessboard: Chessboard, knightPo
 }
 
 
-private fun hasPawnPseudoLegalMovesSatisfying(game: Game, pawnPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
+private fun hasPawnPseudoLegalMovesSatisfying(position: Position, pawnPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
     if (pawnPosition.color == Color.WHITE) {
         hasPawnOneSquareAndTwoSquaresMovesSatisfying(
-                chessboard = game.chessboard,
+                chessboard = position.chessboard,
                 pawnPiecePosition = pawnPosition,
                 hasPawnNotAlreadyMovedFromInitialPosition = pawnPosition.square.rank == Rank.RANK_2,
                 pawnAdvanceFunction = { it.up() },
                 predicate = predicate,
         ).let { if (it) return true }
-        hasPawnDiagonalMovesSatisfying(game.chessboard, pawnPosition, { it.upRight() }, predicate).let { if (it) return true }
-        hasPawnDiagonalMovesSatisfying(game.chessboard, pawnPosition, { it.upLeft() }, predicate).let { if (it) return true }
+        hasPawnDiagonalMovesSatisfying(position.chessboard, pawnPosition, { it.upRight() }, predicate).let { if (it) return true }
+        hasPawnDiagonalMovesSatisfying(position.chessboard, pawnPosition, { it.upLeft() }, predicate).let { if (it) return true }
     } else {
         hasPawnOneSquareAndTwoSquaresMovesSatisfying(
-                chessboard = game.chessboard,
+                chessboard = position.chessboard,
                 pawnPiecePosition = pawnPosition,
                 hasPawnNotAlreadyMovedFromInitialPosition = pawnPosition.square.rank == Rank.RANK_7,
                 pawnAdvanceFunction = { it.down() },
                 predicate = predicate,
         ).let { if (it) return true }
-        hasPawnDiagonalMovesSatisfying(game.chessboard, pawnPosition, { it.downRight() }, predicate).let { if (it) return true }
-        hasPawnDiagonalMovesSatisfying(game.chessboard, pawnPosition, { it.downLeft() }, predicate).let { if (it) return true }
+        hasPawnDiagonalMovesSatisfying(position.chessboard, pawnPosition, { it.downRight() }, predicate).let { if (it) return true }
+        hasPawnDiagonalMovesSatisfying(position.chessboard, pawnPosition, { it.downLeft() }, predicate).let { if (it) return true }
     }
-    hasPawnEnPassantMoveSatisfying(game, pawnPosition, predicate).let { if (it) return true }
+    hasPawnEnPassantMoveSatisfying(position, pawnPosition, predicate).let { if (it) return true }
     return false
 }
 
-private fun hasPawnEnPassantMoveSatisfying(game: Game, pawnPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
-    return game.enPassantTargetSquare?.let { enPassantTargetSquare ->
+private fun hasPawnEnPassantMoveSatisfying(position: Position, pawnPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
+    return position.enPassantTargetSquare?.let { enPassantTargetSquare ->
         if (pawnPosition.color == Color.WHITE && (enPassantTargetSquare == pawnPosition.square.upRight() || enPassantTargetSquare == pawnPosition.square.upLeft())) {
             predicate(
                 Move(
                     piece = pawnPosition.piece,
                     capturedPiece = Piece.BLACK_PAWN,
                     origin = pawnPosition.square,
-                    destination = game.enPassantTargetSquare,
+                    destination = position.enPassantTargetSquare,
             )
             )
         } else if (pawnPosition.color == Color.BLACK && (enPassantTargetSquare == pawnPosition.square.downRight() || enPassantTargetSquare == pawnPosition.square.downLeft())) {
@@ -197,7 +197,7 @@ private fun hasBishopPseudoLegalMovesSatisfying(chessboard: Chessboard, bishopPo
     }
 }
 
-private fun hasKingPseudoLegalMovesSatisfying(game: Game, kingPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
+private fun hasKingPseudoLegalMovesSatisfying(position: Position, kingPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
     return listOf(
             { kingPosition.square.up() },
             { kingPosition.square.down() },
@@ -209,17 +209,17 @@ private fun hasKingPseudoLegalMovesSatisfying(game: Game, kingPosition: PiecePos
             { kingPosition.square.downLeft() },
     ).any { squareCreator ->
         squareCreator.invoke()?.let {
-            if (!game.chessboard.isPiecePresentAtAndHasColor(it, kingPosition.color)) {
-                predicate(Move(piece = kingPosition.piece, origin = kingPosition.square, destination = it, capturedPiece = game.chessboard.getPieceAt(it)))
+            if (!position.chessboard.isPiecePresentAtAndHasColor(it, kingPosition.color)) {
+                predicate(Move(piece = kingPosition.piece, origin = kingPosition.square, destination = it, capturedPiece = position.chessboard.getPieceAt(it)))
             } else false
         } ?: false
     }.let {
-        if (it) return true else hasCastleMovesSatisfying(game, kingPosition, predicate)
+        if (it) return true else hasCastleMovesSatisfying(position, kingPosition, predicate)
     }
 }
 
 private fun hasCastleMoveSatisfying(
-    game: Game,
+    position: Position,
     kingPosition: PiecePosition,
     isKingCastle: Boolean,
     isCurrentCastlePossible: Boolean,
@@ -230,11 +230,11 @@ private fun hasCastleMoveSatisfying(
     if (!isCurrentCastlePossible) {
         return false
     }
-    if (game.chessboard.hasAtLeastOnePieceAt(kingCastlingPathSquares.minus(kingPosition.square))) {
+    if (position.chessboard.hasAtLeastOnePieceAt(kingCastlingPathSquares.minus(kingPosition.square))) {
         return false
     }
     if (
-            hasAPseudoLegalMovesSatisfying2(kingPosition.color.opposite(), game.copyWithoutCastling()) {
+            hasAPseudoLegalMovesSatisfying2(kingPosition.color.opposite(), position.copyWithoutCastling()) {
                 kingCastlingPathSquares.contains(it.destination)
             }
     ) {
@@ -245,7 +245,7 @@ private fun hasCastleMoveSatisfying(
     return false
 }
 
-private fun Game.copyWithoutCastling() = copy(
+private fun Position.copyWithoutCastling() = copy(
         castling = Castling(
                 isWhiteKingCastlePossible = false,
                 isWhiteQueenCastlePossible = false,
@@ -254,23 +254,23 @@ private fun Game.copyWithoutCastling() = copy(
         ),
 )
 
-private fun hasCastleMovesSatisfying(game: Game, kingPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
+private fun hasCastleMovesSatisfying(position: Position, kingPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
 
-    if (game.sideToMove == Color.WHITE) {
+    if (position.sideToMove == Color.WHITE) {
         hasCastleMoveSatisfying(
-                game = game,
+                position = position,
                 kingPosition = kingPosition,
                 isKingCastle = true,
-                isCurrentCastlePossible = game.castling.isWhiteKingCastlePossible,
+                isCurrentCastlePossible = position.castling.isWhiteKingCastlePossible,
                 kingDestination = Square.G1,
                 kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
                 predicate = predicate,
         ).let { if (it) return true }
         hasCastleMoveSatisfying(
-                game = game,
+                position = position,
                 kingPosition = kingPosition,
                 isKingCastle = false,
-                isCurrentCastlePossible = game.castling.isWhiteQueenCastlePossible,
+                isCurrentCastlePossible = position.castling.isWhiteQueenCastlePossible,
                 kingDestination = Square.C1,
                 kingCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
                 predicate = predicate,
@@ -278,19 +278,19 @@ private fun hasCastleMovesSatisfying(game: Game, kingPosition: PiecePosition, pr
 
     } else {
         hasCastleMoveSatisfying(
-                game = game,
+                position = position,
                 kingPosition = kingPosition,
                 isKingCastle = true,
-                isCurrentCastlePossible = game.castling.isBlackKingCastlePossible,
+                isCurrentCastlePossible = position.castling.isBlackKingCastlePossible,
                 kingDestination = Square.G8,
                 kingCastlingPathSquares = listOf(Square.E8, Square.F8, Square.G8),
                 predicate = predicate,
         ).let { if (it) return true }
         hasCastleMoveSatisfying(
-                game = game,
+                position = position,
                 kingPosition = kingPosition,
                 isKingCastle = false,
-                isCurrentCastlePossible = game.castling.isBlackQueenCastlePossible,
+                isCurrentCastlePossible = position.castling.isBlackQueenCastlePossible,
                 kingDestination = Square.C8,
                 kingCastlingPathSquares = listOf(Square.E8, Square.D8, Square.C8),
                 predicate = predicate,

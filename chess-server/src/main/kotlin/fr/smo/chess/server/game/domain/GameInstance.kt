@@ -1,15 +1,15 @@
 package fr.smo.chess.server.game.domain
 
 import fr.smo.chess.core.Color
-import fr.smo.chess.core.Game
+import fr.smo.chess.core.Position
 import fr.smo.chess.core.MoveCommand
 import java.util.*
 
 data class GameInstance(
     val gameId: GameId,
     val players: Map<Color, PlayerId> = mapOf(),
-    val game: Game,
-    val callbackAfterMove: (Game) -> Unit = {},
+    val position: Position,
+    val callbackAfterMove: (Position) -> Unit = {},
 ) {
 
     fun registerNewPlayer(playerId: PlayerId): GameInstance {
@@ -25,8 +25,8 @@ data class GameInstance(
 
     fun applyMove(moveCommand: MoveCommand): GameInstance {
         return this.copy(
-            game = game.applyMove(moveCommand).orThrow()
-        ).also { callbackAfterMove.invoke(it.game) }
+            position = position.applyMove(moveCommand).orThrow()
+        ).also { callbackAfterMove.invoke(it.position) }
     }
 
 }
