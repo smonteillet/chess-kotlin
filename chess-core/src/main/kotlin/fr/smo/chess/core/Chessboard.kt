@@ -6,6 +6,10 @@ data class Chessboard(
 
     fun isPiecePresentAtAndHasColor(square: Square, color: Color): Boolean = getPieceAt(square)?.color == color
 
+    fun isPiecePresentAt(square: Square): Boolean = getPieceAt(square) != null
+
+    fun hasNoPiecePresentAt(square: Square): Boolean = getPieceAt(square) == null
+
     fun getPieceAt(square: Square): Piece? = piecesOnBoard[square]
 
     fun getPiecePositions(color: Color) = getPiecePositions().filter { it.color == color }

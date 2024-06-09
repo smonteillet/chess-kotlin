@@ -74,124 +74,108 @@ private fun getKnightPseudoLegalMoves(chessboard: Chessboard, knightPosition: Pi
 }
 
 
-private fun getPawnPseudoLegalMoves(position: Position, pawnPosition: PiecePosition): List<Move> =
-        (if (pawnPosition.color == Color.WHITE) {
-            getPawnOneSquareAndTwoSquaresMoves(
-                    chessboard = position.chessboard,
-                    pawnPiecePosition = pawnPosition,
-                    hasPawnNotAlreadyMovedFromInitialPosition = pawnPosition.square.rank == Rank.RANK_2,
-                    pawnAdvanceFunction = { it.up() },
-            ).plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.upRight() })
-                    .plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.upLeft() })
-        } else {
-            getPawnOneSquareAndTwoSquaresMoves(
-                    chessboard = position.chessboard,
-                    pawnPiecePosition = pawnPosition,
-                    hasPawnNotAlreadyMovedFromInitialPosition = pawnPosition.square.rank == Rank.RANK_7,
-                    pawnAdvanceFunction = { it.down() },
-            ).plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.downRight() }
-            ).plus(getPawnDiagonalMoves(position.chessboard, pawnPosition) { it.downLeft() })
-        }.plus(getPawnEnPassantMove(position, pawnPosition))).filterNotNull()
+private fun getPawnPseudoLegalMoves(position: Position, pawnPosition: PiecePosition): List<Move> {
+    return getPawnOneSquareAndTwoSquaresMoves(chessboard = position.chessboard, pawnPiecePosition = pawnPosition)
+        .plus(getPawnDiagonalsMoves(chessboard = position.chessboard, pawnPosition = pawnPosition))
+        .plus(getPawnEnPassantMove(position = position, pawnPosition = pawnPosition))
+        .filterNotNull()
+}
 
 
 private fun getPawnEnPassantMove(position: Position, pawnPosition: PiecePosition): Move? {
-    return position.enPassantTargetSquare?.let { enPassantTargetSquare->
-        if (pawnPosition.color == Color.WHITE && (enPassantTargetSquare == pawnPosition.square.upRight() || enPassantTargetSquare == pawnPosition.square.upLeft())) {
-            return Move(
+    if (position.enPassantTargetSquare == null) {
+        return null
+    }
+    return pawnPosition.color.getPawnDiagonalSquareFunction()
+            .firstOrNull{ it.invoke(pawnPosition.square) == position.enPassantTargetSquare }?.let {
+                Move(
                     piece = pawnPosition.piece,
-                    capturedPiece = Piece.BLACK_PAWN,
+                    capturedPiece = when(pawnPosition.color) {
+                        Color.WHITE -> Piece.BLACK_PAWN
+                        Color.BLACK -> Piece.WHITE_PAWN
+                    },
                     origin = pawnPosition.square,
                     destination = position.enPassantTargetSquare,
-            )
-        } else if (pawnPosition.color == Color.BLACK && (enPassantTargetSquare == pawnPosition.square.downRight() || enPassantTargetSquare == pawnPosition.square.downLeft())) {
-            return Move(
-                    piece = pawnPosition.piece,
-                    capturedPiece = Piece.WHITE_PAWN,
-                    origin = pawnPosition.square,
-                    destination = enPassantTargetSquare,
-            )
-        } else null
-    }
+                )
+            }
 }
 
 private fun getPawnOneSquareAndTwoSquaresMoves(
     chessboard: Chessboard,
     pawnPiecePosition: PiecePosition,
-    hasPawnNotAlreadyMovedFromInitialPosition: Boolean,
-    pawnAdvanceFunction: (Square) -> Square?
 ): List<Move> {
-    return pawnAdvanceFunction.invoke(pawnPiecePosition.square)?.let { pawnDestination ->
-        chessboard.getPieceAt(pawnDestination)?.let{ emptyList() } ?:
-        getOneSquarePawnMoves(pawnPiecePosition, pawnDestination)
-                .plus(
-                    getPawnTwoSquaresMove(
-                        hasPawnNotAlreadyMoved = hasPawnNotAlreadyMovedFromInitialPosition,
-                        pawnFrontMoveFunction = pawnAdvanceFunction,
-                        chessboard = chessboard,
-                        pawnPiecePosition = pawnPiecePosition
-                )
-                )
+    return pawnPiecePosition.color.getPawnAdvanceFunction().invoke(pawnPiecePosition.square)?.let { pawnDestination ->
+        if (chessboard.isPiecePresentAt(pawnDestination)) {
+            emptyList()
+        }
+        else {
+            getOneSquarePawnMoves(pawnPiecePosition, pawnDestination)
+                .plus(getPawnTwoSquaresMove(chessboard = chessboard, pawnPiecePosition = pawnPiecePosition))
                 .filterNotNull()
+        }
     } ?: emptyList()
 }
 
 private fun getPawnTwoSquaresMove(
-    hasPawnNotAlreadyMoved: Boolean,
-    pawnFrontMoveFunction: (Square) -> Square?,
     chessboard: Chessboard,
     pawnPiecePosition: PiecePosition
 ): Move? {
+    val hasPawnNotAlreadyMoved = pawnPiecePosition.square.rank == pawnPiecePosition.color.getPawnStartingRank()
     return hasPawnNotAlreadyMoved.ifTrue {
-        pawnFrontMoveFunction.invoke(pawnFrontMoveFunction.invoke(pawnPiecePosition.square)!!)
-                ?.takeIf { chessboard.getPieceAt(it) == null }
-                ?.let { squareTwoSquareAway ->
-                    Move(piece = pawnPiecePosition.piece, origin = pawnPiecePosition.square, destination = squareTwoSquareAway)
-                }
+        val destSquare = pawnPiecePosition.color.getPawnAdvanceFunction(advanceTwice = true).invoke(pawnPiecePosition.square)
+        if (destSquare != null && chessboard.hasNoPiecePresentAt(destSquare)) {
+            Move(piece = pawnPiecePosition.piece, origin = pawnPiecePosition.square, destination = destSquare)
+        }
+        else {
+            null
+        }
     }
 }
 
-private fun getOneSquarePawnMoves(pawnPosition: PiecePosition, destinationSquare: Square, pieceOnDestinationSquare : Piece? = null): List<Move> =
-        getPromotedPieces(pawnPosition, destinationSquare).map {
+private fun getOneSquarePawnMoves(pawnPosition: PiecePosition, destinationSquare: Square, pieceOnDestinationSquare : Piece? = null): List<Move> {
+    return getPromotedPieces(pawnPosition, destinationSquare).map {
+        Move(
+            piece = pawnPosition.piece,
+            origin = pawnPosition.square,
+            destination = destinationSquare,
+            promotedTo = it,
+            capturedPiece = pieceOnDestinationSquare
+        )
+    }.ifEmpty {
+        listOf(
             Move(
-                    piece = pawnPosition.piece,
-                    origin = pawnPosition.square,
-                    destination = destinationSquare,
-                    promotedTo = it,
-                    capturedPiece = pieceOnDestinationSquare,
+                piece = pawnPosition.piece,
+                origin = pawnPosition.square,
+                destination = destinationSquare,
+                capturedPiece = pieceOnDestinationSquare
             )
-        }.ifEmpty {
-            listOf(
-                    Move(
-                            piece = pawnPosition.piece,
-                            origin = pawnPosition.square,
-                            destination = destinationSquare,
-                            capturedPiece = pieceOnDestinationSquare,
-                    )
-            )
-        }
+        )
+    }
+}
 
 
 private fun getPromotedPieces(pawnPosition: PiecePosition, destinationSquare: Square): List<Piece> {
-    return if (pawnPosition.piece == Piece.WHITE_PAWN && destinationSquare.rank == Rank.RANK_8) {
-        Piece.entries.filter { it.color == Color.WHITE }.filter { it.type.isPromotable }
-    } else if (pawnPosition.piece == Piece.BLACK_PAWN && destinationSquare.rank == Rank.RANK_1) {
-        Piece.entries.filter { it.color == Color.BLACK }.filter { it.type.isPromotable }
+    return if (pawnPosition.piece.type == PieceType.PAWN && destinationSquare.rank == pawnPosition.color.getPromotionRank()) {
+        Piece.entries.filter { it.color == pawnPosition.color }.filter { it.type.isPromotable }
     } else {
         emptyList()
     }
 }
 
-private fun getPawnDiagonalMoves(
+private fun getPawnDiagonalsMoves(
     chessboard: Chessboard,
     pawnPosition: PiecePosition,
-    diagonalFunction: (Square) -> Square?
 ): List<Move> {
-    return diagonalFunction.invoke(pawnPosition.square)?.let{diagonalSquare -> chessboard.getPieceAt(diagonalSquare)
-            ?.takeIf { it.color == pawnPosition.color.opposite() }
-            ?.let { pieceAtDiagonal->
-                getOneSquarePawnMoves(pawnPosition = pawnPosition, destinationSquare = diagonalSquare, pieceOnDestinationSquare = pieceAtDiagonal)
-            } ?: emptyList()
-    } ?: emptyList()
+
+    return pawnPosition.color.getPawnDiagonalSquareFunction()
+        .mapNotNull { fn -> fn.invoke(pawnPosition.square) }
+        .flatMap { diagonalAdvanceSquare ->
+            chessboard.getPieceAt(diagonalAdvanceSquare)
+                ?.takeIf { it.color == pawnPosition.color.opposite() }
+                ?.let { pieceAtDiagonal->
+                    getOneSquarePawnMoves(pawnPosition = pawnPosition, destinationSquare = diagonalAdvanceSquare, pieceOnDestinationSquare = pieceAtDiagonal)
+                } ?: emptyList()
+        }
 }
 
 private fun getQueenPseudoLegalMoves(chessboard: Chessboard, queenPosition: PiecePosition): List<Move> =
