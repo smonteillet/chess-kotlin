@@ -1,5 +1,6 @@
-package fr.smo.chess.core
+package fr.smo.chess.core.algs
 
+import fr.smo.chess.core.*
 import fr.smo.chess.core.utils.ifTrue
 import kotlin.random.Random
 
@@ -114,29 +115,31 @@ private fun getPawnEnPassantMove(game: Game, pawnPosition: PiecePosition): Move?
 }
 
 private fun getPawnOneSquareAndTwoSquaresMoves(
-        chessboard: Chessboard,
-        pawnPiecePosition: PiecePosition,
-        hasPawnNotAlreadyMovedFromInitialPosition: Boolean,
-        pawnAdvanceFunction: (Square) -> Square?
+    chessboard: Chessboard,
+    pawnPiecePosition: PiecePosition,
+    hasPawnNotAlreadyMovedFromInitialPosition: Boolean,
+    pawnAdvanceFunction: (Square) -> Square?
 ): List<Move> {
     return pawnAdvanceFunction.invoke(pawnPiecePosition.square)?.let { pawnDestination ->
         chessboard.getPieceAt(pawnDestination)?.let{ emptyList() } ?:
         getOneSquarePawnMoves(pawnPiecePosition, pawnDestination)
-                .plus(getPawnTwoSquaresMove(
+                .plus(
+                    getPawnTwoSquaresMove(
                         hasPawnNotAlreadyMoved = hasPawnNotAlreadyMovedFromInitialPosition,
                         pawnFrontMoveFunction = pawnAdvanceFunction,
                         chessboard = chessboard,
                         pawnPiecePosition = pawnPiecePosition
-                ))
+                )
+                )
                 .filterNotNull()
     } ?: emptyList()
 }
 
 private fun getPawnTwoSquaresMove(
-        hasPawnNotAlreadyMoved: Boolean,
-        pawnFrontMoveFunction: (Square) -> Square?,
-        chessboard: Chessboard,
-        pawnPiecePosition: PiecePosition
+    hasPawnNotAlreadyMoved: Boolean,
+    pawnFrontMoveFunction: (Square) -> Square?,
+    chessboard: Chessboard,
+    pawnPiecePosition: PiecePosition
 ): Move? {
     return hasPawnNotAlreadyMoved.ifTrue {
         pawnFrontMoveFunction.invoke(pawnFrontMoveFunction.invoke(pawnPiecePosition.square)!!)
@@ -179,9 +182,9 @@ private fun getPromotedPieces(pawnPosition: PiecePosition, destinationSquare: Sq
 }
 
 private fun getPawnDiagonalMoves(
-        chessboard: Chessboard,
-        pawnPosition: PiecePosition,
-        diagonalFunction: (Square) -> Square?
+    chessboard: Chessboard,
+    pawnPosition: PiecePosition,
+    diagonalFunction: (Square) -> Square?
 ): List<Move> {
     return diagonalFunction.invoke(pawnPosition.square)?.let{diagonalSquare -> chessboard.getPieceAt(diagonalSquare)
             ?.takeIf { it.color == pawnPosition.color.opposite() }
@@ -231,13 +234,13 @@ private fun getKingPseudoLegalMoves(game: Game, kingPosition: PiecePosition): Li
 }
 
 private fun getCastleMove(
-        game: Game,
-        kingPosition: PiecePosition,
-        isKingCastle : Boolean,
-        isCurrentCastlePossible: Boolean,
-        kingDestination: Square,
-        kingCastlingPathSquares: List<Square>,
-        squaresBetweenKingAndRook: List<Square>
+    game: Game,
+    kingPosition: PiecePosition,
+    isKingCastle : Boolean,
+    isCurrentCastlePossible: Boolean,
+    kingDestination: Square,
+    kingCastlingPathSquares: List<Square>,
+    squaresBetweenKingAndRook: List<Square>
 ) : Move? {
     if (!isCurrentCastlePossible) { return null }
     if (game.chessboard.hasAtLeastOnePieceAt(squaresBetweenKingAndRook)) { return null }
@@ -312,10 +315,10 @@ private fun getCastleMoveIfPossible(game: Game, kingPosition: PiecePosition): Li
 }
 
 private fun getLegalMovesFollowingDirection(
-        piecePosition: PiecePosition,
-        currentSquare: Square = piecePosition.square,
-        chessboard: Chessboard,
-        direction: (origin: Square) -> Square?
+    piecePosition: PiecePosition,
+    currentSquare: Square = piecePosition.square,
+    chessboard: Chessboard,
+    direction: (origin: Square) -> Square?
 ): List<Move> {
     return direction.invoke(currentSquare)?.let { newSquare ->
         chessboard.getPieceAt(newSquare)?.let { pieceAtNewSquare ->

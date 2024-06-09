@@ -1,5 +1,6 @@
-package fr.smo.chess.core
+package fr.smo.chess.core.algs
 
+import fr.smo.chess.core.*
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
 import fr.smo.chess.core.utils.ifTrue
@@ -13,9 +14,9 @@ fun getOutcome(game: Game) : Status {
     }
     else if (isCheckMate(game)) {
        if (game.history.lastMoveColor() == Color.WHITE) {
-            Status.WHITE_WIN
+           Status.WHITE_WIN
         } else {
-            Status.BLACK_WIN
+           Status.BLACK_WIN
         }
     }
     else if (isStaleMate(game)) {
@@ -67,7 +68,7 @@ private fun hasNoLegalMove(color: Color, game: Game) : Boolean {
     return (
         hasAPseudoLegalMovesSatisfying(color, game) { move ->
             val moveCommand = MoveCommand(move.origin, move.destination, move.promotedTo?.type)
-            when (game.applyMove(moveCommand, updateGameOutcomeState = false, markMoveAsCheckedInHistory = false)) {
+            when (game.isLegalMove(moveCommand)) {
                 is Success -> true
                 is Failure -> false
             }

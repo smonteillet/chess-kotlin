@@ -2,6 +2,8 @@ package fr.smo.chess.core.notation
 
 import fr.smo.chess.core.*
 import fr.smo.chess.core.PieceType.*
+import fr.smo.chess.core.algs.getAllPseudoLegalMovesForColor
+import fr.smo.chess.core.algs.getPseudoLegalMovesRegardingDestination
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
 import fr.smo.chess.core.utils.ifTrue

@@ -1,8 +1,10 @@
-package fr.smo.chess.core
+package fr.smo.chess.core.algs
 
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
+import fr.smo.chess.core.Move
 import fr.smo.chess.core.Piece.*
+import fr.smo.chess.core.PiecePosition
 import fr.smo.chess.core.PieceType.*
 import fr.smo.chess.core.Square.*
 import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame

@@ -1,4 +1,4 @@
-package fr.smo.chess.core.eval
+package fr.smo.chess.core.debug
 
 import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame
 import fr.smo.chess.core.notation.STARTING_POSITION_FEN

@@ -16,6 +16,8 @@ data class History(
 
     fun lastMoveColor() : Color = moves.last().piece.color
 
+    fun lastMove() : Move = moves.last()
+
     private fun getHalfMoveClock(move: Move): Int {
         return if (move.capturedPiece != null || move.piece.type == PieceType.PAWN) {
             0

@@ -1,5 +1,6 @@
-package fr.smo.chess.core
+package fr.smo.chess.core.algs
 
+import fr.smo.chess.core.*
 import fr.smo.chess.core.utils.ifTrue
 
 
@@ -70,29 +71,33 @@ private fun hasPawnPseudoLegalMovesSatisfying(game: Game, pawnPosition: PiecePos
 private fun hasPawnEnPassantMoveSatisfying(game: Game, pawnPosition: PiecePosition, predicate: (Move) -> Boolean): Boolean {
     return game.enPassantTargetSquare?.let { enPassantTargetSquare ->
         if (pawnPosition.color == Color.WHITE && (enPassantTargetSquare == pawnPosition.square.upRight() || enPassantTargetSquare == pawnPosition.square.upLeft())) {
-            predicate(Move(
+            predicate(
+                Move(
                     piece = pawnPosition.piece,
                     capturedPiece = Piece.BLACK_PAWN,
                     origin = pawnPosition.square,
                     destination = game.enPassantTargetSquare,
-            ))
+            )
+            )
         } else if (pawnPosition.color == Color.BLACK && (enPassantTargetSquare == pawnPosition.square.downRight() || enPassantTargetSquare == pawnPosition.square.downLeft())) {
-            predicate(Move(
+            predicate(
+                Move(
                     piece = pawnPosition.piece,
                     capturedPiece = Piece.WHITE_PAWN,
                     origin = pawnPosition.square,
                     destination = enPassantTargetSquare,
-            ))
+            )
+            )
         } else false
     } ?: false
 }
 
 private fun hasPawnOneSquareAndTwoSquaresMovesSatisfying(
-        chessboard: Chessboard,
-        pawnPiecePosition: PiecePosition,
-        hasPawnNotAlreadyMovedFromInitialPosition: Boolean,
-        pawnAdvanceFunction: (Square) -> Square?,
-        predicate: (Move) -> Boolean,
+    chessboard: Chessboard,
+    pawnPiecePosition: PiecePosition,
+    hasPawnNotAlreadyMovedFromInitialPosition: Boolean,
+    pawnAdvanceFunction: (Square) -> Square?,
+    predicate: (Move) -> Boolean,
 ): Boolean {
     return pawnAdvanceFunction.invoke(pawnPiecePosition.square)?.let { pawnDestination ->
         chessboard.getPieceAt(pawnDestination)?.let { return false }
@@ -108,11 +113,11 @@ private fun hasPawnOneSquareAndTwoSquaresMovesSatisfying(
 }
 
 private fun hasPawnTwoSquaresMoveSatisfying(
-        hasPawnNotAlreadyMoved: Boolean,
-        pawnFrontMoveFunction: (Square) -> Square?,
-        chessboard: Chessboard,
-        pawnPiecePosition: PiecePosition,
-        predicate: (Move) -> Boolean,
+    hasPawnNotAlreadyMoved: Boolean,
+    pawnFrontMoveFunction: (Square) -> Square?,
+    chessboard: Chessboard,
+    pawnPiecePosition: PiecePosition,
+    predicate: (Move) -> Boolean,
 ): Boolean {
     return hasPawnNotAlreadyMoved.ifTrue {
         pawnFrontMoveFunction.invoke(pawnFrontMoveFunction.invoke(pawnPiecePosition.square)!!)
@@ -150,10 +155,10 @@ private fun getPromotedPieces(pawnPosition: PiecePosition, destinationSquare: Sq
 }
 
 private fun hasPawnDiagonalMovesSatisfying(
-        chessboard: Chessboard,
-        pawnPosition: PiecePosition,
-        diagonalFunction: (Square) -> Square?,
-        predicate: (Move) -> Boolean,
+    chessboard: Chessboard,
+    pawnPosition: PiecePosition,
+    diagonalFunction: (Square) -> Square?,
+    predicate: (Move) -> Boolean,
 ): Boolean {
     return diagonalFunction.invoke(pawnPosition.square)?.let { diagonalSquare ->
         chessboard.getPieceAt(diagonalSquare)
@@ -214,13 +219,13 @@ private fun hasKingPseudoLegalMovesSatisfying(game: Game, kingPosition: PiecePos
 }
 
 private fun hasCastleMoveSatisfying(
-        game: Game,
-        kingPosition: PiecePosition,
-        isKingCastle: Boolean,
-        isCurrentCastlePossible: Boolean,
-        kingDestination: Square,
-        kingCastlingPathSquares: List<Square>,
-        predicate: (Move) -> Boolean,
+    game: Game,
+    kingPosition: PiecePosition,
+    isKingCastle: Boolean,
+    isCurrentCastlePossible: Boolean,
+    kingDestination: Square,
+    kingCastlingPathSquares: List<Square>,
+    predicate: (Move) -> Boolean,
 ): Boolean {
     if (!isCurrentCastlePossible) {
         return false
@@ -295,11 +300,11 @@ private fun hasCastleMovesSatisfying(game: Game, kingPosition: PiecePosition, pr
 }
 
 private fun hasLegalMoveFollowingDirectionSatisfying(
-        piecePosition: PiecePosition,
-        currentSquare: Square = piecePosition.square,
-        chessboard: Chessboard,
-        direction: (origin: Square) -> Square?,
-        predicate: (Move) -> Boolean,
+    piecePosition: PiecePosition,
+    currentSquare: Square = piecePosition.square,
+    chessboard: Chessboard,
+    direction: (origin: Square) -> Square?,
+    predicate: (Move) -> Boolean,
 ): Boolean {
     return direction.invoke(currentSquare)?.let { newSquare ->
         chessboard.getPieceAt(newSquare)?.let { pieceAtNewSquare ->

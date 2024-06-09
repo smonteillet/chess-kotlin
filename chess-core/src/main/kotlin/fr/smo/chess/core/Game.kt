@@ -2,6 +2,9 @@ package fr.smo.chess.core
 
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
+import fr.smo.chess.core.algs.getOutcome
+import fr.smo.chess.core.algs.getPseudoLegalMoves
+import fr.smo.chess.core.algs.isChecked
 import fr.smo.chess.core.utils.*
 
 data class Game(
@@ -12,39 +15,35 @@ data class Game(
         val enPassantTargetSquare: Square? = null,
         val status: Status = Status.CREATED,
 ) {
-    fun applyMove(
-            moveCommand: MoveCommand,
-            updateGameOutcomeState: Boolean = true,
-            markMoveAsCheckedInHistory: Boolean = true,
-    ): Outcome<Game, MoveCommandError> {
+    fun applyMove(moveCommand: MoveCommand): Outcome<Game, MoveCommandError> {
+        return isLegalMove(moveCommand)
+                    .map { markMoveAsCheckedInHistory(it) }
+                    .map { updatedGame -> updateGameOutcome(updatedGame) }
+    }
+
+    fun isLegalMove(moveCommand: MoveCommand): Outcome<Game, MoveCommandError> {
         return buildMove(moveCommand).flatMap { move ->
-            isGameStateLegal(computeNewGameAfterMakeMove(move))
-                    .map { newGameState -> markMoveAsCheckedInHistory(newGameState, move, markMoveAsCheckedInHistory) }
-                    .map { updatedGame -> updateGameOutcome(updateGameOutcomeState, updatedGame) }
+            isGamePositionLegal(computeNewPositionAfterMakeMove(move))
         }
     }
 
-    private fun isGameStateLegal(newGameState: Game): Outcome<Game, MoveCommandError> {
-        return if (isChecked(newGameState.sideToMove.opposite(), newGameState)) {
-            Failure(CannotLeaveYourOwnKingInCheck(newGameState.history))
+    private fun isGamePositionLegal(game: Game): Outcome<Game, MoveCommandError> {
+        return if (isChecked(game.sideToMove.opposite(), game)) {
+            Failure(CannotLeaveYourOwnKingInCheck(game.history))
         } else {
-            Success(newGameState)
+            Success(game)
         }
     }
 
-    private fun updateGameOutcome(updateGameState: Boolean, updatedGame: Game) = updateGameState.ifTrue {
-        updatedGame.copy(status = getOutcome(updatedGame))
-    } ?: updatedGame
+    private fun updateGameOutcome(position: Game) = position.copy(status = getOutcome(position))
 
-    private fun markMoveAsCheckedInHistory(newGameState: Game, move: Move, markMoveAsCheckedInHistory: Boolean) : Game {
-        return markMoveAsCheckedInHistory.ifTrue {
-            isChecked(newGameState.sideToMove, newGameState).ifTrue {
-                newGameState.copy(history = history.addMove(move.copy(isCheck = true)))
-            } ?: newGameState
-        } ?: newGameState
+    private fun markMoveAsCheckedInHistory(position: Game) : Game {
+        return isChecked(position.sideToMove, position).ifTrue {
+                position.copy(history = history.addMove(position.history.lastMove().copy(isCheck = true)))
+            } ?: position
     }
 
-    private fun computeNewGameAfterMakeMove(move: Move) =
+    private fun computeNewPositionAfterMakeMove(move: Move) =
             Game(
                     chessboard = chessboard.applyMoveOnBoard(move, enPassantTargetSquare)
                             .applyPromotions(move)

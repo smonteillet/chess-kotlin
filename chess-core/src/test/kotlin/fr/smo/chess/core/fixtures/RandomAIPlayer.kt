@@ -1,6 +1,7 @@
 package fr.smo.chess.core.fixtures
 
 import fr.smo.chess.core.*
+import fr.smo.chess.core.algs.getFirstPseudoLegalMoveSatisfying
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
 import fr.smo.chess.core.utils.ifTrue
