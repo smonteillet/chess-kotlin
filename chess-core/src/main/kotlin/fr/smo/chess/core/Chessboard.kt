@@ -22,13 +22,18 @@ data class Chessboard(
 
     fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPieceAt(it) != null }
 
-    fun applyMoveOnBoard(move: Move, enPassantTargetSquare: Square?): Chessboard {
-        val opponentPawnThatHasBeenEnPassant = getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare)
+    fun applyMove(move: Move, enPassantTargetSquare: Square?): Chessboard {
         val newBoard = piecesOnBoard - move.origin - move.destination + (move.destination to move.piece)
-        return if (opponentPawnThatHasBeenEnPassant != null )
-            Chessboard(piecesOnBoard = newBoard - opponentPawnThatHasBeenEnPassant)
-        else
-            Chessboard(piecesOnBoard = newBoard)
+        return Chessboard(piecesOnBoard = newBoard)
+            .removeEnPassantPawnIfNecessary(move, enPassantTargetSquare)
+            .applyPromotionIfNecessary(move)
+            .applyRookMovesAfterCastleIfNecessary(move)
+    }
+
+    private fun removeEnPassantPawnIfNecessary(move: Move, enPassantTargetSquare: Square?) : Chessboard {
+        return getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare)?.let { enPassantPawn ->
+            Chessboard(piecesOnBoard = piecesOnBoard - enPassantPawn)
+        } ?: this
     }
 
     private fun getOpponentPawnThatHasBeenEnPassant(move: Move, enPassantTargetSquare: Square?) =
@@ -42,7 +47,7 @@ data class Chessboard(
             null
         }
 
-    fun applyPromotionIfNecessary(move: Move): Chessboard {
+    private fun applyPromotionIfNecessary(move: Move): Chessboard {
         if (move.piece.type == PieceType.PAWN && move.promotedTo != null) {
             return Chessboard(
                 piecesOnBoard = piecesOnBoard - move.destination + (move.destination to move.promotedTo)
@@ -51,7 +56,7 @@ data class Chessboard(
         return this
     }
 
-    fun applyRookMovesAfterCastleIfNecessary(move: Move): Chessboard {
+    private fun applyRookMovesAfterCastleIfNecessary(move: Move): Chessboard {
         val newPiecesOnBoard = if (move.isKingCastle && move.piece.color == Color.WHITE) {
             piecesOnBoard - Square.H1 + (Square.F1 to Piece.WHITE_ROOK)
         } else if (move.isQueenCastle && move.piece.color == Color.WHITE) {

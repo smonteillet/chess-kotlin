@@ -41,9 +41,7 @@ data class Position(
 
     fun unsafeMakeMove(move: Move) =
             Position(
-                    chessboard = chessboard.applyMoveOnBoard(move, enPassantTargetSquare)
-                            .applyPromotionIfNecessary(move)
-                            .applyRookMovesAfterCastleIfNecessary(move),
+                    chessboard = chessboard.applyMove(move, enPassantTargetSquare),
                     history = history.addMove(move),
                     sideToMove = sideToMove.opposite(),
                     castling = castling.updateCastlingAfterMove(move),
