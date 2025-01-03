@@ -2,9 +2,7 @@ package fr.smo.chess.core
 
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
-import fr.smo.chess.core.algs.getStatus
-import fr.smo.chess.core.algs.getPseudoLegalMoves
-import fr.smo.chess.core.algs.isChecked
+import fr.smo.chess.core.algs.*
 import fr.smo.chess.core.utils.*
 
 data class Position(
@@ -15,15 +13,26 @@ data class Position(
         val enPassantTargetSquare: Square? = null,
         val status: Status = Status.CREATED,
 ) {
+
+    private val isCheck: Boolean
+        get() = history.lastMove.isCheck
+
+
     fun applyMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Position> {
         return moveCommand.toMove(this)
             .map { unsafeMakeMove(it) }
             .flatMap { it.isGamePositionLegal() }
             .map { it.markMoveAsCheckedInHistoryIfNecessary() }
-            .map { it.updateGameStatus() }
+            .map { it.copy(status = computeNewStatus()) }
     }
 
-    fun isGamePositionLegal(): Outcome<MoveCommandError, Position> {
+    fun applyMoves(vararg moveCommands: MoveCommand): Outcome<MoveCommandError, Position> {
+        return moveCommands.fold(Success(this) as Outcome<MoveCommandError, Position>) { result, moveRequest ->
+            result.flatMap { it.applyMove(moveRequest) }
+        }
+    }
+
+    private fun isGamePositionLegal(): Outcome<MoveCommandError, Position> {
         return if (isChecked(sideToMove.opposite(), this)) {
             Failure(CannotLeaveYourOwnKingInCheck(history))
         } else {
@@ -31,7 +40,15 @@ data class Position(
         }
     }
 
-    private fun updateGameStatus() = copy(status = getStatus(this))
+    private fun hasNoLegalMove(): Boolean {
+        return hasAPseudoLegalMovesSatisfying(sideToMove, this) { move ->
+                    when (this.unsafeMakeMove(move).isGamePositionLegal()) {
+                        is Success -> true
+                        is Failure -> false
+                    }
+                }.not()
+    }
+
 
     private fun markMoveAsCheckedInHistoryIfNecessary() : Position {
         return isChecked(sideToMove, this).ifTrue {
@@ -39,7 +56,7 @@ data class Position(
             } ?: this
     }
 
-    fun unsafeMakeMove(move: Move) =
+    private fun unsafeMakeMove(move: Move) =
             Position(
                     chessboard = chessboard.applyMove(move, enPassantTargetSquare),
                     history = history.addMove(move),
@@ -47,13 +64,6 @@ data class Position(
                     castling = castling.updateCastlingAfterMove(move),
                     enPassantTargetSquare = getEnPassantTargetSquare(move),
             )
-
-
-    fun applyMoves(vararg moveCommands: MoveCommand): Outcome<MoveCommandError, Position> {
-        return moveCommands.fold(Success(this) as Outcome<MoveCommandError, Position>) { result, moveRequest ->
-            result.flatMap { it.applyMove(moveRequest) }
-        }
-    }
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
         return if (move.piece == Piece.WHITE_PAWN && move.origin.rank == RANK_2 && move.destination.rank == RANK_4) {
@@ -76,5 +86,28 @@ data class Position(
     private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<MoveCommandError, PiecePosition> {
         return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
             ?: Failure(PieceNotFound(moveCommand.origin))
+    }
+
+    private fun isCheckMate() = isCheck && hasNoLegalMove()
+
+    private fun isStaleMate() = !isCheckMate() && hasNoLegalMove()
+
+    // FIXME need to implement insufficient material rule
+    // https://www.chess.com/article/view/how-chess-games-can-end-8-ways-explained#insufficient-material
+    private fun isDraw() = history.isFiftyMoveRules || history.isThreeFoldRepetition || isStaleMate()
+
+    private fun computeNewStatus() : Status {
+        return if (isCheckMate()) {
+            if (history.lastMovedColor == WHITE) {
+                Status.WHITE_WIN
+            } else {
+                Status.BLACK_WIN
+            }
+        }
+        else if (isDraw()) {
+            Status.DRAW
+        } else {
+            Status.STARTED
+        }
     }
 }

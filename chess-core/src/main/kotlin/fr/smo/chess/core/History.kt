@@ -6,6 +6,29 @@ data class History(
     val halfMoveClock: Int = 0,
 ) {
 
+    val lastMove: Move
+        get() = moves.last()
+
+    val lastMovedColor: Color
+        get() = lastMove.piece.color
+
+    val isFiftyMoveRules: Boolean
+        get() = halfMoveClock == 50
+
+    val isThreeFoldRepetition: Boolean
+        get() {
+            val moveCount = moves.size
+            return moves.size >= 12 &&
+                    moves[moveCount - 1] == moves[moveCount - 5] &&
+                    moves[moveCount - 1] == moves[moveCount - 9] &&
+                    moves[moveCount - 2] == moves[moveCount - 6] &&
+                    moves[moveCount - 2] == moves[moveCount - 10] &&
+                    moves[moveCount - 3] == moves[moveCount - 7] &&
+                    moves[moveCount - 3] == moves[moveCount - 11] &&
+                    moves[moveCount - 4] == moves[moveCount - 8] &&
+                    moves[moveCount - 4] == moves[moveCount - 12]
+        }
+
     fun addMove(move: Move): History {
         return this.copy(
             moves = moves.plus(move),
@@ -21,10 +44,6 @@ data class History(
             )
         }
     }
-
-    fun lastMoveColor() : Color = moves.last().piece.color
-
-    fun lastMove() : Move = moves.last()
 
     private fun getHalfMoveClock(move: Move): Int {
         return if (move.capturedPiece != null || move.piece.type == PieceType.PAWN) {
