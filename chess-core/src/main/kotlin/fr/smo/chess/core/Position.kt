@@ -2,7 +2,7 @@ package fr.smo.chess.core
 
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
-import fr.smo.chess.core.algs.getOutcome
+import fr.smo.chess.core.algs.getStatus
 import fr.smo.chess.core.algs.getPseudoLegalMoves
 import fr.smo.chess.core.algs.isChecked
 import fr.smo.chess.core.utils.*
@@ -16,34 +16,30 @@ data class Position(
         val status: Status = Status.CREATED,
 ) {
     fun applyMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Position> {
-        return isLegalMove(moveCommand)
-                    .map { markMoveAsCheckedInHistory(it) }
-                    .map { updatedGame -> updateGameOutcome(updatedGame) }
+        return moveCommand.toMove(this)
+            .map { unsafeMakeMove(it) }
+            .flatMap { it.isGamePositionLegal() }
+            .map { it.markMoveAsCheckedInHistoryIfNecessary() }
+            .map { it.updateGameStatus() }
     }
 
-    fun isLegalMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Position> {
-        return buildMove(moveCommand).flatMap { move ->
-            isGamePositionLegal(computeNewPositionAfterMakeMove(move))
-        }
-    }
-
-    private fun isGamePositionLegal(position: Position): Outcome<MoveCommandError, Position> {
-        return if (isChecked(position.sideToMove.opposite(), position)) {
-            Failure(CannotLeaveYourOwnKingInCheck(position.history))
+    fun isGamePositionLegal(): Outcome<MoveCommandError, Position> {
+        return if (isChecked(sideToMove.opposite(), this)) {
+            Failure(CannotLeaveYourOwnKingInCheck(history))
         } else {
-            Success(position)
+            Success(this)
         }
     }
 
-    private fun updateGameOutcome(position: Position) = position.copy(status = getOutcome(position))
+    private fun updateGameStatus() = copy(status = getStatus(this))
 
-    private fun markMoveAsCheckedInHistory(position: Position) : Position {
-        return isChecked(position.sideToMove, position).ifTrue {
-                position.copy(history = history.addMove(position.history.lastMove().copy(isCheck = true)))
-            } ?: position
+    private fun markMoveAsCheckedInHistoryIfNecessary() : Position {
+        return isChecked(sideToMove, this).ifTrue {
+                copy(history = history.markLastMoveAsChecked())
+            } ?: this
     }
 
-    private fun computeNewPositionAfterMakeMove(move: Move) =
+    fun unsafeMakeMove(move: Move) =
             Position(
                     chessboard = chessboard.applyMoveOnBoard(move, enPassantTargetSquare)
                             .applyPromotionIfNecessary(move)
@@ -70,16 +66,17 @@ data class Position(
             null
     }
 
-    private fun buildMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Move> =
-            getOriginPiecePosition(moveCommand).flatMap { piecePosition ->
-                getPseudoLegalMoves(this, piecePosition)
-                        .firstOrNull { it.destination == moveCommand.destination && it.promotedTo?.type == moveCommand.promotedPiece }
-                        ?.let { Success(it) }
-                        ?: Failure(IllegalMove(moveCommand.origin,moveCommand.destination))
-            }
+    private fun MoveCommand.toMove(position : Position): Outcome<MoveCommandError, Move> {
+        return getOriginPiecePosition(this).flatMap { piecePosition ->
+            getPseudoLegalMoves(position, piecePosition)
+                .firstOrNull { it.destination == this.destination && it.promotedTo?.type == this.promotedPiece }
+                ?.let { Success(it) }
+                ?: Failure(IllegalMove(this.origin,this.destination))
+        }
+    }
 
     private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<MoveCommandError, PiecePosition> {
         return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
-                ?: Failure(PieceNotFound(moveCommand.origin))
+            ?: Failure(PieceNotFound(moveCommand.origin))
     }
 }

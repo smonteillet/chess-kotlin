@@ -8,7 +8,7 @@ import fr.smo.chess.core.utils.ifTrue
 // TODO this could be integrated back into the Game class
 //see https://www.chess.com/article/view/how-chess-games-can-end-8-ways-explained
 
-fun getOutcome(position: Position) : Status {
+fun getStatus(position: Position) : Status {
     return if (isDraw(position)) {
         Status.DRAW
     }
@@ -44,6 +44,7 @@ private fun isDraw(position: Position) : Boolean {
     return isFiftyMovesRule(position) || isThreefoldRepetitions(position)
 }
 
+// FIXME : this alg only looks for repetitions in the last moves, not the whole history
 private fun isThreefoldRepetitions(position: Position): Boolean {
     val moves = position.history.moves
     val moveCount = moves.size
@@ -67,8 +68,7 @@ private fun isStaleMate(position: Position): Boolean {
 private fun hasNoLegalMove(color: Color, position: Position) : Boolean {
     return (
         hasAPseudoLegalMovesSatisfying(color, position) { move ->
-            val moveCommand = MoveCommand(move.origin, move.destination, move.promotedTo?.type)
-            when (position.isLegalMove(moveCommand)) {
+            when (position.unsafeMakeMove(move).isGamePositionLegal()) {
                 is Success -> true
                 is Failure -> false
             }

@@ -14,6 +14,14 @@ data class History(
         )
     }
 
+    fun markLastMoveAsChecked(): History {
+        return moves.last().copy(isCheck = true).let { checkedLastMove ->
+            this.copy(
+                moves = moves.dropLast(1).plus(checkedLastMove)
+            )
+        }
+    }
+
     fun lastMoveColor() : Color = moves.last().piece.color
 
     fun lastMove() : Move = moves.last()

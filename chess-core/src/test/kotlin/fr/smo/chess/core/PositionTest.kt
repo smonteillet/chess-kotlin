@@ -852,6 +852,7 @@ class PositionTest {
             ).applyMove(MoveCommand(origin = D2, destination = C2)).orThrow()
             // Then
             expectThat(game.history.moves.last().isCheck).isTrue()
+            expectThat(game.history.moves.size) isEqualTo 1
         }
 
         @Test
