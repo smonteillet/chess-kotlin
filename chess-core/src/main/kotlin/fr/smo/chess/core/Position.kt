@@ -11,25 +11,46 @@ data class Position(
         val sideToMove: Color = WHITE,
         val castling: Castling,
         val enPassantTargetSquare: Square? = null,
-        val status: Status = Status.CREATED,
+        val forcedOutcome: ForcedOutcome? = null,
 ) {
 
     private val isCheck: Boolean
-        get() = history.lastMove.isCheck
+        get() = history.lastMove?.isCheck ?: false
 
+    val status: Status
+        get() = when (forcedOutcome) {
+            ForcedOutcome.BLACK_RESIGN -> Status.WHITE_WIN
+            ForcedOutcome.WHITE_RESIGN -> Status.BLACK_WIN
+            ForcedOutcome.DRAW_AGREEMENT -> Status.DRAW
+            ForcedOutcome.UNKNOWN_RESULT -> Status.UNKNOWN_RESULT
+            null -> if (isCheckMate()) {
+                if (history.lastMovedColor == WHITE) {
+                    Status.WHITE_WIN
+                } else {
+                    Status.BLACK_WIN
+                }
+            } else if (isDraw()) {
+                Status.DRAW
+            } else {
+                Status.STARTED
+            }
+        }
 
     fun applyMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Position> {
         return moveCommand.toMove(this)
             .map { unsafeMakeMove(it) }
             .flatMap { it.isGamePositionLegal() }
             .map { it.markMoveAsCheckedInHistoryIfNecessary() }
-            .map { it.copy(status = computeNewStatus()) }
     }
 
     fun applyMoves(vararg moveCommands: MoveCommand): Outcome<MoveCommandError, Position> {
         return moveCommands.fold(Success(this) as Outcome<MoveCommandError, Position>) { result, moveRequest ->
             result.flatMap { it.applyMove(moveRequest) }
         }
+    }
+
+    fun forceOutcome(forcedOutcome: ForcedOutcome) : Position {
+        return copy(forcedOutcome = forcedOutcome)
     }
 
     private fun isGamePositionLegal(): Outcome<MoveCommandError, Position> {
@@ -88,26 +109,19 @@ data class Position(
             ?: Failure(PieceNotFound(moveCommand.origin))
     }
 
-    private fun isCheckMate() = isCheck && hasNoLegalMove()
+    fun isCheckMate() = isCheck && hasNoLegalMove()
 
     private fun isStaleMate() = !isCheckMate() && hasNoLegalMove()
 
     // FIXME need to implement insufficient material rule
     // https://www.chess.com/article/view/how-chess-games-can-end-8-ways-explained#insufficient-material
-    private fun isDraw() = history.isFiftyMoveRules || history.isThreeFoldRepetition || isStaleMate()
+    fun isDraw() = history.isFiftyMoveRules || history.isThreeFoldRepetition || isStaleMate()
 
-    private fun computeNewStatus() : Status {
-        return if (isCheckMate()) {
-            if (history.lastMovedColor == WHITE) {
-                Status.WHITE_WIN
-            } else {
-                Status.BLACK_WIN
-            }
-        }
-        else if (isDraw()) {
-            Status.DRAW
-        } else {
-            Status.STARTED
-        }
+
+    enum class ForcedOutcome{
+        BLACK_RESIGN,
+        WHITE_RESIGN,
+        DRAW_AGREEMENT,
+        UNKNOWN_RESULT,
     }
 }

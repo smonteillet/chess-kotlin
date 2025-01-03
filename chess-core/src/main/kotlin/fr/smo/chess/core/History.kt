@@ -6,11 +6,11 @@ data class History(
     val halfMoveClock: Int = 0,
 ) {
 
-    val lastMove: Move
-        get() = moves.last()
+    val lastMove: Move?
+        get() = moves.lastOrNull()
 
-    val lastMovedColor: Color
-        get() = lastMove.piece.color
+    val lastMovedColor: Color?
+        get() = lastMove?.piece?.color
 
     val isFiftyMoveRules: Boolean
         get() = halfMoveClock == 50

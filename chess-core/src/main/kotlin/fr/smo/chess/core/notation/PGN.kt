@@ -2,6 +2,7 @@ package fr.smo.chess.core.notation
 
 import fr.smo.chess.core.*
 import fr.smo.chess.core.PieceType.*
+import fr.smo.chess.core.Position.ForcedOutcome
 import fr.smo.chess.core.algs.getAllPseudoLegalMovesForColor
 import fr.smo.chess.core.algs.getPseudoLegalMovesRegardingDestination
 import fr.smo.chess.core.utils.Failure
@@ -98,10 +99,10 @@ object PGN {
 
     private fun importGameEndIfNecessary(position: Position, pgnMove: String): Position? =
         when (pgnMove) {
-            DRAWN_PGN -> position.copy(status = Status.DRAW)
-            BLACK_WIN_PGN -> position.copy(status = Status.BLACK_WIN)
-            WHITE_WIN_PGN -> position.copy(status = Status.WHITE_WIN)
-            UNKNOWN_RESULT_PGN -> position.copy(status = Status.UNKNOWN_RESULT)
+            DRAWN_PGN -> if (position.isDraw()) position else position.forceOutcome(ForcedOutcome.DRAW_AGREEMENT)
+            BLACK_WIN_PGN -> if (position.isCheckMate()) position else position.forceOutcome(ForcedOutcome.WHITE_RESIGN)
+            WHITE_WIN_PGN -> if (position.isCheckMate()) position else position.forceOutcome(ForcedOutcome.BLACK_RESIGN)
+            UNKNOWN_RESULT_PGN -> position.forceOutcome(ForcedOutcome.UNKNOWN_RESULT)
             else -> null
         }
 

@@ -10,7 +10,7 @@ object GameStateFixtures {
 
 
     fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Position {
-        return importFEN(fullFEN).copy(status = Status.STARTED).apply { render(this) }
+        return importFEN(fullFEN).apply { render(this) }
     }
 
     fun givenAChessGame(
@@ -21,7 +21,6 @@ object GameStateFixtures {
         isBlackKingCastlePossible: Boolean = false,
         isBlackQueenCastlePossible: Boolean = false,
         enPassantTargetSquare: Square? = null,
-        status: Status = Status.STARTED,
         history: History = History(),
     ): Position {
         return Position(
@@ -35,7 +34,6 @@ object GameStateFixtures {
                 isBlackQueenCastlePossible = isBlackQueenCastlePossible,
             ),
             enPassantTargetSquare = enPassantTargetSquare,
-            status = status,
         ).apply { render(this) }
     }
 
