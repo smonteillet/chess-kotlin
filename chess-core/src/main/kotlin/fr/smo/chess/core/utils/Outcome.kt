@@ -2,9 +2,9 @@ package fr.smo.chess.core.utils
 
 import java.lang.Exception
 
-sealed class Outcome<out T, out ERR : OutcomeError> {
+sealed class Outcome<out ERR : OutcomeError, out T> {
 
-    fun <U> map(mapFn: (T) -> U): Outcome<U, ERR> = when (this) {
+    fun <U> map(mapFn: (T) -> U): Outcome<ERR, U> = when (this) {
         is Success -> Success(mapFn(value))
         is Failure -> this
     }
@@ -21,14 +21,14 @@ sealed class Outcome<out T, out ERR : OutcomeError> {
 }
 
 // it is not possible to put this directly in Outcome
-fun <E : OutcomeError, T, U> Outcome<T, E>.flatMap(f: (T) -> Outcome<U, E>): Outcome<U, E> =
+fun <E : OutcomeError, T, U> Outcome<E, T>.flatMap(f: (T) -> Outcome<E, U>): Outcome<E, U> =
         when (this) {
             is Success -> f(value)
             is Failure -> this
         }
 
-data class Success<T>(val value: T) : Outcome<T, Nothing>()
-data class Failure<ERR : OutcomeError>(val error :ERR) : Outcome<Nothing, ERR>()
+data class Success<T>(val value: T) : Outcome<Nothing, T>()
+data class Failure<ERR : OutcomeError>(val error :ERR) : Outcome<ERR, Nothing>()
 
 interface OutcomeError {
     val message : String

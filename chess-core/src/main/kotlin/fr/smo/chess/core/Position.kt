@@ -15,19 +15,19 @@ data class Position(
         val enPassantTargetSquare: Square? = null,
         val status: Status = Status.CREATED,
 ) {
-    fun applyMove(moveCommand: MoveCommand): Outcome<Position, MoveCommandError> {
+    fun applyMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Position> {
         return isLegalMove(moveCommand)
                     .map { markMoveAsCheckedInHistory(it) }
                     .map { updatedGame -> updateGameOutcome(updatedGame) }
     }
 
-    fun isLegalMove(moveCommand: MoveCommand): Outcome<Position, MoveCommandError> {
+    fun isLegalMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Position> {
         return buildMove(moveCommand).flatMap { move ->
             isGamePositionLegal(computeNewPositionAfterMakeMove(move))
         }
     }
 
-    private fun isGamePositionLegal(position: Position): Outcome<Position, MoveCommandError> {
+    private fun isGamePositionLegal(position: Position): Outcome<MoveCommandError, Position> {
         return if (isChecked(position.sideToMove.opposite(), position)) {
             Failure(CannotLeaveYourOwnKingInCheck(position.history))
         } else {
@@ -55,8 +55,8 @@ data class Position(
             )
 
 
-    fun applyMoves(vararg moveCommands: MoveCommand): Outcome<Position, MoveCommandError> {
-        return moveCommands.fold(Success(this) as Outcome<Position, MoveCommandError>) { result, moveRequest ->
+    fun applyMoves(vararg moveCommands: MoveCommand): Outcome<MoveCommandError, Position> {
+        return moveCommands.fold(Success(this) as Outcome<MoveCommandError, Position>) { result, moveRequest ->
             result.flatMap { it.applyMove(moveRequest) }
         }
     }
@@ -70,7 +70,7 @@ data class Position(
             null
     }
 
-    private fun buildMove(moveCommand: MoveCommand): Outcome<Move, MoveCommandError> =
+    private fun buildMove(moveCommand: MoveCommand): Outcome<MoveCommandError, Move> =
             getOriginPiecePosition(moveCommand).flatMap { piecePosition ->
                 getPseudoLegalMoves(this, piecePosition)
                         .firstOrNull { it.destination == moveCommand.destination && it.promotedTo?.type == moveCommand.promotedPiece }
@@ -78,7 +78,7 @@ data class Position(
                         ?: Failure(IllegalMove(moveCommand.origin,moveCommand.destination))
             }
 
-    private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<PiecePosition, MoveCommandError> {
+    private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<MoveCommandError, PiecePosition> {
         return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
                 ?: Failure(PieceNotFound(moveCommand.origin))
     }
