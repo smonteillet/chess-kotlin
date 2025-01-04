@@ -8,6 +8,8 @@ import fr.smo.chess.core.algs.getPseudoLegalMovesRegardingDestination
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
 import fr.smo.chess.core.utils.ifTrue
+import fr.smo.chess.core.variant.Standard
+import fr.smo.chess.core.variant.Variant
 
 object PGN {
 
@@ -39,7 +41,7 @@ object PGN {
         return "$pgnHistory $pgnOutcome"
     }
 
-    fun import(pgn: String): Position {
+    fun import(pgn: String, variant: Variant = Standard): Position {
         return pgn.trim()
             .replace(PGN_COMMENT_BRACKET_REGEX, "")
             .replace(PGN_COMMENT_CURLY_BRACKET_REGEX, "")
@@ -47,7 +49,7 @@ object PGN {
             .split(" ")
             .map { it.trim().replace(PGN_MOVE_NUMBER_REGEX, "") }
             .filter { it.isNotBlank() }
-            .fold(GameFactory.createStandardGame()) { currentGame, pgnMove -> applyPGNMove(currentGame, pgnMove) }
+            .fold(GameFactory.createGame(variant)) { currentGame, pgnMove -> applyPGNMove(currentGame, pgnMove) }
 
     }
 

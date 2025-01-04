@@ -4,12 +4,14 @@ import fr.smo.chess.core.*
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Piece.*
+import fr.smo.chess.core.variant.Standard
+import fr.smo.chess.core.variant.Variant
 import java.util.*
 
 const val STARTING_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 object FEN {
-    fun importFEN(fen: String): Position {
+    fun importFEN(fen: String, variant: Variant = Standard): Position {
         val fenSplit = fen.split(" ")
         require(fenSplit.size == 6)
         return Position(
@@ -25,7 +27,8 @@ object FEN {
             history = History(
                 halfMoveClock = fenSplit[4].toInt(),
                 fullMoveCounter = fenSplit[5].toInt(),
-            )
+            ),
+            variant = variant,
         )
     }
 

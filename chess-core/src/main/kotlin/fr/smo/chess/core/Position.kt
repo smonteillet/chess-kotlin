@@ -6,6 +6,8 @@ import fr.smo.chess.core.algs.getPseudoLegalMoves
 import fr.smo.chess.core.algs.hasAPseudoLegalMovesSatisfying
 import fr.smo.chess.core.algs.isChecked
 import fr.smo.chess.core.utils.*
+import fr.smo.chess.core.variant.Standard
+import fr.smo.chess.core.variant.Variant
 
 data class Position(
     val chessboard: Chessboard,
@@ -14,6 +16,7 @@ data class Position(
     val castling: Castling,
     val enPassantTargetSquare: Square? = null,
     val forcedOutcome: ForcedOutcome? = null,
+    val variant : Variant = Standard,
 ) {
 
     private val isCheck: Boolean
@@ -25,13 +28,13 @@ data class Position(
             ForcedOutcome.WHITE_RESIGN -> Status.BLACK_WIN
             ForcedOutcome.DRAW_AGREEMENT -> Status.DRAW
             ForcedOutcome.UNKNOWN_RESULT -> Status.UNKNOWN_RESULT
-            null -> if (isCheckMate()) {
+            null -> if (variant.isVariantVictory(this)) {
                 if (history.lastMovedColor == WHITE) {
                     Status.WHITE_WIN
                 } else {
                     Status.BLACK_WIN
                 }
-            } else if (isDraw()) {
+            } else if (variant.isVariantDraw(this)) {
                 Status.DRAW
             } else {
                 Status.STARTED
@@ -86,6 +89,7 @@ data class Position(
             sideToMove = sideToMove.opposite(),
             castling = castling.updateCastlingAfterMove(move),
             enPassantTargetSquare = getEnPassantTargetSquare(move),
+            variant = variant
         )
 
     private fun getEnPassantTargetSquare(move: Move): Square? {

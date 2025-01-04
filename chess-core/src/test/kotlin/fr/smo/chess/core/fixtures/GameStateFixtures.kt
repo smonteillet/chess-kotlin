@@ -3,14 +3,21 @@ package fr.smo.chess.core.fixtures
 import fr.smo.chess.core.*
 import fr.smo.chess.core.notation.FEN.getChessboardFromFenPiecePlacement
 import fr.smo.chess.core.notation.FEN.importFEN
+import fr.smo.chess.core.notation.PGN.import
 import fr.smo.chess.core.notation.STARTING_POSITION_FEN
 import fr.smo.chess.core.renderer.GameRenderer
+import fr.smo.chess.core.variant.Standard
+import fr.smo.chess.core.variant.Variant
 
 object GameStateFixtures {
 
 
     fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Position {
         return importFEN(fullFEN).apply { render(this) }
+    }
+
+    fun givenAChessGameWithHistory(pgn : String, variant: Variant = Standard) : Position {
+        return import(pgn, variant)
     }
 
     fun givenAChessGame(
@@ -22,6 +29,7 @@ object GameStateFixtures {
         isBlackQueenCastlePossible: Boolean = false,
         enPassantTargetSquare: Square? = null,
         history: History = History(),
+        variant: Variant = Standard,
     ): Position {
         return Position(
             chessboard = getChessboardFromFenPiecePlacement(fenPiecePlacementOnly),
@@ -34,6 +42,7 @@ object GameStateFixtures {
                 isBlackQueenCastlePossible = isBlackQueenCastlePossible,
             ),
             enPassantTargetSquare = enPassantTargetSquare,
+            variant = variant,
         ).apply { render(this) }
     }
 
