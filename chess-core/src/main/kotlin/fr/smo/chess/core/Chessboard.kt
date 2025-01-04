@@ -22,12 +22,12 @@ data class Chessboard(
 
     fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPieceAt(it) != null }
 
-    fun applyMove(move: Move, enPassantTargetSquare: Square?): Chessboard {
+    fun applyMove(move: Move, enPassantTargetSquare: Square?, castles: Castles): Chessboard {
         val newBoard = piecesOnBoard - move.origin - move.destination + (move.destination to move.piece)
         return Chessboard(piecesOnBoard = newBoard)
             .removeEnPassantPawnIfNecessary(move, enPassantTargetSquare)
             .applyPromotionIfNecessary(move)
-            .applyRookMovesAfterCastleIfNecessary(move)
+            .applyRookMovesAfterCastleIfNecessary(move, castles)
     }
 
     private fun removeEnPassantPawnIfNecessary(move: Move, enPassantTargetSquare: Square?): Chessboard {
@@ -56,18 +56,15 @@ data class Chessboard(
         return this
     }
 
-    private fun applyRookMovesAfterCastleIfNecessary(move: Move): Chessboard {
-        val newPiecesOnBoard = if (move.isKingCastle && move.piece.color == Color.WHITE) {
-            piecesOnBoard - Square.H1 + (Square.F1 to Piece.WHITE_ROOK)
-        } else if (move.isQueenCastle && move.piece.color == Color.WHITE) {
-            piecesOnBoard - Square.A1 + (Square.D1 to Piece.WHITE_ROOK)
-        } else if (move.isKingCastle && move.piece.color == Color.BLACK) {
-            piecesOnBoard - Square.H8 + (Square.F8 to Piece.BLACK_ROOK)
-        } else if (move.isQueenCastle && move.piece.color == Color.BLACK) {
-            piecesOnBoard - Square.A8 + (Square.D8 to Piece.BLACK_ROOK)
-        } else {
-            piecesOnBoard
-        }
+    private fun applyRookMovesAfterCastleIfNecessary(move: Move, castles: Castles): Chessboard {
+        val newPiecesOnBoard = if (move.isQueenCastle || move.isKingCastle) {
+            val impactedCastle = castles.getCastle(
+                color = move.piece.color,
+                castleType = if (move.isKingCastle) CastleType.SHORT else CastleType.LONG
+            )
+            val rook = if (move.piece.color == Color.WHITE) Piece.WHITE_ROOK else Piece.BLACK_ROOK
+            piecesOnBoard - impactedCastle.rookStartSquare + (impactedCastle.rookDestinationSquare to rook)
+        } else piecesOnBoard
         return Chessboard(newPiecesOnBoard)
     }
 

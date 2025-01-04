@@ -358,14 +358,7 @@ private fun hasCastleMoveSatisfying(
     return false
 }
 
-private fun Position.copyWithoutCastling() = copy(
-    castling = Castling(
-        isWhiteKingCastlePossible = false,
-        isWhiteQueenCastlePossible = false,
-        isBlackQueenCastlePossible = false,
-        isBlackKingCastlePossible = false
-    ),
-)
+private fun Position.copyWithoutCastling() = copy(castles = Castles(castles = emptyList()))
 
 private fun hasCastleMovesSatisfying(
     position: Position,
@@ -373,46 +366,19 @@ private fun hasCastleMovesSatisfying(
     predicate: (Move) -> Boolean
 ): Boolean {
 
-    if (position.sideToMove == Color.WHITE) {
-        hasCastleMoveSatisfying(
-            position = position,
-            kingPosition = kingPosition,
-            isKingCastle = true,
-            isCurrentCastlePossible = position.castling.isWhiteKingCastlePossible,
-            kingDestination = Square.G1,
-            kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
-            predicate = predicate,
-        ).let { if (it) return true }
-        hasCastleMoveSatisfying(
-            position = position,
-            kingPosition = kingPosition,
-            isKingCastle = false,
-            isCurrentCastlePossible = position.castling.isWhiteQueenCastlePossible,
-            kingDestination = Square.C1,
-            kingCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
-            predicate = predicate,
-        ).let { if (it) return true }
-
-    } else {
-        hasCastleMoveSatisfying(
-            position = position,
-            kingPosition = kingPosition,
-            isKingCastle = true,
-            isCurrentCastlePossible = position.castling.isBlackKingCastlePossible,
-            kingDestination = Square.G8,
-            kingCastlingPathSquares = listOf(Square.E8, Square.F8, Square.G8),
-            predicate = predicate,
-        ).let { if (it) return true }
-        hasCastleMoveSatisfying(
-            position = position,
-            kingPosition = kingPosition,
-            isKingCastle = false,
-            isCurrentCastlePossible = position.castling.isBlackQueenCastlePossible,
-            kingDestination = Square.C8,
-            kingCastlingPathSquares = listOf(Square.E8, Square.D8, Square.C8),
-            predicate = predicate,
-        ).let { if (it) return true }
-    }
+    position.castles.castles
+        .filter { it.color == position.sideToMove }
+        .map {
+            hasCastleMoveSatisfying(
+                position = position,
+                kingPosition = kingPosition,
+                isKingCastle = it.castleType == CastleType.SHORT,
+                isCurrentCastlePossible = it.isCastleStillPossible,
+                kingDestination = it.kingDestinationSquare,
+                kingCastlingPathSquares = it.kingCastlingPathSquares,
+                predicate = predicate,
+            ).let { satisfiedPredicate -> if (satisfiedPredicate) return true }
+        }
     return false
 }
 

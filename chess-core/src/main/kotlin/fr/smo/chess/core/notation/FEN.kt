@@ -8,20 +8,21 @@ import fr.smo.chess.core.variant.Standard
 import fr.smo.chess.core.variant.Variant
 import java.util.*
 
-const val STARTING_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+const val STARTING_STANDARD_POSITION_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 object FEN {
     fun importFEN(fen: String, variant: Variant = Standard): Position {
         val fenSplit = fen.split(" ")
         require(fenSplit.size == 6)
+        val chessboard = getChessboardFromFenPiecePlacement(fenSplit[0])
+        val castles = variant.initCastles(chessboard)
         return Position(
-            chessboard = getChessboardFromFenPiecePlacement(fenSplit[0]),
+            chessboard = chessboard,
             sideToMove = sideToMove(fenSplit[1]),
-            castling = Castling(
-                isBlackKingCastlePossible = fenSplit[2].contains("k"),
-                isBlackQueenCastlePossible = fenSplit[2].contains("q"),
-                isWhiteQueenCastlePossible = fenSplit[2].contains("Q"),
-                isWhiteKingCastlePossible = fenSplit[2].contains("K"),
+            castles = castles.copy(
+                castles = castles.castles.map {
+                    it.copy(isCastleStillPossible = fenSplit[2].contains(it.getFenLetter()))
+                }
             ),
             enPassantTargetSquare = enPassantTargetSquare(fenSplit[3]),
             history = History(
@@ -50,22 +51,9 @@ object FEN {
     }
 
     private fun getFenCastlingFromGameState(position: Position): String {
-        var fenCastle = ""
-        if (position.castling.isWhiteKingCastlePossible) {
-            fenCastle += "K"
-        }
-        if (position.castling.isWhiteQueenCastlePossible) {
-            fenCastle += "Q"
-        }
-        if (position.castling.isBlackKingCastlePossible) {
-            fenCastle += "k"
-        }
-        if (position.castling.isBlackQueenCastlePossible) {
-            fenCastle += "q"
-        }
-        return fenCastle.ifEmpty {
-            "-"
-        }
+        return position.castles.castles.joinToString("") { castle ->
+            if (castle.isCastleStillPossible) castle.getFenLetter() else ""
+        }.let { it.ifEmpty { "-" } }
     }
 
     private fun getFenPiecePlacementFromGameState(position: Position): String {

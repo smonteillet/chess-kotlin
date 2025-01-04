@@ -1111,7 +1111,7 @@ class PseudoLegalMovesAlgTest {
                     // when
                     val legalMoves = getPseudoLegalMoves(game, PiecePosition(E8, BLACK_KING))
                     // Then
-                    expectThat(legalMoves.none { it.isKingCastle }).isTrue()
+                    expectThat(legalMoves.none { it.isKingCastle && it.piece.color == BLACK }).isTrue()
                 }
 
                 @Test
@@ -1125,7 +1125,7 @@ class PseudoLegalMovesAlgTest {
                     // when
                     val legalMoves = getPseudoLegalMoves(game, PiecePosition(E8, BLACK_KING))
                     // Then
-                    expectThat(legalMoves.none { it.isQueenCastle }).isTrue()
+                    expectThat(legalMoves.none { it.isQueenCastle && it.piece.color == BLACK }).isTrue()
                 }
             }
 

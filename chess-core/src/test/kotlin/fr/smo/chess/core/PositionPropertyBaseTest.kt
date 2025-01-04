@@ -104,32 +104,18 @@ class PositionPropertyBaseTest {
     }
 
     private fun assertVariousThingsAboutCastling(position: Position) {
-        if (position.castling.isBlackQueenCastlePossible) {
-            expectThat(position.chessboard.getPieceAt(A8)).isNotNull()
-            expectThat(position.chessboard.getPieceAt(A8)) isEqualTo BLACK_ROOK
-        }
-        if (position.castling.isBlackKingCastlePossible) {
-            expectThat(position.chessboard.getPieceAt(H8)).isNotNull()
-            expectThat(position.chessboard.getPieceAt(H8)) isEqualTo BLACK_ROOK
-        }
-        if (position.castling.isWhiteQueenCastlePossible) {
-            expectThat(position.chessboard.getPieceAt(A1)).isNotNull()
-            expectThat(position.chessboard.getPieceAt(A1)) isEqualTo WHITE_ROOK
-        }
-        if (position.castling.isWhiteKingCastlePossible) {
-            expectThat(position.chessboard.getPieceAt(H1)).isNotNull()
-            expectThat(position.chessboard.getPieceAt(H1)) isEqualTo WHITE_ROOK
-        }
 
-        if (position.castling.isWhiteKingCastlePossible || position.castling.isWhiteQueenCastlePossible) {
-            expectThat(position.chessboard.getPieceAt(E1)).isNotNull()
-            expectThat(position.chessboard.getPieceAt(E1)) isEqualTo WHITE_KING
-        }
+        position.castles.castles
+            .filter { it.isCastleStillPossible }
+            .forEach { castle ->
+                expectThat(position.chessboard.getPieceAt(castle.rookStartSquare)).isNotNull()
+                expectThat(position.chessboard.getPieceAt(castle.rookStartSquare)?.color) isEqualTo castle.color
+                expectThat(position.chessboard.getPieceAt(castle.rookStartSquare)?.type) isEqualTo PieceType.ROOK
 
-        if (position.castling.isBlackQueenCastlePossible || position.castling.isBlackKingCastlePossible) {
-            expectThat(position.chessboard.getPieceAt(E8)).isNotNull()
-            expectThat(position.chessboard.getPieceAt(E8)) isEqualTo BLACK_KING
-        }
+                expectThat(position.chessboard.getPieceAt(castle.kingStartSquare)).isNotNull()
+                expectThat(position.chessboard.getPieceAt(castle.kingStartSquare)?.color) isEqualTo castle.color
+                expectThat(position.chessboard.getPieceAt(castle.kingStartSquare)?.type) isEqualTo PieceType.KING
+            }
 
         val historyMoves = position.history.moves
         val lastMove = position.history.moves.last()

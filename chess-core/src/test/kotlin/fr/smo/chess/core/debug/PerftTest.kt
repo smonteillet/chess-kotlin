@@ -1,7 +1,7 @@
 package fr.smo.chess.core.debug
 
 import fr.smo.chess.core.fixtures.GameStateFixtures.givenAChessGame
-import fr.smo.chess.core.notation.STARTING_POSITION_FEN
+import fr.smo.chess.core.notation.STARTING_STANDARD_POSITION_FEN
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -42,8 +42,8 @@ class PerftTest {
             val position3 =
                 "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1" // https://www.chessprogramming.org/Perft_Results#Position_3
             return Stream.of(
-                Arguments.of("starting position", STARTING_POSITION_FEN, 1, PerftResult(20, 0, 0, 0, 0)),
-                Arguments.of("starting position", STARTING_POSITION_FEN, 2, PerftResult(400, 0, 0, 0, 0)),
+                Arguments.of("starting position", STARTING_STANDARD_POSITION_FEN, 1, PerftResult(20, 0, 0, 0, 0)),
+                Arguments.of("starting position", STARTING_STANDARD_POSITION_FEN, 2, PerftResult(400, 0, 0, 0, 0)),
 //                    Arguments.of("starting position", STARTING_POSITION_FEN, 3, PerftResult(8_902, 34, 0, 0, 12)),
 //                    Arguments.of("starting position", STARTING_POSITION_FEN, 4, PerftResult(197_281, 1576, 8, 0, 469)),
 //                    Arguments.of("starting position", STARTING_POSITION_FEN, 5, PerftResult(4_865_609, 82_719, 347, 0, 27_351)),

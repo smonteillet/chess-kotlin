@@ -4,7 +4,7 @@ import fr.smo.chess.core.*
 import fr.smo.chess.core.notation.FEN.getChessboardFromFenPiecePlacement
 import fr.smo.chess.core.notation.FEN.importFEN
 import fr.smo.chess.core.notation.PGN.importPGN
-import fr.smo.chess.core.notation.STARTING_POSITION_FEN
+import fr.smo.chess.core.notation.STARTING_STANDARD_POSITION_FEN
 import fr.smo.chess.core.renderer.GameRenderer
 import fr.smo.chess.core.variant.Standard
 import fr.smo.chess.core.variant.Variant
@@ -12,16 +12,16 @@ import fr.smo.chess.core.variant.Variant
 object GameStateFixtures {
 
 
-    fun givenAChessGame(fullFEN: String = STARTING_POSITION_FEN): Position {
+    fun givenAChessGame(fullFEN: String = STARTING_STANDARD_POSITION_FEN): Position {
         return importFEN(fullFEN).apply { render(this) }
     }
 
-    fun givenAChessGameWithHistory(pgn : String, variant: Variant = Standard) : Position {
+    fun givenAChessGameWithHistory(pgn: String, variant: Variant = Standard): Position {
         return importPGN(pgn, variant)
     }
 
     fun givenAChessGame(
-        fenPiecePlacementOnly: String = STARTING_POSITION_FEN,
+        fenPiecePlacementOnly: String = STARTING_STANDARD_POSITION_FEN,
         sideToMove: Color = Color.WHITE,
         isWhiteKingCastlePossible: Boolean = false,
         isWhiteQueenCastlePossible: Boolean = false,
@@ -31,16 +31,26 @@ object GameStateFixtures {
         history: History = History(),
         variant: Variant = Standard,
     ): Position {
+        val chessboard = getChessboardFromFenPiecePlacement(fenPiecePlacementOnly)
+        val castles = variant.initCastles(chessboard)
         return Position(
-            chessboard = getChessboardFromFenPiecePlacement(fenPiecePlacementOnly),
+            chessboard = chessboard,
             history = history,
             sideToMove = sideToMove,
-            castling = Castling(
-                isWhiteKingCastlePossible = isWhiteKingCastlePossible,
-                isWhiteQueenCastlePossible = isWhiteQueenCastlePossible,
-                isBlackKingCastlePossible = isBlackKingCastlePossible,
-                isBlackQueenCastlePossible = isBlackQueenCastlePossible,
-            ),
+            castles = castles.copy(castles = castles.castles.map {
+                // FIXME there should be a better way to do this
+                if (it.castleType == CastleType.SHORT && it.color == Color.WHITE && !isWhiteKingCastlePossible) {
+                    it.copy(isCastleStillPossible = false)
+                } else if (it.castleType == CastleType.LONG && it.color == Color.WHITE && !isWhiteQueenCastlePossible) {
+                    it.copy(isCastleStillPossible = false)
+                } else if (it.castleType == CastleType.SHORT && it.color == Color.BLACK && !isBlackKingCastlePossible) {
+                    it.copy(isCastleStillPossible = false)
+                } else if (it.castleType == CastleType.LONG && it.color == Color.BLACK && !isBlackQueenCastlePossible) {
+                    it.copy(isCastleStillPossible = false)
+                }  else {
+                    it
+                }
+            }),
             enPassantTargetSquare = enPassantTargetSquare,
             variant = variant,
         ).apply { render(this) }

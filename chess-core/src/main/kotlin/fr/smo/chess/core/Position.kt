@@ -11,12 +11,12 @@ import fr.smo.chess.core.variant.Variant
 
 data class Position(
     val chessboard: Chessboard,
-    val history: History,
+    val history: History = History(),
     val sideToMove: Color = WHITE,
-    val castling: Castling,
     val enPassantTargetSquare: Square? = null,
     val forcedOutcome: ForcedOutcome? = null,
     val variant : Variant = Standard,
+    val castles: Castles = variant.initCastles(chessboard),
 ) {
 
     private val isCheck: Boolean
@@ -84,10 +84,10 @@ data class Position(
 
     private fun unsafeMakeMove(move: Move) =
         Position(
-            chessboard = chessboard.applyMove(move, enPassantTargetSquare),
+            chessboard = chessboard.applyMove(move, enPassantTargetSquare, castles),
             history = history.addMove(move),
             sideToMove = sideToMove.opposite(),
-            castling = castling.updateCastlingAfterMove(move),
+            castles = castles.updateCastlesAfterMove(move),
             enPassantTargetSquare = getEnPassantTargetSquare(move),
             variant = variant
         )

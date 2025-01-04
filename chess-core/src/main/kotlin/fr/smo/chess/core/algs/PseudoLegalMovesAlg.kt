@@ -259,60 +259,22 @@ private fun getCastleMove(
     } else null
 }
 
-private fun Position.copyWithoutCastling() = copy(
-    castling = Castling(
-        isWhiteKingCastlePossible = false,
-        isWhiteQueenCastlePossible = false,
-        isBlackQueenCastlePossible = false,
-        isBlackKingCastlePossible = false
-    ),
-)
+private fun Position.copyWithoutCastling() = copy(castles = Castles(castles = emptyList()),)
 
 private fun getCastleMoveIfPossible(position: Position, kingPosition: PiecePosition): List<Move> {
-
-    return if (position.sideToMove == Color.WHITE) {
-        listOfNotNull(
+    return position.castles.castles
+        .filter { it.color == kingPosition.color }
+        .mapNotNull {
             getCastleMove(
                 position = position,
                 kingPosition = kingPosition,
-                isKingCastle = true,
-                isCurrentCastlePossible = position.castling.isWhiteKingCastlePossible,
-                kingDestination = Square.G1,
-                kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
-                squaresBetweenKingAndRook = listOf(Square.F1, Square.G1),
-            ),
-            getCastleMove(
-                position = position,
-                kingPosition = kingPosition,
-                isKingCastle = false,
-                isCurrentCastlePossible = position.castling.isWhiteQueenCastlePossible,
-                kingDestination = Square.C1,
-                kingCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
-                squaresBetweenKingAndRook = listOf(Square.B1, Square.C1, Square.D1),
+                isKingCastle = it.castleType == CastleType.SHORT,
+                isCurrentCastlePossible = it.isCastleStillPossible,
+                kingDestination = it.kingDestinationSquare,
+                kingCastlingPathSquares = it.kingCastlingPathSquares,
+                squaresBetweenKingAndRook = it.squaresBetweenKingAndRook,
             )
-        )
-    } else {
-        listOfNotNull(
-            getCastleMove(
-                position = position,
-                kingPosition = kingPosition,
-                isKingCastle = true,
-                isCurrentCastlePossible = position.castling.isBlackKingCastlePossible,
-                kingDestination = Square.G8,
-                kingCastlingPathSquares = listOf(Square.E8, Square.F8, Square.G8),
-                squaresBetweenKingAndRook = listOf(Square.F8, Square.G8),
-            ),
-            getCastleMove(
-                position = position,
-                kingPosition = kingPosition,
-                isKingCastle = false,
-                isCurrentCastlePossible = position.castling.isBlackQueenCastlePossible,
-                kingDestination = Square.C8,
-                kingCastlingPathSquares = listOf(Square.E8, Square.D8, Square.C8),
-                squaresBetweenKingAndRook = listOf(Square.B8, Square.C8, Square.D8),
-            )
-        )
-    }
+        }
 }
 
 private fun getLegalMovesFollowingDirection(

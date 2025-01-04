@@ -132,10 +132,10 @@ class PGNTest {
             expectThat(importedGame) isEqualTo expectedGame
             expectThat(importedGame.history.moves.any { it.isKingCastle && it.piece.color == Color.BLACK }).isTrue()
             expectThat(importedGame.history.moves.any { it.isKingCastle && it.piece.color == Color.WHITE }).isTrue()
-            expectThat(importedGame.castling.isWhiteKingCastlePossible).isFalse()
-            expectThat(importedGame.castling.isWhiteQueenCastlePossible).isFalse()
-            expectThat(importedGame.castling.isBlackKingCastlePossible).isFalse()
-            expectThat(importedGame.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(importedGame.castles.isWhiteKingCastlePossible).isFalse()
+            expectThat(importedGame.castles.isWhiteQueenCastlePossible).isFalse()
+            expectThat(importedGame.castles.isBlackKingCastlePossible).isFalse()
+            expectThat(importedGame.castles.isBlackQueenCastlePossible).isFalse()
         }
 
         @Test
@@ -156,10 +156,10 @@ class PGNTest {
             expectThat(importedGame) isEqualTo expectedGame
             expectThat(importedGame.history.moves.any { it.isQueenCastle && it.piece.color == Color.BLACK }).isTrue()
             expectThat(importedGame.history.moves.any { it.isQueenCastle && it.piece.color == Color.WHITE }).isTrue()
-            expectThat(importedGame.castling.isWhiteKingCastlePossible).isFalse()
-            expectThat(importedGame.castling.isWhiteQueenCastlePossible).isFalse()
-            expectThat(importedGame.castling.isBlackKingCastlePossible).isFalse()
-            expectThat(importedGame.castling.isBlackQueenCastlePossible).isFalse()
+            expectThat(importedGame.castles.isWhiteKingCastlePossible).isFalse()
+            expectThat(importedGame.castles.isWhiteQueenCastlePossible).isFalse()
+            expectThat(importedGame.castles.isBlackKingCastlePossible).isFalse()
+            expectThat(importedGame.castles.isBlackQueenCastlePossible).isFalse()
         }
 
         @Nested
