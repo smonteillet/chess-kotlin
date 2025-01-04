@@ -3,7 +3,7 @@ package fr.smo.chess.core.fixtures
 import fr.smo.chess.core.*
 import fr.smo.chess.core.notation.FEN.getChessboardFromFenPiecePlacement
 import fr.smo.chess.core.notation.FEN.importFEN
-import fr.smo.chess.core.notation.PGN.import
+import fr.smo.chess.core.notation.PGN.importPGN
 import fr.smo.chess.core.notation.STARTING_POSITION_FEN
 import fr.smo.chess.core.renderer.GameRenderer
 import fr.smo.chess.core.variant.Standard
@@ -17,7 +17,7 @@ object GameStateFixtures {
     }
 
     fun givenAChessGameWithHistory(pgn : String, variant: Variant = Standard) : Position {
-        return import(pgn, variant)
+        return importPGN(pgn, variant)
     }
 
     fun givenAChessGame(

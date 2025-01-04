@@ -19,7 +19,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn and ignore comment for a comment only pgn as input`() {
-            val game = PGN.import(
+            val game = PGN.importPGN(
                 """
                 [COMMENT 1]
                 [COMMENT 2]
@@ -31,7 +31,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with one turn of move`() {
-            val game = PGN.import("1. e4 e5")
+            val game = PGN.importPGN("1. e4 e5")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(E7, E5),
@@ -41,7 +41,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with move comment`() {
-            val game = PGN.import("1. e4 e5 {this is a comment}")
+            val game = PGN.importPGN("1. e4 e5 {this is a comment}")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(E7, E5),
@@ -50,7 +50,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with two turns of move`() {
-            val game = PGN.import("1. e4 e5 2. a3 a6")
+            val game = PGN.importPGN("1. e4 e5 2. a3 a6")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(E7, E5),
@@ -62,7 +62,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with knight moves`() {
-            val game = PGN.import("1. Nc3 Nf6")
+            val game = PGN.importPGN("1. Nc3 Nf6")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(B1, C3),
                 MoveCommand(G8, F6),
@@ -71,7 +71,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with all piece types moves`() {
-            val game = PGN.import("1. d4 d5 2. Bf4 Nf6 3. Qd3 Qd6 4. Kd2 Bf5 5. Nc3 Kd7 6. Rb1 Rg8")
+            val game = PGN.importPGN("1. d4 d5 2. Bf4 Nf6 3. Qd3 Qd6 4. Kd2 Bf5 5. Nc3 Kd7 6. Rb1 Rg8")
             expectThat(game) isEqualTo GameFactory.createStandardGame().applyMoves(
                 MoveCommand(D2, D4),
                 MoveCommand(D7, D5),
@@ -90,7 +90,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with a pawn capturing another pawn`() {
-            val importedGame = PGN.import("1. e4 d5 2. exd5")
+            val importedGame = PGN.importPGN("1. e4 d5 2. exd5")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(D7, D5),
@@ -104,7 +104,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with a knight capturing another pawn`() {
-            val importedGame = PGN.import("1. Nc3 d5 2. Nxd5")
+            val importedGame = PGN.importPGN("1. Nc3 d5 2. Nxd5")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
                 MoveCommand(B1, C3),
                 MoveCommand(D7, D5),
@@ -118,7 +118,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with king castle for both white and black`() {
-            val importedGame = PGN.import("1. e4 e5 2. Bc4 Bc5 3. Nf3 Nf6 4. O-O O-O")
+            val importedGame = PGN.importPGN("1. e4 e5 2. Bc4 Bc5 3. Nf3 Nf6 4. O-O O-O")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
                 MoveCommand(E2, E4),
                 MoveCommand(E7, E5),
@@ -140,7 +140,7 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with queen castle for both white and black`() {
-            val importedGame = PGN.import("1. d4 d5 2. Bf4 Bf5 3. Nc3 Nc6 4. Qd3 Qd6 5. O-O-O O-O-O")
+            val importedGame = PGN.importPGN("1. d4 d5 2. Bf4 Bf5 3. Nc3 Nc6 4. Qd3 Qd6 5. O-O-O O-O-O")
             val expectedGame = GameFactory.createStandardGame().applyMoves(
                 MoveCommand(D2, D4),
                 MoveCommand(D7, D5),
@@ -167,7 +167,7 @@ class PGNTest {
 
             @Test
             fun `should import a pgn with two knights of same color that can capture piece and Knight 1 captures`() {
-                val importedGame = PGN.import("1. Nc3 d5 2. Nh3 a6 3. Nf4 h6 4. Ncxd5 ")
+                val importedGame = PGN.importPGN("1. Nc3 d5 2. Nh3 a6 3. Nf4 h6 4. Ncxd5 ")
                 expectThat(importedGame.chessboard.getPieceAt(C3)).isNull()
                 expectThat(importedGame.chessboard.getPieceAt(D5)!!) isEqualTo Piece.WHITE_KNIGHT
                 expectThat(importedGame.chessboard.getPieceAt(F4)!!) isEqualTo Piece.WHITE_KNIGHT
@@ -175,7 +175,7 @@ class PGNTest {
 
             @Test
             fun `should import a pgn with two knights of same color that can capture piece and Knight 2 captures`() {
-                val importedGame = PGN.import("1. Nc3 d5 2. Nh3 a6 3. Nf4 h6 4. Nfxd5 ")
+                val importedGame = PGN.importPGN("1. Nc3 d5 2. Nh3 a6 3. Nf4 h6 4. Nfxd5 ")
                 expectThat(importedGame.chessboard.getPieceAt(F4)).isNull()
                 expectThat(importedGame.chessboard.getPieceAt(D5)!!) isEqualTo Piece.WHITE_KNIGHT
                 expectThat(importedGame.chessboard.getPieceAt(C3)!!) isEqualTo Piece.WHITE_KNIGHT
@@ -184,7 +184,7 @@ class PGNTest {
             @Test
             fun `should import a pgn with two rooks where either one or the other can move to the same given square`() {
                 // Given
-                val importedGame = PGN.import("1. a4 a6 2. h4 h6 3. Rh3 b6 4. Rha3 c6 5. R3a2 ")
+                val importedGame = PGN.importPGN("1. a4 a6 2. h4 h6 3. Rh3 b6 4. Rha3 c6 5. R3a2 ")
                 expectThat(importedGame.chessboard.getPieceAt(A1)!!) isEqualTo Piece.WHITE_ROOK
                 expectThat(importedGame.chessboard.getPieceAt(A2)!!) isEqualTo Piece.WHITE_ROOK
             }
@@ -192,7 +192,7 @@ class PGNTest {
             @Test
             fun `should import a pgn with two knights where either one or the other can move to the same given square and Knight 1 moves`() {
                 // Given
-                val importedGame = PGN.import("1. Nc3 a6 2. Nf3 a5 3. Nd4 a4 4. Nb3 a3 5. Nc5 b6 6. N5e4 ")
+                val importedGame = PGN.importPGN("1. Nc3 a6 2. Nf3 a5 3. Nd4 a4 4. Nb3 a3 5. Nc5 b6 6. N5e4 ")
                 expectThat(importedGame.chessboard.getPieceAt(E4)!!) isEqualTo Piece.WHITE_KNIGHT
                 expectThat(importedGame.chessboard.getPieceAt(C3)!!) isEqualTo Piece.WHITE_KNIGHT
                 expectThat(importedGame.chessboard.getPieceAt(C5)).isNull()
@@ -201,7 +201,7 @@ class PGNTest {
             @Test
             fun `should import a pgn with two knights where either one or the other can move to the same given square and Knight 2 moves`() {
                 // Given
-                val importedGame = PGN.import("1. Nc3 a6 2. Nf3 a5 3. Nd4 a4 4. Nb3 a3 5. Nc5 b6 6. N3e4 ")
+                val importedGame = PGN.importPGN("1. Nc3 a6 2. Nf3 a5 3. Nd4 a4 4. Nb3 a3 5. Nc5 b6 6. N3e4 ")
                 expectThat(importedGame.chessboard.getPieceAt(E4)!!) isEqualTo Piece.WHITE_KNIGHT
                 expectThat(importedGame.chessboard.getPieceAt(C5)!!) isEqualTo Piece.WHITE_KNIGHT
                 expectThat(importedGame.chessboard.getPieceAt(C3)).isNull()
@@ -211,7 +211,7 @@ class PGNTest {
         @Test
         fun `should import a pgn with a promotion`() {
             val importedGame =
-                PGN.import("1. e4 e5 2. h3 g5 3. g4 h5 4. gxh5 Rh6 5. Bc4 Re6 6. h6 Rd6 7. h7 Re6 8. h8=Qe7")
+                PGN.importPGN("1. e4 e5 2. h3 g5 3. g4 h5 4. gxh5 Rh6 5. Bc4 Re6 6. h6 Rd6 7. h7 Re6 8. h8=Qe7")
             expectThat(importedGame.history.moves.last().promotedTo) isEqualTo Piece.WHITE_QUEEN
             expectThat(importedGame.chessboard.count { it.value == Piece.WHITE_PAWN }) isEqualTo 7
             expectThat(importedGame.chessboard.count { it.value == Piece.WHITE_QUEEN }) isEqualTo 2
@@ -219,7 +219,7 @@ class PGNTest {
 
         @Test
         fun `should import pgn with two white rooks that can go to the same square but one is pinned at move 20`() {
-            val importedGame = PGN.import(
+            val importedGame = PGN.importPGN(
                 """
                         1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.O-O Nf6 5.b4 Bxb4 6.c3 Bd6 7.d4 Qe7 8.Bg5 O-O
                         9.Re1 a6 10.Qc2 h6 11.Bxf6 Qxf6 12.Nbd2 g5 13.dxe5 Bxe5 14.Rac1 g4 15.Nxe5 Nxe5
@@ -232,7 +232,7 @@ class PGNTest {
 
         @Test
         fun `should import pgn with a castle move that checks`() {
-            val importedGame = PGN.import(
+            val importedGame = PGN.importPGN(
                 """
                     1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6 6.Bc4 Nc6 7.Nxc6 bxc6 8.e5 d5
                     9.exf6 dxc4 10.Qxd8+ Kxd8 11.fxe7+ Bxe7 12.Be3 Be6 13.O-O-O+ Kc8 14.Na4 Rb8
@@ -247,7 +247,7 @@ class PGNTest {
 
         @Test
         fun `should import pgn with an unknown result`() {
-            val importedGame = PGN.import(
+            val importedGame = PGN.importPGN(
                 """
                     1.c4 Nf6 2.g3 g6 3.Bg2 Bg7 4.Nc3 c5 5.e4 Nc6 6.Nge2 O-O 7.O-O Ne8 8.h3 Nc7
                     9.d3 Ne6 10.g4 Ned4 11.Ng3 e6 12.Be3 a6 13.Qd2 b5 14.f4 bxc4 15.dxc4 Rb8
@@ -272,7 +272,7 @@ class PGNTest {
                 return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).mapIndexed { index, pgnGame ->
                     DynamicTest.dynamicTest("Imported Morphy game $index") {
                         println(pgnGame)
-                        PGN.import(pgnGame)
+                        PGN.importPGN(pgnGame)
                     }
                 }
             }
@@ -284,7 +284,7 @@ class PGNTest {
                 return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).map { pgnGame ->
                     DynamicTest.dynamicTest("Imported Polgar game") {
                         println(pgnGame)
-                        PGN.import(pgnGame)
+                        PGN.importPGN(pgnGame)
                     }
                 }
             }
@@ -296,7 +296,7 @@ class PGNTest {
                 return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).map { pgnGame ->
                     DynamicTest.dynamicTest("Imported Carlsen game") {
                         println(pgnGame)
-                        PGN.import(pgnGame)
+                        PGN.importPGN(pgnGame)
                     }
                 }
             }

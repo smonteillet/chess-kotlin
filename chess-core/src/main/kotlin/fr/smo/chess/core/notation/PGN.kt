@@ -41,7 +41,7 @@ object PGN {
         return "$pgnHistory $pgnOutcome"
     }
 
-    fun import(pgn: String, variant: Variant = Standard): Position {
+    fun importPGN(pgn: String, variant: Variant = Standard): Position {
         return pgn.trim()
             .replace(PGN_COMMENT_BRACKET_REGEX, "")
             .replace(PGN_COMMENT_CURLY_BRACKET_REGEX, "")
