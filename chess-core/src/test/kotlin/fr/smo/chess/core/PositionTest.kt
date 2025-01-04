@@ -24,9 +24,9 @@ class PositionTest {
         fun `should not mark game as over after check but not checkmate`() {
             // Given When
             val game = givenAChessGame().applyMoves(
-                    MoveCommand(E2, E3),
-                    MoveCommand(F7, F6),
-                    MoveCommand(D1, H5),
+                MoveCommand(E2, E3),
+                MoveCommand(F7, F6),
+                MoveCommand(D1, H5),
             ).orThrow()
             expectThat(game.status.gameIsOver).isFalse()
         }
@@ -34,7 +34,12 @@ class PositionTest {
         @Test
         fun `should not mark game as over when a check can be escaped`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/3n4/8/8/K7", sideToMove = BLACK).applyMove(MoveCommand(D4, C2)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/3n4/8/8/K7", sideToMove = BLACK).applyMove(
+                MoveCommand(
+                    D4,
+                    C2
+                )
+            ).orThrow()
             // Then
             expectThat(game.status.gameIsOver).isFalse()
         }
@@ -58,7 +63,10 @@ class PositionTest {
         @Test
         fun `should mark game as won when performing back rank mate`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k2r/p7/8/8/8/8/PPP5/1K6", sideToMove = BLACK).applyMove(MoveCommand(H8, H1)).orThrow()
+            val game =
+                givenAChessGame(fenPiecePlacementOnly = "4k2r/p7/8/8/8/8/PPP5/1K6", sideToMove = BLACK).applyMove(
+                    MoveCommand(H8, H1)
+                ).orThrow()
             // Then
             expectThat(game.status) isEqualTo BLACK_WIN
         }
@@ -66,7 +74,9 @@ class PositionTest {
         @Test
         fun `should mark game as won when performing kiss of death checkmate`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/7P/8/1k6/4q3/1K6", sideToMove = BLACK).applyMove(MoveCommand(E2, B2)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/7P/8/1k6/4q3/1K6", sideToMove = BLACK).applyMove(
+                MoveCommand(E2, B2)
+            ).orThrow()
             // Then
             expectThat(game.status) isEqualTo BLACK_WIN
         }
@@ -74,7 +84,10 @@ class PositionTest {
         @Test
         fun `should mark game as won when performing smothered mate checkmate`() {
             /// Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "6rk/6pp/2PN4/8/8/8/8/1K6", sideToMove = WHITE).applyMove(MoveCommand(D6, F7)).orThrow()
+            val game =
+                givenAChessGame(fenPiecePlacementOnly = "6rk/6pp/2PN4/8/8/8/8/1K6", sideToMove = WHITE).applyMove(
+                    MoveCommand(D6, F7)
+                ).orThrow()
             // Then
             expectThat(game.status) isEqualTo WHITE_WIN
         }
@@ -82,7 +95,10 @@ class PositionTest {
         @Test
         fun `should mark game as won when performing two rook checkmate`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "8/3R4/8/7k/8/1p4R1/8/3K4", sideToMove = WHITE).applyMove(MoveCommand(D7, H7)).orThrow()
+            val game =
+                givenAChessGame(fenPiecePlacementOnly = "8/3R4/8/7k/8/1p4R1/8/3K4", sideToMove = WHITE).applyMove(
+                    MoveCommand(D7, H7)
+                ).orThrow()
             // Then
             expectThat(game.status) isEqualTo WHITE_WIN
         }
@@ -90,7 +106,9 @@ class PositionTest {
         @Test
         fun `should mark game as won when performing rook + king checkmate`() {
             /// Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/8/2k5/7r/2K5", sideToMove = BLACK).applyMove(MoveCommand(H2, H1)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/8/2k5/7r/2K5", sideToMove = BLACK).applyMove(
+                MoveCommand(H2, H1)
+            ).orThrow()
             // Then
             expectThat(game.status) isEqualTo BLACK_WIN
         }
@@ -98,7 +116,9 @@ class PositionTest {
         @Test
         fun `should mark game as won after a promotion checkmate`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/8/2k5/7p/2K5", sideToMove = BLACK).applyMove(MoveCommand(H2, H1, QUEEN)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "8/8/8/8/8/2k5/7p/2K5", sideToMove = BLACK).applyMove(
+                MoveCommand(H2, H1, QUEEN)
+            ).orThrow()
             // Then
             expectThat(game.status) isEqualTo BLACK_WIN
         }
@@ -137,7 +157,9 @@ class PositionTest {
         fun `should throw an error when performing a move that doesn't revert check when king is checked`() {
             // Given When
             val game =
-                givenAChessGame(fenPiecePlacementOnly = "3k4/1P6/8/8/8/8/7r/2K5", sideToMove = BLACK).applyMove(MoveCommand(H2, H1)).orThrow() // White King check
+                givenAChessGame(fenPiecePlacementOnly = "3k4/1P6/8/8/8/8/7r/2K5", sideToMove = BLACK).applyMove(
+                    MoveCommand(H2, H1)
+                ).orThrow() // White King check
             // Then
             expectThat(game.applyMove(MoveCommand(B7, B8))).isA<Failure<MoveCommandError>>()
         }
@@ -146,7 +168,9 @@ class PositionTest {
         fun `should throw an error when performing a move that doesn't revert check when king is checked after promotion`() {
             // Given When
             val game =
-                givenAChessGame(fenPiecePlacementOnly = "3k4/1P6/8/8/8/8/7p/2K5", sideToMove = BLACK).applyMove(MoveCommand(H2, H1, QUEEN)).orThrow() // White King check
+                givenAChessGame(fenPiecePlacementOnly = "3k4/1P6/8/8/8/8/7p/2K5", sideToMove = BLACK).applyMove(
+                    MoveCommand(H2, H1, QUEEN)
+                ).orThrow() // White King check
 
             // Then
             expectThat(game.applyMove(MoveCommand(B7, B8))).isA<Failure<MoveCommandError>>()
@@ -160,7 +184,9 @@ class PositionTest {
         @Test
         fun `should black pawn promote to a Queen when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, QUEEN)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(
+                MoveCommand(B2, B1, QUEEN)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_QUEEN
             expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
@@ -169,7 +195,9 @@ class PositionTest {
         @Test
         fun `should black pawn promote to a Knight when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, KNIGHT)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(
+                MoveCommand(B2, B1, KNIGHT)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_KNIGHT
             expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
@@ -178,7 +206,9 @@ class PositionTest {
         @Test
         fun `should black pawn promote to a Bishop when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, BISHOP)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(
+                MoveCommand(B2, B1, BISHOP)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_BISHOP
             expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
@@ -187,7 +217,9 @@ class PositionTest {
         @Test
         fun `should black pawn promote to a Rook when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(MoveCommand(B2, B1, ROOK)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = BLACK).applyMove(
+                MoveCommand(B2, B1, ROOK)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(B1)) isEqualTo BLACK_ROOK
             expectThat(game.chessboard.count { it.value == BLACK_PAWN }) isEqualTo 0
@@ -197,7 +229,9 @@ class PositionTest {
         @Test
         fun `should white pawn promote to a Queen when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, QUEEN)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(
+                MoveCommand(A7, A8, QUEEN)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_QUEEN
             expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
@@ -206,7 +240,9 @@ class PositionTest {
         @Test
         fun `should white pawn promote to a Knight when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, KNIGHT)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(
+                MoveCommand(A7, A8, KNIGHT)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_KNIGHT
             expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
@@ -215,7 +251,9 @@ class PositionTest {
         @Test
         fun `should white pawn promote to a Bishop when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, BISHOP)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(
+                MoveCommand(A7, A8, BISHOP)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_BISHOP
             expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
@@ -224,7 +262,9 @@ class PositionTest {
         @Test
         fun `should white pawn promote to a Rook when possible`() {
             // Given When
-            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(MoveCommand(A7, A8, ROOK)).orThrow()
+            val game = givenAChessGame(fenPiecePlacementOnly = "4k3/P7/8/8/8/8/1p6/4K3", sideToMove = WHITE).applyMove(
+                MoveCommand(A7, A8, ROOK)
+            ).orThrow()
             // Then
             expectThat(game.chessboard.getPieceAt(A8)) isEqualTo WHITE_ROOK
             expectThat(game.chessboard.count { it.value == WHITE_PAWN }) isEqualTo 0
@@ -509,7 +549,7 @@ class PositionTest {
             val game = givenAChessGame("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/5Q1p/PPPBBPPP/RN2K2R w KQkq - 1 1")
             // When
             expectThrows<IllegalStateException> {
-                game.applyMoves(MoveCommand(E1,C1)).orThrow()
+                game.applyMoves(MoveCommand(E1, C1)).orThrow()
             }
 
             // Then
@@ -523,9 +563,9 @@ class PositionTest {
             // When then
             expectThrows<IllegalStateException> {
                 game.applyMoves(
-                        MoveCommand(A2, A3),
-                        MoveCommand(A6, E2),
-                        MoveCommand(E1, G1),
+                    MoveCommand(A2, A3),
+                    MoveCommand(A6, E2),
+                    MoveCommand(E1, G1),
                 ).orThrow()
             }
         }

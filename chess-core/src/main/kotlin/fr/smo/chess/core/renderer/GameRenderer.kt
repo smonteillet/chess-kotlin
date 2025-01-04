@@ -1,8 +1,8 @@
 package fr.smo.chess.core.renderer
 
 import fr.smo.chess.core.File
-import fr.smo.chess.core.Position
 import fr.smo.chess.core.Piece.*
+import fr.smo.chess.core.Position
 import fr.smo.chess.core.Rank
 import fr.smo.chess.core.Square
 import fr.smo.chess.core.notation.FEN.exportFEN

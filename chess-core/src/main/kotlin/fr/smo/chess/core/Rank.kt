@@ -11,7 +11,7 @@ enum class Rank(val value: Int) {
     RANK_7(7),
     RANK_8(8);
 
-    val label : String = value.toString()
+    val label: String = value.toString()
 
     companion object {
 

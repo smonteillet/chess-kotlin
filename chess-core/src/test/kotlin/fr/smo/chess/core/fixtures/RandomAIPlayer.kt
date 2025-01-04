@@ -1,6 +1,9 @@
 package fr.smo.chess.core.fixtures
 
-import fr.smo.chess.core.*
+import fr.smo.chess.core.Color
+import fr.smo.chess.core.Move
+import fr.smo.chess.core.MoveCommand
+import fr.smo.chess.core.Position
 import fr.smo.chess.core.algs.getFirstPseudoLegalMoveSatisfying
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
@@ -20,21 +23,22 @@ class RandomAIPlayer(seed: Long = System.currentTimeMillis()) : Player {
         var move: Move? = null
         getFirstPseudoLegalMoveSatisfying(color!!, position, random) { candidateMove ->
             val legalMove = isMoveLegal(candidateMove, position)
-            legalMove.ifTrue {  move = candidateMove }
+            legalMove.ifTrue { move = candidateMove }
             legalMove && random.nextBoolean()
         }
         return move?.let {
             MoveCommand(origin = it.origin, destination = it.destination, promotedPiece = it.promotedTo?.type)
-        } ?: throw IllegalStateException("This should not happen because game instance shall have stated that it is a stalemate on previous move")
+        }
+            ?: throw IllegalStateException("This should not happen because game instance shall have stated that it is a stalemate on previous move")
     }
 
     private fun isMoveLegal(move: Move, position: Position): Boolean {
         return position.applyMove(
-                MoveCommand(
-                        origin = move.origin,
-                        destination = move.destination,
-                        promotedPiece = move.promotedTo?.type,
-                )
+            MoveCommand(
+                origin = move.origin,
+                destination = move.destination,
+                promotedPiece = move.promotedTo?.type,
+            )
         ).let { outcome ->
             when (outcome) {
                 is Success -> true

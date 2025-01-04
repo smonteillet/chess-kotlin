@@ -22,10 +22,10 @@ fun getPseudoLegalMoves(position: Position, piecePosition: PiecePosition): List<
 
 fun getPseudoLegalMovesRegardingDestination(position: Position, destinationPiecePosition: PiecePosition): List<Move> {
     return position.chessboard.getPiecePositions(color = position.sideToMove)
-            .filter { it.pieceType == destinationPiecePosition.pieceType }
-            .parallelStream()
-            .flatMap { getPseudoLegalMoves(position, it).stream() }
-            .toList()
+        .filter { it.pieceType == destinationPiecePosition.pieceType }
+        .parallelStream()
+        .flatMap { getPseudoLegalMoves(position, it).stream() }
+        .toList()
 }
 
 fun getAllPseudoLegalMovesForColor(color: Color, position: Position): List<Move> {
@@ -35,42 +35,47 @@ fun getAllPseudoLegalMovesForColor(color: Color, position: Position): List<Move>
 }
 
 fun hasAPseudoLegalMovesSatisfying(color: Color, position: Position, predicate: (Move) -> Boolean): Boolean {
-    return getFirstPseudoLegalMoveSatisfying(color, position,null,  predicate) != null
+    return getFirstPseudoLegalMoveSatisfying(color, position, null, predicate) != null
 }
 
-fun getFirstPseudoLegalMoveSatisfying(color: Color, position: Position, random : Random? = null, predicate: (Move) -> Boolean): Move? {
+fun getFirstPseudoLegalMoveSatisfying(
+    color: Color,
+    position: Position,
+    random: Random? = null,
+    predicate: (Move) -> Boolean
+): Move? {
     position.chessboard.getPiecePositions(color)
-            .let { if (random != null) it.shuffled(random) else it }
-            .forEach {
-                getPseudoLegalMoves(position, it).forEach { move ->
-                    if (predicate.invoke(move)) {
-                        return move
-                    }
+        .let { if (random != null) it.shuffled(random) else it }
+        .forEach {
+            getPseudoLegalMoves(position, it).forEach { move ->
+                if (predicate.invoke(move)) {
+                    return move
                 }
             }
+        }
     return null
 }
 
 
 private fun getKnightPseudoLegalMoves(chessboard: Chessboard, knightPosition: PiecePosition): List<Move> {
     return listOfNotNull(
-            knightPosition.square.up()?.upLeft(),
-            knightPosition.square.up()?.upRight(),
-            knightPosition.square.down()?.downRight(),
-            knightPosition.square.down()?.downLeft(),
-            knightPosition.square.left()?.upLeft(),
-            knightPosition.square.left()?.downLeft(),
-            knightPosition.square.right()?.upRight(),
-            knightPosition.square.right()?.downRight(),
+        knightPosition.square.up()?.upLeft(),
+        knightPosition.square.up()?.upRight(),
+        knightPosition.square.down()?.downRight(),
+        knightPosition.square.down()?.downLeft(),
+        knightPosition.square.left()?.upLeft(),
+        knightPosition.square.left()?.downLeft(),
+        knightPosition.square.right()?.upRight(),
+        knightPosition.square.right()?.downRight(),
     ).filterNot { chessboard.isPiecePresentAtAndHasColor(it, knightPosition.color) }
-            .map {
-                Move(
-                        piece = knightPosition.piece,
-                        origin = knightPosition.square,
-                        destination = it,
-                        capturedPiece = chessboard.getPieceAt(it),
-                )
-            }
+        .map {
+            Move(
+                piece = knightPosition.piece,
+                origin = knightPosition.square,
+                destination = it,
+                capturedPiece = chessboard.getPieceAt(it),
+            )
+        }
 }
 
 
@@ -87,17 +92,17 @@ private fun getPawnEnPassantMove(position: Position, pawnPosition: PiecePosition
         return null
     }
     return pawnPosition.color.getPawnDiagonalSquareFunction()
-            .firstOrNull{ it.invoke(pawnPosition.square) == position.enPassantTargetSquare }?.let {
-                Move(
-                    piece = pawnPosition.piece,
-                    capturedPiece = when(pawnPosition.color) {
-                        Color.WHITE -> Piece.BLACK_PAWN
-                        Color.BLACK -> Piece.WHITE_PAWN
-                    },
-                    origin = pawnPosition.square,
-                    destination = position.enPassantTargetSquare,
-                )
-            }
+        .firstOrNull { it.invoke(pawnPosition.square) == position.enPassantTargetSquare }?.let {
+            Move(
+                piece = pawnPosition.piece,
+                capturedPiece = when (pawnPosition.color) {
+                    Color.WHITE -> Piece.BLACK_PAWN
+                    Color.BLACK -> Piece.WHITE_PAWN
+                },
+                origin = pawnPosition.square,
+                destination = position.enPassantTargetSquare,
+            )
+        }
 }
 
 private fun getPawnOneSquareAndTwoSquaresMoves(
@@ -107,8 +112,7 @@ private fun getPawnOneSquareAndTwoSquaresMoves(
     return pawnPiecePosition.color.getPawnAdvanceFunction().invoke(pawnPiecePosition.square)?.let { pawnDestination ->
         if (chessboard.isPiecePresentAt(pawnDestination)) {
             emptyList()
-        }
-        else {
+        } else {
             getOneSquarePawnMoves(pawnPiecePosition, pawnDestination)
                 .plus(getPawnTwoSquaresMove(chessboard = chessboard, pawnPiecePosition = pawnPiecePosition))
                 .filterNotNull()
@@ -122,17 +126,21 @@ private fun getPawnTwoSquaresMove(
 ): Move? {
     val hasPawnNotAlreadyMoved = pawnPiecePosition.square.rank == pawnPiecePosition.color.getPawnStartingRank()
     return hasPawnNotAlreadyMoved.ifTrue {
-        val destSquare = pawnPiecePosition.color.getPawnAdvanceFunction(advanceTwice = true).invoke(pawnPiecePosition.square)
+        val destSquare =
+            pawnPiecePosition.color.getPawnAdvanceFunction(advanceTwice = true).invoke(pawnPiecePosition.square)
         if (destSquare != null && chessboard.hasNoPiecePresentAt(destSquare)) {
             Move(piece = pawnPiecePosition.piece, origin = pawnPiecePosition.square, destination = destSquare)
-        }
-        else {
+        } else {
             null
         }
     }
 }
 
-private fun getOneSquarePawnMoves(pawnPosition: PiecePosition, destinationSquare: Square, pieceOnDestinationSquare : Piece? = null): List<Move> {
+private fun getOneSquarePawnMoves(
+    pawnPosition: PiecePosition,
+    destinationSquare: Square,
+    pieceOnDestinationSquare: Piece? = null
+): List<Move> {
     return getPromotedPieces(pawnPosition, destinationSquare).map {
         Move(
             piece = pawnPosition.piece,
@@ -172,14 +180,18 @@ private fun getPawnDiagonalsMoves(
         .flatMap { diagonalAdvanceSquare ->
             chessboard.getPieceAt(diagonalAdvanceSquare)
                 ?.takeIf { it.color == pawnPosition.color.opposite() }
-                ?.let { pieceAtDiagonal->
-                    getOneSquarePawnMoves(pawnPosition = pawnPosition, destinationSquare = diagonalAdvanceSquare, pieceOnDestinationSquare = pieceAtDiagonal)
+                ?.let { pieceAtDiagonal ->
+                    getOneSquarePawnMoves(
+                        pawnPosition = pawnPosition,
+                        destinationSquare = diagonalAdvanceSquare,
+                        pieceOnDestinationSquare = pieceAtDiagonal
+                    )
                 } ?: emptyList()
         }
 }
 
 private fun getQueenPseudoLegalMoves(chessboard: Chessboard, queenPosition: PiecePosition): List<Move> =
-        getBishopPseudoLegalMoves(chessboard, queenPosition) + getRookPseudoLegalMoves(chessboard, queenPosition)
+    getBishopPseudoLegalMoves(chessboard, queenPosition) + getRookPseudoLegalMoves(chessboard, queenPosition)
 
 private fun getRookPseudoLegalMoves(chessboard: Chessboard, rookPosition: PiecePosition): List<Move> {
     return getLegalMovesFollowingDirection(piecePosition = rookPosition, chessboard = chessboard) { it.up() } +
@@ -197,103 +209,108 @@ private fun getBishopPseudoLegalMoves(chessboard: Chessboard, bishopPosition: Pi
 
 private fun getKingPseudoLegalMoves(position: Position, kingPosition: PiecePosition): List<Move> {
     return listOfNotNull(
-            kingPosition.square.up(),
-            kingPosition.square.down(),
-            kingPosition.square.left(),
-            kingPosition.square.right(),
-            kingPosition.square.upLeft(),
-            kingPosition.square.upRight(),
-            kingPosition.square.downRight(),
-            kingPosition.square.downLeft()
+        kingPosition.square.up(),
+        kingPosition.square.down(),
+        kingPosition.square.left(),
+        kingPosition.square.right(),
+        kingPosition.square.upLeft(),
+        kingPosition.square.upRight(),
+        kingPosition.square.downRight(),
+        kingPosition.square.downLeft()
     )
-            .filterNot { position.chessboard.isPiecePresentAtAndHasColor(it, kingPosition.color) }
-            .map {
-                Move(
-                        piece = kingPosition.piece,
-                        origin = kingPosition.square,
-                        destination = it,
-                        capturedPiece = position.chessboard.getPieceAt(it)
-                )
-            }.plus(getCastleMoveIfPossible(position, kingPosition))
+        .filterNot { position.chessboard.isPiecePresentAtAndHasColor(it, kingPosition.color) }
+        .map {
+            Move(
+                piece = kingPosition.piece,
+                origin = kingPosition.square,
+                destination = it,
+                capturedPiece = position.chessboard.getPieceAt(it)
+            )
+        }.plus(getCastleMoveIfPossible(position, kingPosition))
 }
 
 private fun getCastleMove(
     position: Position,
     kingPosition: PiecePosition,
-    isKingCastle : Boolean,
+    isKingCastle: Boolean,
     isCurrentCastlePossible: Boolean,
     kingDestination: Square,
     kingCastlingPathSquares: List<Square>,
     squaresBetweenKingAndRook: List<Square>
-) : Move? {
-    if (!isCurrentCastlePossible) { return null }
-    if (position.chessboard.hasAtLeastOnePieceAt(squaresBetweenKingAndRook)) { return null }
-    val hasPieceAttackingKingPath = hasAPseudoLegalMovesSatisfying(kingPosition.color.opposite(), position.copyWithoutCastling()) {
-        kingCastlingPathSquares.contains(it.destination)
+): Move? {
+    if (!isCurrentCastlePossible) {
+        return null
     }
+    if (position.chessboard.hasAtLeastOnePieceAt(squaresBetweenKingAndRook)) {
+        return null
+    }
+    val hasPieceAttackingKingPath =
+        hasAPseudoLegalMovesSatisfying(kingPosition.color.opposite(), position.copyWithoutCastling()) {
+            kingCastlingPathSquares.contains(it.destination)
+        }
     return if (!hasPieceAttackingKingPath) {
         Move(
-                piece = kingPosition.piece,
-                origin = kingPosition.square,
-                destination = kingDestination,
-                isKingCastle = isKingCastle,
-                isQueenCastle = !isKingCastle,
+            piece = kingPosition.piece,
+            origin = kingPosition.square,
+            destination = kingDestination,
+            isKingCastle = isKingCastle,
+            isQueenCastle = !isKingCastle,
         )
     } else null
 }
 
 private fun Position.copyWithoutCastling() = copy(
-        castling = Castling(
-                isWhiteKingCastlePossible = false,
-                isWhiteQueenCastlePossible = false,
-                isBlackQueenCastlePossible = false,
-                isBlackKingCastlePossible = false
-        ),
+    castling = Castling(
+        isWhiteKingCastlePossible = false,
+        isWhiteQueenCastlePossible = false,
+        isBlackQueenCastlePossible = false,
+        isBlackKingCastlePossible = false
+    ),
 )
 
 private fun getCastleMoveIfPossible(position: Position, kingPosition: PiecePosition): List<Move> {
 
     return if (position.sideToMove == Color.WHITE) {
         listOfNotNull(
-                getCastleMove(
-                        position = position,
-                        kingPosition = kingPosition,
-                        isKingCastle = true,
-                        isCurrentCastlePossible = position.castling.isWhiteKingCastlePossible,
-                        kingDestination = Square.G1,
-                        kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
-                        squaresBetweenKingAndRook = listOf(Square.F1, Square.G1),
-                ),
-                getCastleMove(
-                        position = position,
-                        kingPosition = kingPosition,
-                        isKingCastle = false,
-                        isCurrentCastlePossible = position.castling.isWhiteQueenCastlePossible,
-                        kingDestination = Square.C1,
-                        kingCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
-                        squaresBetweenKingAndRook = listOf(Square.B1, Square.C1, Square.D1),
-                )
+            getCastleMove(
+                position = position,
+                kingPosition = kingPosition,
+                isKingCastle = true,
+                isCurrentCastlePossible = position.castling.isWhiteKingCastlePossible,
+                kingDestination = Square.G1,
+                kingCastlingPathSquares = listOf(Square.E1, Square.F1, Square.G1),
+                squaresBetweenKingAndRook = listOf(Square.F1, Square.G1),
+            ),
+            getCastleMove(
+                position = position,
+                kingPosition = kingPosition,
+                isKingCastle = false,
+                isCurrentCastlePossible = position.castling.isWhiteQueenCastlePossible,
+                kingDestination = Square.C1,
+                kingCastlingPathSquares = listOf(Square.E1, Square.D1, Square.C1),
+                squaresBetweenKingAndRook = listOf(Square.B1, Square.C1, Square.D1),
+            )
         )
     } else {
         listOfNotNull(
-                getCastleMove(
-                        position = position,
-                        kingPosition = kingPosition,
-                        isKingCastle = true,
-                        isCurrentCastlePossible = position.castling.isBlackKingCastlePossible,
-                        kingDestination = Square.G8,
-                        kingCastlingPathSquares = listOf(Square.E8, Square.F8, Square.G8),
-                        squaresBetweenKingAndRook = listOf(Square.F8, Square.G8),
-                ),
-                getCastleMove(
-                        position = position,
-                        kingPosition = kingPosition,
-                        isKingCastle = false,
-                        isCurrentCastlePossible = position.castling.isBlackQueenCastlePossible,
-                        kingDestination = Square.C8,
-                        kingCastlingPathSquares = listOf(Square.E8, Square.D8, Square.C8),
-                        squaresBetweenKingAndRook = listOf(Square.B8, Square.C8, Square.D8),
-                )
+            getCastleMove(
+                position = position,
+                kingPosition = kingPosition,
+                isKingCastle = true,
+                isCurrentCastlePossible = position.castling.isBlackKingCastlePossible,
+                kingDestination = Square.G8,
+                kingCastlingPathSquares = listOf(Square.E8, Square.F8, Square.G8),
+                squaresBetweenKingAndRook = listOf(Square.F8, Square.G8),
+            ),
+            getCastleMove(
+                position = position,
+                kingPosition = kingPosition,
+                isKingCastle = false,
+                isCurrentCastlePossible = position.castling.isBlackQueenCastlePossible,
+                kingDestination = Square.C8,
+                kingCastlingPathSquares = listOf(Square.E8, Square.D8, Square.C8),
+                squaresBetweenKingAndRook = listOf(Square.B8, Square.C8, Square.D8),
+            )
         )
     }
 }
@@ -308,13 +325,18 @@ private fun getLegalMovesFollowingDirection(
         chessboard.getPieceAt(newSquare)?.let { pieceAtNewSquare ->
             if (pieceAtNewSquare.color != piecePosition.piece.color) {
                 listOf(
-                        Move(piece = piecePosition.piece, origin = piecePosition.square, destination = newSquare, capturedPiece = pieceAtNewSquare)
+                    Move(
+                        piece = piecePosition.piece,
+                        origin = piecePosition.square,
+                        destination = newSquare,
+                        capturedPiece = pieceAtNewSquare
+                    )
                 )
             } else
                 emptyList()
         } ?: (
                 getLegalMovesFollowingDirection(piecePosition, newSquare, chessboard, direction).plus(
-                        Move(piece = piecePosition.piece, origin = piecePosition.square, destination = newSquare)
+                    Move(piece = piecePosition.piece, origin = piecePosition.square, destination = newSquare)
                 ))
     } ?: emptyList()
 }

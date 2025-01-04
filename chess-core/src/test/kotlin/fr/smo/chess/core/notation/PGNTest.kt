@@ -2,11 +2,7 @@ package fr.smo.chess.core.notation
 
 import fr.smo.chess.core.*
 import fr.smo.chess.core.Square.*
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.*
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
@@ -214,7 +210,8 @@ class PGNTest {
 
         @Test
         fun `should import a pgn with a promotion`() {
-            val importedGame = PGN.import("1. e4 e5 2. h3 g5 3. g4 h5 4. gxh5 Rh6 5. Bc4 Re6 6. h6 Rd6 7. h7 Re6 8. h8=Qe7")
+            val importedGame =
+                PGN.import("1. e4 e5 2. h3 g5 3. g4 h5 4. gxh5 Rh6 5. Bc4 Re6 6. h6 Rd6 7. h7 Re6 8. h8=Qe7")
             expectThat(importedGame.history.moves.last().promotedTo) isEqualTo Piece.WHITE_QUEEN
             expectThat(importedGame.chessboard.count { it.value == Piece.WHITE_PAWN }) isEqualTo 7
             expectThat(importedGame.chessboard.count { it.value == Piece.WHITE_QUEEN }) isEqualTo 2
@@ -235,7 +232,8 @@ class PGNTest {
 
         @Test
         fun `should import pgn with a castle move that checks`() {
-            val importedGame = PGN.import("""
+            val importedGame = PGN.import(
+                """
                     1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6 6.Bc4 Nc6 7.Nxc6 bxc6 8.e5 d5
                     9.exf6 dxc4 10.Qxd8+ Kxd8 11.fxe7+ Bxe7 12.Be3 Be6 13.O-O-O+ Kc8 14.Na4 Rb8
                     15.Bc5 Bg5+ 16.Kb1 Rb5 17.Bd4 Be7 18.Rhe1 Rd8 19.g3 g5 20.Nb6+ Kb7 21.Nxc4 Rbd5
@@ -243,12 +241,14 @@ class PGNTest {
                     29.Rd7+ Ke4 30.Rd2 Kf3 31.b4 e5 32.c4 e4 33.c5 Rf6 34.Rc2 Rf8 35.c6 h5 36.c7 Rc8
                     37.a4 h4 38.gxh4 gxh4 39.b5 h3 40.b6 Kg2 41.b7 Rxc7 42.Rxc7 Kxh2 43.b8=Q Kg2
                     44.Rg7+ Kh1 45.Qg3 h2 46.Qg2+  1-0  
-                """.trimIndent())
+                """.trimIndent()
+            )
         }
 
         @Test
         fun `should import pgn with an unknown result`() {
-            val importedGame = PGN.import("""
+            val importedGame = PGN.import(
+                """
                     1.c4 Nf6 2.g3 g6 3.Bg2 Bg7 4.Nc3 c5 5.e4 Nc6 6.Nge2 O-O 7.O-O Ne8 8.h3 Nc7
                     9.d3 Ne6 10.g4 Ned4 11.Ng3 e6 12.Be3 a6 13.Qd2 b5 14.f4 bxc4 15.dxc4 Rb8
                     16.b3 Bb7 17.Rac1 Ne7 18.g5 f5 19.gxf6 Bxf6 20.e5 Bh4 21.Nge4 Nef5 22.Bf2 Be7
@@ -256,7 +256,8 @@ class PGNTest {
                     30.Be4 Bh4 31.Bxf5 Rxf5 32.Qe4 Bxf2+ 33.Rxf2 Qh4 34.Qb7+ Kh6 35.Rcf1 Rd8
                     36.e6 d3 37.e7 Re8 38.Qd7 Qg3+ 39.Rg2 Qe3+ 40.Kh2 Rxe7 41.Qd8 Rxf4 42.Rg3 Rf2+
                     43.Rg2 Qf4+  *
-                """.trimIndent())
+                """.trimIndent()
+            )
             expectThat(importedGame.status) isEqualTo Status.UNKNOWN_RESULT
             expectThat(importedGame.status.gameIsOver).isTrue()
         }
@@ -265,11 +266,10 @@ class PGNTest {
         inner class ImportFamousPosition {
 
 
-
             @TestFactory
             fun testPgnImportOfMorphyGames(): Collection<DynamicTest> {
-               val morphyPgn = File("src/test/resources/morphy.pgn").readText(Charsets.UTF_8)
-               return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).mapIndexed { index, pgnGame ->
+                val morphyPgn = File("src/test/resources/morphy.pgn").readText(Charsets.UTF_8)
+                return morphyPgn.trimIndent().split("\\[Event.*]".toRegex()).mapIndexed { index, pgnGame ->
                     DynamicTest.dynamicTest("Imported Morphy game $index") {
                         println(pgnGame)
                         PGN.import(pgnGame)

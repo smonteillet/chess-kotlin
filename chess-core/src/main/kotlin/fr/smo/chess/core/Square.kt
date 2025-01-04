@@ -80,86 +80,86 @@ enum class Square(val file: File, val rank: Rank) {
     companion object {
 
         private val squareMaps: Map<File, Map<Rank, Square>> = mapOf(
-                FILE_A to mapOf(
-                        RANK_1 to A1,
-                        RANK_2 to A2,
-                        RANK_3 to A3,
-                        RANK_4 to A4,
-                        RANK_5 to A5,
-                        RANK_6 to A6,
-                        RANK_7 to A7,
-                        RANK_8 to A8
-                ),
-                FILE_B to mapOf(
-                        RANK_1 to B1,
-                        RANK_2 to B2,
-                        RANK_3 to B3,
-                        RANK_4 to B4,
-                        RANK_5 to B5,
-                        RANK_6 to B6,
-                        RANK_7 to B7,
-                        RANK_8 to B8
-                ),
-                FILE_C to mapOf(
-                        RANK_1 to C1,
-                        RANK_2 to C2,
-                        RANK_3 to C3,
-                        RANK_4 to C4,
-                        RANK_5 to C5,
-                        RANK_6 to C6,
-                        RANK_7 to C7,
-                        RANK_8 to C8
-                ),
-                FILE_D to mapOf(
-                        RANK_1 to D1,
-                        RANK_2 to D2,
-                        RANK_3 to D3,
-                        RANK_4 to D4,
-                        RANK_5 to D5,
-                        RANK_6 to D6,
-                        RANK_7 to D7,
-                        RANK_8 to D8
-                ),
-                FILE_E to mapOf(
-                        RANK_1 to E1,
-                        RANK_2 to E2,
-                        RANK_3 to E3,
-                        RANK_4 to E4,
-                        RANK_5 to E5,
-                        RANK_6 to E6,
-                        RANK_7 to E7,
-                        RANK_8 to E8
-                ),
-                FILE_F to mapOf(
-                        RANK_1 to F1,
-                        RANK_2 to F2,
-                        RANK_3 to F3,
-                        RANK_4 to F4,
-                        RANK_5 to F5,
-                        RANK_6 to F6,
-                        RANK_7 to F7,
-                        RANK_8 to F8
-                ),
-                FILE_G to mapOf(
-                        RANK_1 to G1,
-                        RANK_2 to G2,
-                        RANK_3 to G3,
-                        RANK_4 to G4,
-                        RANK_5 to G5,
-                        RANK_6 to G6,
-                        RANK_7 to G7,
-                        RANK_8 to G8
-                ),
-                FILE_H to mapOf(
-                        RANK_1 to H1,
-                        RANK_2 to H2,
-                        RANK_3 to H3,
-                        RANK_4 to H4,
-                        RANK_5 to H5,
-                        RANK_6 to H6,
-                        RANK_7 to H7,
-                        RANK_8 to H8
-                ),
+            FILE_A to mapOf(
+                RANK_1 to A1,
+                RANK_2 to A2,
+                RANK_3 to A3,
+                RANK_4 to A4,
+                RANK_5 to A5,
+                RANK_6 to A6,
+                RANK_7 to A7,
+                RANK_8 to A8
+            ),
+            FILE_B to mapOf(
+                RANK_1 to B1,
+                RANK_2 to B2,
+                RANK_3 to B3,
+                RANK_4 to B4,
+                RANK_5 to B5,
+                RANK_6 to B6,
+                RANK_7 to B7,
+                RANK_8 to B8
+            ),
+            FILE_C to mapOf(
+                RANK_1 to C1,
+                RANK_2 to C2,
+                RANK_3 to C3,
+                RANK_4 to C4,
+                RANK_5 to C5,
+                RANK_6 to C6,
+                RANK_7 to C7,
+                RANK_8 to C8
+            ),
+            FILE_D to mapOf(
+                RANK_1 to D1,
+                RANK_2 to D2,
+                RANK_3 to D3,
+                RANK_4 to D4,
+                RANK_5 to D5,
+                RANK_6 to D6,
+                RANK_7 to D7,
+                RANK_8 to D8
+            ),
+            FILE_E to mapOf(
+                RANK_1 to E1,
+                RANK_2 to E2,
+                RANK_3 to E3,
+                RANK_4 to E4,
+                RANK_5 to E5,
+                RANK_6 to E6,
+                RANK_7 to E7,
+                RANK_8 to E8
+            ),
+            FILE_F to mapOf(
+                RANK_1 to F1,
+                RANK_2 to F2,
+                RANK_3 to F3,
+                RANK_4 to F4,
+                RANK_5 to F5,
+                RANK_6 to F6,
+                RANK_7 to F7,
+                RANK_8 to F8
+            ),
+            FILE_G to mapOf(
+                RANK_1 to G1,
+                RANK_2 to G2,
+                RANK_3 to G3,
+                RANK_4 to G4,
+                RANK_5 to G5,
+                RANK_6 to G6,
+                RANK_7 to G7,
+                RANK_8 to G8
+            ),
+            FILE_H to mapOf(
+                RANK_1 to H1,
+                RANK_2 to H2,
+                RANK_3 to H3,
+                RANK_4 to H4,
+                RANK_5 to H5,
+                RANK_6 to H6,
+                RANK_7 to H7,
+                RANK_8 to H8
+            ),
         )
 
 

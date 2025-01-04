@@ -18,11 +18,11 @@ object PGN {
     private const val DRAWN_PGN = "1/2-1/2"
     private const val UNKNOWN_RESULT_PGN = "*"
 
-    private val PGN_MOVE_REGEX = "(?<originPiece>[NBQRK])?(?<originFileAdditionalInfo>[a-h])?(?<originRankAdditionalInfo>[1-8])?x?(?<destinationSquare>[a-h][1-8])(=(?<promotion>[NBQR]))?((?<check>\\+)|(?<checkmate>#))?".toRegex()
+    private val PGN_MOVE_REGEX =
+        "(?<originPiece>[NBQRK])?(?<originFileAdditionalInfo>[a-h])?(?<originRankAdditionalInfo>[1-8])?x?(?<destinationSquare>[a-h][1-8])(=(?<promotion>[NBQR]))?((?<check>\\+)|(?<checkmate>#))?".toRegex()
     private val PGN_MOVE_NUMBER_REGEX = "(([0-9]*)\\.( )?)".toRegex()
     private val PGN_COMMENT_BRACKET_REGEX = "\\[.*]".toRegex()
     private val PGN_COMMENT_CURLY_BRACKET_REGEX = "\\{.*}".toRegex()
-
 
 
     fun exportPGN(position: Position): String {
@@ -67,8 +67,11 @@ object PGN {
         ).orThrow()
     }
 
-    private fun extractOriginSquare(position: Position, pgnMove: PgnMove) : Square {
-        val candidateMoves = getPseudoLegalMovesRegardingDestination(position, PiecePosition(square = pgnMove.destination, piece = pgnMove.piece))
+    private fun extractOriginSquare(position: Position, pgnMove: PgnMove): Square {
+        val candidateMoves = getPseudoLegalMovesRegardingDestination(
+            position,
+            PiecePosition(square = pgnMove.destination, piece = pgnMove.piece)
+        )
             .filter {
                 it.piece == pgnMove.piece &&
                         it.destination == pgnMove.destination &&
@@ -82,11 +85,11 @@ object PGN {
         } else {
             candidateMoves.firstNotNullOf { move ->
                 position.applyMove(
-                        MoveCommand(
-                                origin = move.origin,
-                                destination = move.destination,
-                                promotedPiece = move.promotedTo?.type,
-                        )
+                    MoveCommand(
+                        origin = move.origin,
+                        destination = move.destination,
+                        promotedPiece = move.promotedTo?.type,
+                    )
                 ).let { outcome ->
                     when (outcome) {
                         is Success -> move
@@ -117,8 +120,8 @@ object PGN {
         position: Position,
         pgnMove: String,
         expectedCastlePgn: String,
-        castleMoveChecker : (Move) -> Boolean
-    ) : Position? {
+        castleMoveChecker: (Move) -> Boolean
+    ): Position? {
         if (pgnMove.replace("+", "") == expectedCastlePgn) {
             val castleMove = getAllPseudoLegalMovesForColor(position.sideToMove, position)
                 .firstOrNull { castleMoveChecker(it) }
@@ -133,7 +136,6 @@ object PGN {
         }
         return null
     }
-
 
 
     private fun moveToPgn(move: Move, isLastMove: Boolean): String {
@@ -176,14 +178,15 @@ object PGN {
         val pgnNotation: String,
     ) {
         companion object {
-            fun parse(pgnMove: String, color : Color): PgnMove {
+            fun parse(pgnMove: String, color: Color): PgnMove {
                 val matchResult = PGN_MOVE_REGEX.find(pgnMove)!!
-                val pieceType = matchResult.groups["originPiece"]?.value.let{ PieceType.fromPGNNotation(it ?: "") }
+                val pieceType = matchResult.groups["originPiece"]?.value.let { PieceType.fromPGNNotation(it ?: "") }
                 val piece = Piece.entries.first { it.color == color && it.type == pieceType }
                 val fromFileAdditionalInfo = matchResult.groups["originFileAdditionalInfo"]?.value?.let { File.at(it) }
-                val fromRankAdditionalInfo = matchResult.groups["originRankAdditionalInfo"]?.value?.let { Rank.at(it.toInt()) }
+                val fromRankAdditionalInfo =
+                    matchResult.groups["originRankAdditionalInfo"]?.value?.let { Rank.at(it.toInt()) }
                 val destinationSquare = matchResult.groups["destinationSquare"]?.value!!.let { Square.at(it) }
-                val promotedPiece = matchResult.groups["promotion"]?.value?.let{ PieceType.fromPGNNotation(it) }
+                val promotedPiece = matchResult.groups["promotion"]?.value?.let { PieceType.fromPGNNotation(it) }
                 val isCheck = matchResult.groups["check"] != null
                 val isCheckmate = matchResult.groups["checkmate"] != null
                 return PgnMove(

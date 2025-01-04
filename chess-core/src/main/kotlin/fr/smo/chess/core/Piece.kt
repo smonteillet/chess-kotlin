@@ -24,5 +24,4 @@ enum class Piece(
     BLACK_PAWN(PAWN, BLACK);
 
 
-
 }

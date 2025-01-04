@@ -30,7 +30,7 @@ data class Chessboard(
             .applyRookMovesAfterCastleIfNecessary(move)
     }
 
-    private fun removeEnPassantPawnIfNecessary(move: Move, enPassantTargetSquare: Square?) : Chessboard {
+    private fun removeEnPassantPawnIfNecessary(move: Move, enPassantTargetSquare: Square?): Chessboard {
         return getOpponentPawnThatHasBeenEnPassant(move, enPassantTargetSquare)?.let { enPassantPawn ->
             Chessboard(piecesOnBoard = piecesOnBoard - enPassantPawn)
         } ?: this

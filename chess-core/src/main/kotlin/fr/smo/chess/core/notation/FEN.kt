@@ -120,7 +120,7 @@ object FEN {
     }
 
     fun getChessboardFromFenPiecePlacement(fenPiecePlacement: String): Chessboard {
-        val board: MutableMap<Square,Piece> = mutableMapOf()
+        val board: MutableMap<Square, Piece> = mutableMapOf()
         val lines = fenPiecePlacement.split("/")
         var currentSquare = Square.A8
         for (lineIndex in 8 downTo 1) {

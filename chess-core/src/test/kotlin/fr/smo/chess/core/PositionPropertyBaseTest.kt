@@ -59,8 +59,8 @@ class PositionPropertyBaseTest {
             expectThat(position.chessboard.count { it.value == WHITE_BISHOP && !it.key.isLightSquare() }) isLessThanOrEqualTo 1
         }
         if (position.history.moves.none { it.promotedTo == BLACK_BISHOP }) {
-            expectThat(position.chessboard.count { it.value == BLACK_BISHOP && it.key.isLightSquare()}) isLessThanOrEqualTo 1
-            expectThat(position.chessboard.count { it.value == BLACK_BISHOP && !it.key.isLightSquare()}) isLessThanOrEqualTo 1
+            expectThat(position.chessboard.count { it.value == BLACK_BISHOP && it.key.isLightSquare() }) isLessThanOrEqualTo 1
+            expectThat(position.chessboard.count { it.value == BLACK_BISHOP && !it.key.isLightSquare() }) isLessThanOrEqualTo 1
         }
     }
 
@@ -135,21 +135,21 @@ class PositionPropertyBaseTest {
         val lastMove = position.history.moves.last()
         val movesWithoutLastMove = historyMoves.subList(0, historyMoves.lastIndex)
         if (lastMove.isKingCastle && lastMove.piece.color == Color.WHITE) {
-            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING  && it.origin != H1}).isTrue()
+            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING && it.origin != H1 }).isTrue()
             expectThat(position.chessboard.getPieceAt(H1)).isNull()
         }
         if (lastMove.isQueenCastle && lastMove.piece.color == Color.WHITE) {
-            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING  && it.origin != A1}).isTrue()
+            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING && it.origin != A1 }).isTrue()
             expectThat(position.chessboard.getPieceAt(B1)).isNull()
             expectThat(position.chessboard.getPieceAt(A1)).isNull()
         }
 
         if (lastMove.isKingCastle && lastMove.piece.color == Color.BLACK) {
-            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING  && it.origin != H8}).isTrue()
+            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING && it.origin != H8 }).isTrue()
             expectThat(position.chessboard.getPieceAt(H8)).isNull()
         }
         if (lastMove.isQueenCastle && lastMove.piece.color == Color.BLACK) {
-            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING  && it.origin != A8}).isTrue()
+            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING && it.origin != A8 }).isTrue()
             expectThat(position.chessboard.getPieceAt(B8)).isNull()
             expectThat(position.chessboard.getPieceAt(A8)).isNull()
         }

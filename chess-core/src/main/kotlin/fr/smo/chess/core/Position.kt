@@ -2,16 +2,18 @@ package fr.smo.chess.core
 
 import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
-import fr.smo.chess.core.algs.*
+import fr.smo.chess.core.algs.getPseudoLegalMoves
+import fr.smo.chess.core.algs.hasAPseudoLegalMovesSatisfying
+import fr.smo.chess.core.algs.isChecked
 import fr.smo.chess.core.utils.*
 
 data class Position(
-        val chessboard: Chessboard,
-        val history: History,
-        val sideToMove: Color = WHITE,
-        val castling: Castling,
-        val enPassantTargetSquare: Square? = null,
-        val forcedOutcome: ForcedOutcome? = null,
+    val chessboard: Chessboard,
+    val history: History,
+    val sideToMove: Color = WHITE,
+    val castling: Castling,
+    val enPassantTargetSquare: Square? = null,
+    val forcedOutcome: ForcedOutcome? = null,
 ) {
 
     private val isCheck: Boolean
@@ -49,7 +51,7 @@ data class Position(
         }
     }
 
-    fun forceOutcome(forcedOutcome: ForcedOutcome) : Position {
+    fun forceOutcome(forcedOutcome: ForcedOutcome): Position {
         return copy(forcedOutcome = forcedOutcome)
     }
 
@@ -63,28 +65,28 @@ data class Position(
 
     private fun hasNoLegalMove(): Boolean {
         return hasAPseudoLegalMovesSatisfying(sideToMove, this) { move ->
-                    when (this.unsafeMakeMove(move).isGamePositionLegal()) {
-                        is Success -> true
-                        is Failure -> false
-                    }
-                }.not()
+            when (this.unsafeMakeMove(move).isGamePositionLegal()) {
+                is Success -> true
+                is Failure -> false
+            }
+        }.not()
     }
 
 
-    private fun markMoveAsCheckedInHistoryIfNecessary() : Position {
+    private fun markMoveAsCheckedInHistoryIfNecessary(): Position {
         return isChecked(sideToMove, this).ifTrue {
-                copy(history = history.markLastMoveAsChecked())
-            } ?: this
+            copy(history = history.markLastMoveAsChecked())
+        } ?: this
     }
 
     private fun unsafeMakeMove(move: Move) =
-            Position(
-                    chessboard = chessboard.applyMove(move, enPassantTargetSquare),
-                    history = history.addMove(move),
-                    sideToMove = sideToMove.opposite(),
-                    castling = castling.updateCastlingAfterMove(move),
-                    enPassantTargetSquare = getEnPassantTargetSquare(move),
-            )
+        Position(
+            chessboard = chessboard.applyMove(move, enPassantTargetSquare),
+            history = history.addMove(move),
+            sideToMove = sideToMove.opposite(),
+            castling = castling.updateCastlingAfterMove(move),
+            enPassantTargetSquare = getEnPassantTargetSquare(move),
+        )
 
     private fun getEnPassantTargetSquare(move: Move): Square? {
         return if (move.piece == Piece.WHITE_PAWN && move.origin.rank == RANK_2 && move.destination.rank == RANK_4) {
@@ -95,17 +97,18 @@ data class Position(
             null
     }
 
-    private fun MoveCommand.toMove(position : Position): Outcome<MoveCommandError, Move> {
+    private fun MoveCommand.toMove(position: Position): Outcome<MoveCommandError, Move> {
         return getOriginPiecePosition(this).flatMap { piecePosition ->
             getPseudoLegalMoves(position, piecePosition)
                 .firstOrNull { it.destination == this.destination && it.promotedTo?.type == this.promotedPiece }
                 ?.let { Success(it) }
-                ?: Failure(IllegalMove(this.origin,this.destination))
+                ?: Failure(IllegalMove(this.origin, this.destination))
         }
     }
 
     private fun getOriginPiecePosition(moveCommand: MoveCommand): Outcome<MoveCommandError, PiecePosition> {
-        return chessboard.getPieceAt(moveCommand.origin)?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
+        return chessboard.getPieceAt(moveCommand.origin)
+            ?.let { Success(PiecePosition(square = moveCommand.origin, piece = it)) }
             ?: Failure(PieceNotFound(moveCommand.origin))
     }
 
@@ -118,7 +121,7 @@ data class Position(
     fun isDraw() = history.isFiftyMoveRules || history.isThreeFoldRepetition || isStaleMate()
 
 
-    enum class ForcedOutcome{
+    enum class ForcedOutcome {
         BLACK_RESIGN,
         WHITE_RESIGN,
         DRAW_AGREEMENT,

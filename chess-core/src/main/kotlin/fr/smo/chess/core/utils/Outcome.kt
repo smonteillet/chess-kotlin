@@ -1,7 +1,5 @@
 package fr.smo.chess.core.utils
 
-import java.lang.Exception
-
 sealed class Outcome<out ERR : OutcomeError, out T> {
 
     fun <U> map(mapFn: (T) -> U): Outcome<ERR, U> = when (this) {
@@ -14,7 +12,7 @@ sealed class Outcome<out ERR : OutcomeError, out T> {
         is Failure -> null
     }
 
-    fun orThrow(exceptionSupplier: (ERR) -> Exception = { IllegalStateException(it.toString()) }) : T = when (this) {
+    fun orThrow(exceptionSupplier: (ERR) -> Exception = { IllegalStateException(it.toString()) }): T = when (this) {
         is Success -> value
         is Failure -> throw exceptionSupplier.invoke(error)
     }
@@ -22,15 +20,15 @@ sealed class Outcome<out ERR : OutcomeError, out T> {
 
 // it is not possible to put this directly in Outcome
 fun <E : OutcomeError, T, U> Outcome<E, T>.flatMap(f: (T) -> Outcome<E, U>): Outcome<E, U> =
-        when (this) {
-            is Success -> f(value)
-            is Failure -> this
-        }
+    when (this) {
+        is Success -> f(value)
+        is Failure -> this
+    }
 
 data class Success<T>(val value: T) : Outcome<Nothing, T>()
-data class Failure<ERR : OutcomeError>(val error :ERR) : Outcome<ERR, Nothing>()
+data class Failure<ERR : OutcomeError>(val error: ERR) : Outcome<ERR, Nothing>()
 
 interface OutcomeError {
-    val message : String
+    val message: String
 }
 

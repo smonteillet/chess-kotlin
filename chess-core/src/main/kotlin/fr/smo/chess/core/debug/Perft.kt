@@ -1,6 +1,8 @@
 package fr.smo.chess.core.debug
 
-import fr.smo.chess.core.*
+import fr.smo.chess.core.MoveCommand
+import fr.smo.chess.core.Position
+import fr.smo.chess.core.Status
 import fr.smo.chess.core.algs.getAllPseudoLegalMovesForColor
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
@@ -10,11 +12,11 @@ import java.util.concurrent.atomic.AtomicLong
 // https://www.chessprogramming.org/Perft_Results#cite_note-1
 
 data class PerftResult(
-        val nodesCount: Long = 0,
-        val captures: Long = 0,
-        val checkMates: Long = 0,
-        val castles: Long = 0,
-        val checks: Long = 0,
+    val nodesCount: Long = 0,
+    val captures: Long = 0,
+    val checkMates: Long = 0,
+    val castles: Long = 0,
+    val checks: Long = 0,
 )
 
 class Perft {
@@ -35,11 +37,11 @@ class Perft {
         enPassant.set(0)
         perftRec(position, depth)
         return PerftResult(
-                nodesCount = nodesCount.get(),
-                captures = captures.get(),
-                checkMates = checkMates.get(),
-                castles = castles.get(),
-                checks = checks.get(),
+            nodesCount = nodesCount.get(),
+            captures = captures.get(),
+            checkMates = checkMates.get(),
+            castles = castles.get(),
+            checks = checks.get(),
         )
     }
 
@@ -49,13 +51,13 @@ class Perft {
             return
         }
         return getAllPseudoLegalMovesForColor(position.sideToMove, position)
-                .map { MoveCommand(origin = it.origin, destination = it.destination, promotedPiece = it.promotedTo?.type) }
-                .forEach { moveCommand ->
-                    when (val moveOutcome = position.applyMove(moveCommand)) {
-                        is Success -> perftRec(moveOutcome.value, depth - 1)
-                        is Failure -> {}
-                    }
+            .map { MoveCommand(origin = it.origin, destination = it.destination, promotedPiece = it.promotedTo?.type) }
+            .forEach { moveCommand ->
+                when (val moveOutcome = position.applyMove(moveCommand)) {
+                    is Success -> perftRec(moveOutcome.value, depth - 1)
+                    is Failure -> {}
                 }
+            }
     }
 
     private fun incrementCounters(position: Position) {

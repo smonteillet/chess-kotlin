@@ -3,9 +3,9 @@ package fr.smo.chess.core.fixtures
 import fr.smo.chess.core.Color
 import fr.smo.chess.core.Color.BLACK
 import fr.smo.chess.core.Color.WHITE
-import fr.smo.chess.core.Position
 import fr.smo.chess.core.GameFactory
 import fr.smo.chess.core.MoveCommand
+import fr.smo.chess.core.Position
 import fr.smo.chess.core.notation.FEN.exportFEN
 import fr.smo.chess.core.notation.PGN.exportPGN
 
@@ -36,6 +36,6 @@ class GameLoop(
 }
 
 interface Player {
-    fun nextPlay(position: Position) : MoveCommand
-    fun registerColor(colorForTheGame : Color)
+    fun nextPlay(position: Position): MoveCommand
+    fun registerColor(colorForTheGame: Color)
 }

@@ -11,7 +11,7 @@ internal class ChessboardTest {
 
     private val board = Chessboard(
         piecesOnBoard = mapOf(
-                A1 to  WHITE_ROOK
+            A1 to WHITE_ROOK
         )
     )
 

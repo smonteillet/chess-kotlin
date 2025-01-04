@@ -12,17 +12,17 @@ internal class SquareTest {
 
     @Test
     fun up() {
-        expectThat(D4.up()) isEqualTo  D5
+        expectThat(D4.up()) isEqualTo D5
     }
 
     @Test
     fun upLeft() {
-        expectThat(D4.upLeft()) isEqualTo  C5
+        expectThat(D4.upLeft()) isEqualTo C5
     }
 
     @Test
     fun upRight() {
-        expectThat(D4.upRight()) isEqualTo  E5
+        expectThat(D4.upRight()) isEqualTo E5
     }
 
 
@@ -80,6 +80,7 @@ internal class SquareTest {
     fun testToTheVeryLeft() {
         expectThat(H7.toTheVeryLeft()) isEqualTo A7
     }
+
     @Test
     fun testWithRow() {
         expectThat(H7.withRank(Rank.RANK_3)) isEqualTo H3

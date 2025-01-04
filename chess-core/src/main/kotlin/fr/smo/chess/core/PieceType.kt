@@ -1,6 +1,6 @@
 package fr.smo.chess.core
 
-enum class PieceType(val pgnNotation: String, val isPromotable : Boolean) {
+enum class PieceType(val pgnNotation: String, val isPromotable: Boolean) {
     PAWN("", false),
     BISHOP("B", true),
     KNIGHT("N", true),
