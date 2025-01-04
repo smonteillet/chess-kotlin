@@ -42,7 +42,7 @@ class ThreeCheckTest {
                 2. c4 e6 
                 3. Qa4+ Nc6 
                 4. Qb3 Nb8 
-            """.trimIndent()
+            """
         )
         // when
         val updatedGame = game.applyMove(
@@ -59,7 +59,7 @@ class ThreeCheckTest {
             pgn = """
                 1. f4 e5 
                 2. g4 
-            """.trimIndent()
+            """
         )
         // when
         val updatedGame = game.applyMove(
