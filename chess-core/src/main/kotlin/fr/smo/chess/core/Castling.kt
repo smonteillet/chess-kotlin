@@ -1,5 +1,7 @@
 package fr.smo.chess.core
 
+import fr.smo.chess.core.Square.*
+
 data class Castles(val castles : List<Castle>) {
     fun updateCastlesAfterMove(move: Move): Castles {
         return Castles(
@@ -45,21 +47,19 @@ data class Castle(
     val rookStartSquare: Square,
     val isCastleStillPossible: Boolean = true,
     val kingDestinationSquare: Square =  when (color) {
-        Color.WHITE -> if (castleType == CastleType.LONG) Square.C1 else Square.G1
-        Color.BLACK -> if (castleType == CastleType.LONG) Square.C8 else Square.G8
+        Color.WHITE -> if (castleType == CastleType.LONG) C1 else G1
+        Color.BLACK -> if (castleType == CastleType.LONG) C8 else G8
     },
     val rookDestinationSquare: Square =  when (color) {
-        Color.WHITE -> if (castleType == CastleType.LONG) Square.D1 else Square.F1
-        Color.BLACK -> if (castleType == CastleType.LONG) Square.D8 else Square.F8
+        Color.WHITE -> if (castleType == CastleType.LONG) D1 else F1
+        Color.BLACK -> if (castleType == CastleType.LONG) D8 else F8
     },
-    val kingCastlingPathSquares : List<Square> = when (color) {
-        Color.WHITE -> if (castleType == CastleType.SHORT) listOf(Square.E1, Square.F1, Square.G1) else listOf(Square.E1, Square.D1, Square.C1)
-        Color.BLACK -> if (castleType == CastleType.SHORT) listOf(Square.E8, Square.F8, Square.G8) else listOf(Square.E8, Square.D8, Square.C8)
-    },
-    val squaresBetweenKingAndRook : List<Square> = when (color) {
-        Color.WHITE -> if (castleType == CastleType.SHORT) listOf(Square.F1, Square.G1) else listOf(Square.B1, Square.C1, Square.D1)
-        Color.BLACK -> if (castleType == CastleType.SHORT) listOf(Square.F8, Square.G8) else listOf(Square.B8, Square.C8, Square.D8)
-    },
+    val kingCastlingPathSquares : List<Square> = kingStartSquare.getSquareBetween(
+        otherSquare = kingDestinationSquare,
+        includeLeftSquare = castleType == CastleType.SHORT,
+        includeRightSquare = castleType == CastleType.LONG,
+    ),
+    val squaresBetweenKingAndRook : List<Square> = kingStartSquare.getSquareBetween(rookStartSquare, includeLeftSquare = false),
 ) {
 
     fun updateAfterMove(move : Move) : Castle {

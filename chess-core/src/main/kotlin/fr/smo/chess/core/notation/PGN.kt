@@ -8,6 +8,7 @@ import fr.smo.chess.core.algs.getPseudoLegalMovesRegardingDestination
 import fr.smo.chess.core.utils.Failure
 import fr.smo.chess.core.utils.Success
 import fr.smo.chess.core.utils.ifTrue
+import fr.smo.chess.core.variant.Chess960
 import fr.smo.chess.core.variant.Standard
 import fr.smo.chess.core.variant.Variant
 
@@ -41,7 +42,12 @@ object PGN {
         return "$pgnHistory $pgnOutcome"
     }
 
-    fun importPGN(pgn: String, variant: Variant = Standard): Position {
+    fun importPGN(pgn: String, variant: Variant = Standard, chess960StartingPosition : String? = null): Position {
+        val startingPosition = when (variant) {
+            Chess960 -> GameFactory.create960Game(startingPosition = chess960StartingPosition)
+            else -> GameFactory.createGame(variant)
+        }
+
         return pgn.trim()
             .replace(PGN_COMMENT_BRACKET_REGEX, "")
             .replace(PGN_COMMENT_CURLY_BRACKET_REGEX, "")
@@ -49,8 +55,7 @@ object PGN {
             .split(" ")
             .map { it.trim().replace(PGN_MOVE_NUMBER_REGEX, "") }
             .filter { it.isNotBlank() }
-            .fold(GameFactory.createGame(variant)) { currentGame, pgnMove -> applyPGNMove(currentGame, pgnMove) }
-
+            .fold(startingPosition) { currentGame, pgnMove -> applyPGNMove(currentGame, pgnMove) }
     }
 
     private fun applyPGNMove(position: Position, pgnMoveStr: String): Position {

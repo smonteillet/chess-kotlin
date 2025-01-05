@@ -6,6 +6,7 @@ import fr.smo.chess.core.notation.FEN.importFEN
 import fr.smo.chess.core.notation.PGN.importPGN
 import fr.smo.chess.core.notation.STARTING_STANDARD_POSITION_FEN
 import fr.smo.chess.core.renderer.GameRenderer
+import fr.smo.chess.core.variant.Chess960
 import fr.smo.chess.core.variant.Standard
 import fr.smo.chess.core.variant.Variant
 
@@ -14,6 +15,10 @@ object GameStateFixtures {
 
     fun givenAChessGame(fullFEN: String = STARTING_STANDARD_POSITION_FEN): Position {
         return importFEN(fullFEN).apply { render(this) }
+    }
+
+    fun givenAChess960Game(startingPosition : String, pgn: String): Position {
+        return importPGN(pgn, Chess960, startingPosition).apply { render(this) }
     }
 
     fun givenAChessGameWithHistory(pgn: String, variant: Variant = Standard): Position {

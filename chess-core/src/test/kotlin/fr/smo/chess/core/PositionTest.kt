@@ -544,16 +544,13 @@ class PositionTest {
     inner class Castle {
 
         @Test
-        fun `should be able to castle queen side if there is a piece on the b file`() {
+        fun `should not be able to castle queen side if there is a piece on the b file`() {
             // Given
             val game = givenAChessGame("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/5Q1p/PPPBBPPP/RN2K2R w KQkq - 1 1")
-            // When
+            // When Then
             expectThrows<IllegalStateException> {
                 game.applyMoves(MoveCommand(E1, C1)).orThrow()
             }
-
-            // Then
-
         }
 
         @Test

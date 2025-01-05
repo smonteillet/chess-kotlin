@@ -22,6 +22,10 @@ data class Chessboard(
 
     fun hasAtLeastOnePieceAt(squares: List<Square>): Boolean = squares.any { getPieceAt(it) != null }
 
+    fun getPiecesSquares(piece: Piece) : List<Square> = piecesOnBoard
+        .filter { it.value == piece }
+        .map { it.key }
+
     fun applyMove(move: Move, enPassantTargetSquare: Square?, castles: Castles): Chessboard {
         val newBoard = piecesOnBoard - move.origin - move.destination + (move.destination to move.piece)
         return Chessboard(piecesOnBoard = newBoard)
