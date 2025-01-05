@@ -61,13 +61,18 @@ data class Chessboard(
     }
 
     private fun applyRookMovesAfterCastleIfNecessary(move: Move, castles: Castles): Chessboard {
-        val newPiecesOnBoard = if (move.isQueenCastle || move.isKingCastle) {
+        val newPiecesOnBoard = if (move.isCastle) {
             val impactedCastle = castles.getCastle(
                 color = move.piece.color,
                 castleType = if (move.isKingCastle) CastleType.SHORT else CastleType.LONG
             )
             val rook = if (move.piece.color == Color.WHITE) Piece.WHITE_ROOK else Piece.BLACK_ROOK
-            piecesOnBoard - impactedCastle.rookStartSquare + (impactedCastle.rookDestinationSquare to rook)
+            val updatedPiecesOnBoard =
+                // specific case for Chess 960 when king lands on rook square during castle, example position: nbrkqnbr
+                if (piecesOnBoard[impactedCastle.rookStartSquare]?.type != PieceType.KING) {
+                    piecesOnBoard - impactedCastle.rookStartSquare
+                } else piecesOnBoard
+            updatedPiecesOnBoard + (impactedCastle.rookDestinationSquare to rook)
         } else piecesOnBoard
         return Chessboard(newPiecesOnBoard)
     }

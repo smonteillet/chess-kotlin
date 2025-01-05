@@ -232,29 +232,29 @@ private fun getKingPseudoLegalMoves(position: Position, kingPosition: PiecePosit
 private fun getCastleMove(
     position: Position,
     kingPosition: PiecePosition,
-    isKingCastle: Boolean,
-    isCurrentCastlePossible: Boolean,
-    kingDestination: Square,
-    kingCastlingPathSquares: List<Square>,
-    squaresBetweenKingAndRook: List<Square>
+    castle: Castle
 ): Move? {
-    if (!isCurrentCastlePossible) {
+    if (!castle.isCastleStillPossible) {
         return null
     }
-    if (position.chessboard.hasAtLeastOnePieceAt(squaresBetweenKingAndRook)) {
+    val hasPieceOnRookOrKingPath = (castle.rookCastlingPathSquares + castle.kingCastlingPathSquares)
+        .filter { it != castle.rookStartSquare }
+        .filter { it != castle.kingStartSquare }
+        .any { position.chessboard.getPieceAt(it) != null }
+    if (hasPieceOnRookOrKingPath) {
         return null
     }
     val hasPieceAttackingKingPath =
         hasAPseudoLegalMovesSatisfying(kingPosition.color.opposite(), position.copyWithoutCastling()) {
-            kingCastlingPathSquares.contains(it.destination)
+            castle.kingCastlingPathSquares.contains(it.destination)
         }
     return if (!hasPieceAttackingKingPath) {
         Move(
             piece = kingPosition.piece,
             origin = kingPosition.square,
-            destination = kingDestination,
-            isKingCastle = isKingCastle,
-            isQueenCastle = !isKingCastle,
+            destination = castle.kingDestinationSquare,
+            isKingCastle = castle.castleType == CastleType.SHORT,
+            isQueenCastle = castle.castleType == CastleType.LONG,
         )
     } else null
 }
@@ -268,11 +268,7 @@ private fun getCastleMoveIfPossible(position: Position, kingPosition: PiecePosit
             getCastleMove(
                 position = position,
                 kingPosition = kingPosition,
-                isKingCastle = it.castleType == CastleType.SHORT,
-                isCurrentCastlePossible = it.isCastleStillPossible,
-                kingDestination = it.kingDestinationSquare,
-                kingCastlingPathSquares = it.kingCastlingPathSquares,
-                squaresBetweenKingAndRook = it.squaresBetweenKingAndRook,
+                castle = it,
             )
         }
 }

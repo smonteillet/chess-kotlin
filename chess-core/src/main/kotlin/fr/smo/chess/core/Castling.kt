@@ -46,20 +46,16 @@ data class Castle(
     val kingStartSquare: Square,
     val rookStartSquare: Square,
     val isCastleStillPossible: Boolean = true,
-    val kingDestinationSquare: Square =  when (color) {
+    val kingDestinationSquare: Square = when (color) {
         Color.WHITE -> if (castleType == CastleType.LONG) C1 else G1
         Color.BLACK -> if (castleType == CastleType.LONG) C8 else G8
     },
-    val rookDestinationSquare: Square =  when (color) {
+    val rookDestinationSquare: Square = when (color) {
         Color.WHITE -> if (castleType == CastleType.LONG) D1 else F1
         Color.BLACK -> if (castleType == CastleType.LONG) D8 else F8
     },
-    val kingCastlingPathSquares : List<Square> = kingStartSquare.getSquareBetween(
-        otherSquare = kingDestinationSquare,
-        includeLeftSquare = castleType == CastleType.SHORT,
-        includeRightSquare = castleType == CastleType.LONG,
-    ),
-    val squaresBetweenKingAndRook : List<Square> = kingStartSquare.getSquareBetween(rookStartSquare, includeLeftSquare = false),
+    val kingCastlingPathSquares: List<Square> = kingStartSquare.getSquareBetweenIncludingBounds(kingDestinationSquare),
+    val rookCastlingPathSquares: List<Square> = rookStartSquare.getSquareBetweenIncludingBounds(rookDestinationSquare)
 ) {
 
     fun updateAfterMove(move : Move) : Castle {

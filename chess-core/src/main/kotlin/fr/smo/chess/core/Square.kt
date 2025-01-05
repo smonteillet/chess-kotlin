@@ -189,29 +189,24 @@ enum class Square(val file: File, val rank: Rank) {
         }
     }
 
-    fun getSquareBetween(
+    fun getSquareBetweenIncludingBounds(
         otherSquare: Square,
-        includeLeftSquare : Boolean = false,
-        includeRightSquare : Boolean = false,
     ): List<Square> {
         // FIXME this implementation hurts a little bit the wannabee functional programmer that I am
         if (this == otherSquare) {
-            return if (includeLeftSquare || includeRightSquare) {
-                listOf(this)
-            } else emptyList()
+            return listOf(this)
         }
         val (leftSquare,rightSquare) = if (this.file.value > otherSquare.file.value) {
             otherSquare to this
         } else this to otherSquare
-        var currentSquare = if (includeLeftSquare) leftSquare else leftSquare.right()!!
+        var currentSquare = leftSquare
         val squareInBetween = mutableListOf<Square>()
         while (currentSquare != rightSquare) {
             squareInBetween.add(currentSquare)
             currentSquare = currentSquare.right()!!
         }
-        if (includeRightSquare) {
-            squareInBetween.add(rightSquare)
-        }
+        squareInBetween.add(rightSquare)
+
         return squareInBetween
     }
 

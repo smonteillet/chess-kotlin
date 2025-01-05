@@ -69,7 +69,7 @@ class Perft {
         (position.history.moves.last().isCheck).ifTrue {
             checks.incrementAndGet()
         }
-        (position.history.moves.last().isKingCastle || position.history.moves.last().isQueenCastle).ifTrue {
+        (position.history.moves.last().isCastle).ifTrue {
             castles.incrementAndGet()
         }
         if (position.status == Status.BLACK_WIN || position.status == Status.WHITE_WIN) {

@@ -10,4 +10,7 @@ data class Move(
     val isKingCastle: Boolean = false,
     val isQueenCastle: Boolean = false,
     val isCheck: Boolean = false,
-)
+) {
+    val isCastle : Boolean
+        get() = isQueenCastle || isKingCastle
+}
