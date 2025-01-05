@@ -1,9 +1,11 @@
 package fr.smo.chess.core
 
 import fr.smo.chess.core.Piece.*
-import fr.smo.chess.core.Square.*
+
 import fr.smo.chess.core.fixtures.GameLoop
 import fr.smo.chess.core.fixtures.RandomAIPlayer
+import fr.smo.chess.core.notation.PGN.exportPGN
+import fr.smo.chess.core.variant.Chess960
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -31,7 +33,7 @@ class PositionPropertyBaseTest {
     ) {
         val player1 = RandomAIPlayer(seed)
         val player2 = RandomAIPlayer(seed - 1) // seed - 1 because we don't want mirror match
-        GameLoop(afterMoveCallback = { assertGameStateInvariantsAfterEachMove(it) }).run(player1, player2)
+        GameLoop(seed = seed, afterMoveCallback = { assertGameStateInvariantsAfterEachMove(it) }).run(player1, player2)
     }
 
     @ParameterizedTest
@@ -120,33 +122,30 @@ class PositionPropertyBaseTest {
         val historyMoves = position.history.moves
         val lastMove = position.history.moves.last()
         val movesWithoutLastMove = historyMoves.subList(0, historyMoves.lastIndex)
-        if (lastMove.isKingCastle && lastMove.piece.color == Color.WHITE) {
-            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING && it.origin != H1 }).isTrue()
-            expectThat(position.chessboard.getPieceAt(H1)).isNull()
-        }
-        if (lastMove.isQueenCastle && lastMove.piece.color == Color.WHITE) {
-            expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING && it.origin != A1 }).isTrue()
-            expectThat(position.chessboard.getPieceAt(B1)).isNull()
-            expectThat(position.chessboard.getPieceAt(A1)).isNull()
-        }
 
-        if (lastMove.isKingCastle && lastMove.piece.color == Color.BLACK) {
-            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING && it.origin != H8 }).isTrue()
-            expectThat(position.chessboard.getPieceAt(H8)).isNull()
-        }
-        if (lastMove.isQueenCastle && lastMove.piece.color == Color.BLACK) {
-            expectThat(movesWithoutLastMove.all { it.piece != BLACK_KING && it.origin != A8 }).isTrue()
-            expectThat(position.chessboard.getPieceAt(B8)).isNull()
-            expectThat(position.chessboard.getPieceAt(A8)).isNull()
+        if (lastMove.isCastle) {
+            position.castles.castles
+                .filter { it.isCastleStillPossible }
+                .filter { it.color == lastMove.piece.color}
+                .filter { it.castleType == CastleType.SHORT && lastMove.isKingCastle || lastMove.isQueenCastle && it.castleType == CastleType.LONG }
+                .forEach { castle ->
+                    expectThat(movesWithoutLastMove.all { it.piece != WHITE_KING && it.origin != castle.rookStartSquare }).isTrue()
+                    expectThat(position.chessboard.getPieceAt(castle.rookStartSquare)).isNull()
+                    if (castle.castleType == CastleType.LONG) {
+                        expectThat(position.chessboard.getPieceAt(castle.rookStartSquare.right()!!)).isNull()
+                    }
+                }
         }
     }
 
     private fun assertThatLastMovingHasLeftABlankSquareAfterMoving(position: Position) {
-        expectThat(
-            position.history.moves.last().let {
-                position.chessboard.getPieceAt(it.origin)
-            }
-        ).isNull()
+        if (position.variant != Chess960 || !position.history.lastMove!!.isCastle) {
+            expectThat(
+                position.history.moves.last().let {
+                    position.chessboard.getPieceAt(it.origin)
+                }
+            ).isNull()
+        }
     }
 
     private fun assertThatSumOfCaptureAndRemainingPieceIs32(position: Position) {
@@ -154,7 +153,7 @@ class PositionPropertyBaseTest {
         val wholePieceCount = position.history.moves.count { it.capturedPiece != null } +
                 position.chessboard.numberOfRemainingPieces()
         if (wholePieceCount != 32) {
-            throw IllegalStateException()
+            throw IllegalStateException(exportPGN(position))
         }
         expectThat(
             position.history.moves.count { it.capturedPiece != null } +
