@@ -12,9 +12,10 @@ data object ThreeCheck : Variant() {
     }
 
     private fun hasAtLeastThreeChecks(position: Position): Boolean {
-        val lastMovedColor = position.history.lastMovedColor!!
-        return position.history.moves
-            .filter { it.piece.color == lastMovedColor }
-            .count { it.isCheck } >= 3
+        return position.history.lastMovedColor?.let { lastMovedColor ->
+            position.history.moves
+                .filter { it.piece.color == lastMovedColor }
+                .count { it.isCheck } >= 3
+        } ?: false
     }
 }
