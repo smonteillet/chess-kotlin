@@ -19,7 +19,7 @@ allprojects {
 	}
 
 	dependencies {
-		val junitVersion = "5.10.2"
+		val junitVersion = "5.11.4"
 		val striktVersion = "0.34.1"
 		implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
