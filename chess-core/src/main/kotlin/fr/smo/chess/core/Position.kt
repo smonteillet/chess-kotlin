@@ -4,7 +4,6 @@ import fr.smo.chess.core.Color.WHITE
 import fr.smo.chess.core.Rank.*
 import fr.smo.chess.core.algs.getPseudoLegalMoves
 import fr.smo.chess.core.algs.hasAPseudoLegalMovesSatisfying
-import fr.smo.chess.core.algs.isChecked
 import fr.smo.chess.core.utils.*
 import fr.smo.chess.core.variant.Standard
 import fr.smo.chess.core.variant.Variant
@@ -59,10 +58,16 @@ data class Position(
     }
 
     private fun isGamePositionLegal(): Outcome<MoveCommandError, Position> {
-        return if (isChecked(sideToMove.opposite(), this)) {
+        return if (isChecked(sideToMove.opposite())) {
             Failure(CannotLeaveYourOwnKingInCheck(history))
         } else {
             Success(this)
+        }
+    }
+
+    private fun isChecked(kingColorThatMayBeChecked: Color): Boolean {
+        return hasAPseudoLegalMovesSatisfying(kingColorThatMayBeChecked.opposite(), this) { move ->
+            move.capturedPiece?.type == PieceType.KING
         }
     }
 
@@ -77,7 +82,7 @@ data class Position(
 
 
     private fun markMoveAsCheckedInHistoryIfNecessary(): Position {
-        return isChecked(sideToMove, this).ifTrue {
+        return isChecked(sideToMove).ifTrue {
             copy(history = history.markLastMoveAsChecked())
         } ?: this
     }
