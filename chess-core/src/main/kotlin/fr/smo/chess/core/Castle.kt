@@ -10,28 +10,16 @@ data class Castles(val castles : List<Castle>) {
     }
 
     val isBlackKingCastlePossible : Boolean
-        get() = castles
-            .filter { it.color == Color.BLACK }
-            .firstOrNull { it.castleType == CastleType.SHORT }
-            ?.isCastleStillPossible ?: false
+        get() = getCastle(Color.BLACK, CastleType.SHORT).isCastleStillPossible
 
     val isBlackQueenCastlePossible : Boolean
-        get() = castles
-            .filter { it.color == Color.BLACK }
-            .firstOrNull { it.castleType == CastleType.LONG }
-            ?.isCastleStillPossible ?: false
+        get() = getCastle(Color.BLACK, CastleType.LONG).isCastleStillPossible
 
     val isWhiteKingCastlePossible : Boolean
-        get() = castles
-            .filter { it.color == Color.WHITE }
-            .firstOrNull { it.castleType == CastleType.SHORT }
-            ?.isCastleStillPossible ?: false
+        get() = getCastle(Color.WHITE, CastleType.SHORT).isCastleStillPossible
 
     val isWhiteQueenCastlePossible : Boolean
-        get() = castles
-            .filter { it.color == Color.WHITE }
-            .firstOrNull { it.castleType == CastleType.LONG }
-            ?.isCastleStillPossible ?: false
+        get() = getCastle(Color.WHITE, CastleType.LONG).isCastleStillPossible
 
     fun getCastle(color : Color, castleType: CastleType) : Castle {
         return castles
@@ -57,6 +45,12 @@ data class Castle(
     val kingCastlingPathSquares: List<Square> = kingStartSquare.getSquareBetweenIncludingBounds(kingDestinationSquare),
     val rookCastlingPathSquares: List<Square> = rookStartSquare.getSquareBetweenIncludingBounds(rookDestinationSquare)
 ) {
+
+    val kingPiece
+        get() = when (color) {
+            Color.WHITE -> Piece.WHITE_KING
+            Color.BLACK -> Piece.BLACK_KING
+        }
 
     fun updateAfterMove(move : Move) : Castle {
         val myKingHasMoved = move.piece.type == PieceType.KING && move.piece.color == color

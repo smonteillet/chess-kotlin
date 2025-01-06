@@ -226,14 +226,10 @@ private fun getKingPseudoLegalMoves(position: Position, kingPosition: PiecePosit
                 destination = it,
                 capturedPiece = position.chessboard.getPieceAt(it)
             )
-        }.plus(getCastleMoveIfPossible(position, kingPosition))
+        }.plus(getCastleMoveIfPossible(position, kingPosition.color))
 }
 
-private fun getCastleMove(
-    position: Position,
-    kingPosition: PiecePosition,
-    castle: Castle
-): Move? {
+private fun getCastleMove(position: Position, castle: Castle): Move? {
     if (!castle.isCastleStillPossible) {
         return null
     }
@@ -245,13 +241,13 @@ private fun getCastleMove(
         return null
     }
     val hasPieceAttackingKingPath =
-        hasAPseudoLegalMovesSatisfying(kingPosition.color.opposite(), position.copyWithoutCastling()) {
+        hasAPseudoLegalMovesSatisfying(castle.color.opposite(), position.copyWithoutCastling()) {
             castle.kingCastlingPathSquares.contains(it.destination)
         }
     return if (!hasPieceAttackingKingPath) {
         Move(
-            piece = kingPosition.piece,
-            origin = kingPosition.square,
+            piece = castle.kingPiece,
+            origin = castle.kingStartSquare,
             destination = castle.kingDestinationSquare,
             isKingCastle = castle.castleType == CastleType.SHORT,
             isQueenCastle = castle.castleType == CastleType.LONG,
@@ -261,16 +257,10 @@ private fun getCastleMove(
 
 private fun Position.copyWithoutCastling() = copy(castles = Castles(castles = emptyList()),)
 
-private fun getCastleMoveIfPossible(position: Position, kingPosition: PiecePosition): List<Move> {
+private fun getCastleMoveIfPossible(position: Position, color: Color): List<Move> {
     return position.castles.castles
-        .filter { it.color == kingPosition.color }
-        .mapNotNull {
-            getCastleMove(
-                position = position,
-                kingPosition = kingPosition,
-                castle = it,
-            )
-        }
+        .filter { it.color == color }
+        .mapNotNull { getCastleMove(position = position, castle = it) }
 }
 
 private fun getLegalMovesFollowingDirection(
